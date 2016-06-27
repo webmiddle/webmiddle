@@ -1,0 +1,7 @@
+{
+  "presets": ["es2015", "stage-0"],
+  "plugins": [
+    ["transform-react-jsx", { "pragma": "WebMiddle.h" }],
+    ["transform-runtime", { "polyfill": false, "regenerator": true }]
+  ]
+}
