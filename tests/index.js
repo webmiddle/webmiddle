@@ -29,15 +29,14 @@ test('isResource -> true', t => {
   }));
 });
 
-test('callVirtual: when type is not a function', t => {
+test('callVirtual: when type is not a function', async t => {
   const virtual = <element />;
-  return t.context.webmiddle.callVirtual(virtual).then(output => {
-    t.is(output.result, virtual, 'result');
-    t.is(output.webmiddle, t.context.webmiddle, 'webmiddle');
-  });
+  const output = await t.context.webmiddle.callVirtual(virtual);
+  t.is(output.result, virtual, 'result');
+  t.is(output.webmiddle, t.context.webmiddle, 'webmiddle');
 });
 
-test('callVirtual: service must be called correctly', t => {
+test('callVirtual: service must be called correctly', async t => {
   const Service = async ({ children, webmiddle, ...args }) => ({
     args,
     children,
@@ -49,18 +48,17 @@ test('callVirtual: service must be called correctly', t => {
     </Service>
   );
 
-  return t.context.webmiddle.callVirtual(virtual).then(output => {
-    t.deepEqual(output.result.args, {
-      foo: 'bar',
-    }, 'attributes');
+  const output = await t.context.webmiddle.callVirtual(virtual);
+  t.deepEqual(output.result.args, {
+    foo: 'bar',
+  }, 'attributes');
 
-    t.is(output.result.children[0].type, 'element', 'children');
+  t.is(output.result.children[0].type, 'element', 'children');
 
-    t.is(output.webmiddle, t.context.webmiddle, 'webmiddle');
-  });
+  t.is(output.webmiddle, t.context.webmiddle, 'webmiddle');
 });
 
-test('callVirtual: resource overrides', t => {
+test('callVirtual: resource overrides', async t => {
   const Service = async () => ({
     name: 'some',
     contentType: 'text/html',
@@ -70,11 +68,10 @@ test('callVirtual: resource overrides', t => {
     <Service name="rawtext" contentType="text/plain" />
   );
 
-  return t.context.webmiddle.callVirtual(virtual).then(output => {
-    const resource = output.result;
-    t.is(resource.name, 'rawtext', 'name');
-    t.is(resource.contentType, 'text/plain', 'contentType');
-  });
+  const output = await t.context.webmiddle.callVirtual(virtual);
+  const resource = output.result;
+  t.is(resource.name, 'rawtext', 'name');
+  t.is(resource.contentType, 'text/plain', 'contentType');
 });
 
 test('registerService', t => {
@@ -105,4 +102,40 @@ test('service: with parent and constructor options', t => {
   t.falsy(webmiddle.service('bar'));
 });
 
-// TODO: evaluate fn
+test('evaluate: function', async t => {
+  const output = await t.context.webmiddle.evaluate(num => num * 2, {
+    functionParameters: [3],
+  });
+  t.is(output, 6);
+});
+
+test('evaluate: promise', async t => {
+  const output = await t.context.webmiddle.evaluate(Promise.resolve(10));
+  t.is(output, 10);
+
+  try {
+    await t.context.webmiddle.evaluate(Promise.reject());
+    t.fail('expected rejection');
+  } catch (e) {
+    // no-op: we're good!
+  }
+});
+
+test('evaluate: virtual', async t => {
+  const Service = (num) => num * 2;
+  const output = await t.context.webmiddle.evaluate((
+    <Service num={6} />
+  ));
+  t.is(output, 12);
+});
+
+test('evaluate: expectResource', async t => {
+  try {
+    await t.context.webmiddle.evaluate(() => 3, {
+      expectResource: true,
+    });
+    t.fail('expected rejection');
+  } catch (e) {
+    // no-op: we're good!
+  }
+});
