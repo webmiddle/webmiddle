@@ -1,6 +1,5 @@
 import isVirtual from './isVirtual';
 import isResource from './isResource';
-import callVirtual from './callVirtual';
 
 export default async function evaluate(value, options = {}) {
   try {
