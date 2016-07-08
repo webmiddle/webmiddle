@@ -102,6 +102,12 @@ test('service: with parent and constructor options', t => {
   t.falsy(webmiddle.service('bar'));
 });
 
+test('evaluate: NaN', async t => {
+  // regression test: NaN result should not cause infinite loop
+  await t.context.webmiddle.evaluate(NaN);
+  t.pass();
+});
+
 test('evaluate: function', async t => {
   const output = await t.context.webmiddle.evaluate(num => num * 2, {
     functionParameters: [3],
@@ -117,12 +123,12 @@ test('evaluate: promise', async t => {
     await t.context.webmiddle.evaluate(Promise.reject());
     t.fail('expected rejection');
   } catch (e) {
-    // no-op: we're good!
+    t.pass();
   }
 });
 
 test('evaluate: virtual', async t => {
-  const Service = (num) => num * 2;
+  const Service = ({ num }) => num * 2;
   const output = await t.context.webmiddle.evaluate((
     <Service num={6} />
   ));
@@ -136,6 +142,6 @@ test('evaluate: expectResource', async t => {
     });
     t.fail('expected rejection');
   } catch (e) {
-    // no-op: we're good!
+    t.pass();
   }
 });
