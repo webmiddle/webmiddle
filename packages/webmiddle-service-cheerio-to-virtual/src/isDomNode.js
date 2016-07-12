@@ -1,6 +1,6 @@
 import every from 'lodash.every';
 
-const props = ['type', 'next', 'prev', 'parent', 'children'];
+const props = ['type', 'next', 'prev', 'parent'];
 
 export default (target) =>
   typeof target === 'object' && target !== null &&
