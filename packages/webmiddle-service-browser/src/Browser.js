@@ -35,7 +35,17 @@ const Browser =
     let finalUrl = url;
 
     if (typeof body === 'object' && body !== null) {
-      // TODO: body to string (form string or stringified json data etc. depending on "Content-Type" header)
+      // body as string
+      if (httpHeaders && httpHeaders['Content-Type'] === 'application/json') {
+        body = JSON.stringify(body);
+      } else {
+        // default: convert to form data
+        body = Object.keys(body).reduce((list, prop) => {
+          const value = body[prop];
+          list.push(`${encodeURIComponent(prop)}=${encodeURIComponent(value)}`);
+          return list;
+        }, []).join('&');
+      }
     }
 
     phantom.create()
