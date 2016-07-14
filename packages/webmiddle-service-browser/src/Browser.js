@@ -28,12 +28,15 @@ function waitForFn(config) {
 const Browser =
 ({ name, contentType, url, method = 'GET', body = {}, httpHeaders = {}, cookies = {}, waitFor }) => {
   // TODO: cookies
-  // todo: body to query string (if is object)
   return new Promise((resolve, reject) => {
     let sitepage = null;
     let phInstance = null;
     const pageResponses = {};
     let finalUrl = url;
+
+    if (typeof body === 'object' && body !== null) {
+      // TODO: body to string (form string or stringified json data etc. depending on "Content-Type" header)
+    }
 
     phantom.create()
     .then(instance => {
@@ -43,7 +46,7 @@ const Browser =
     .then(page => {
       sitepage = page;
 
-      page.customHeaders = httpHeaders;
+      //page.customHeaders = httpHeaders; // TODO: doesn't seem to work
 
       // track final response (after redirects)
       // https://github.com/ariya/phantomjs/issues/10185#issuecomment-38856203
@@ -54,7 +57,14 @@ const Browser =
         finalUrl = targetUrl;
       });
 
-      return page.open(url, method, body);
+      // TODO: are httpHeaders still sent in case of redirect?
+      const settings = {
+        operation: method,
+        headers: httpHeaders,
+        data: body,
+      };
+
+      return page.open(url, settings);
     })
     .then(status => {
       const pageResponse = pageResponses[finalUrl];
