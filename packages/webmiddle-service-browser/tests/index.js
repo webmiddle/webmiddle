@@ -103,8 +103,6 @@ test('POST https page: json data as object', async t => {
   });
 });
 
-
-// TODO: post with body as object (auto conversion to string based on Content-Type header)
 // TODO: cookies
 
 test('httpHeaders', async t => {
