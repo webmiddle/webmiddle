@@ -6,7 +6,7 @@ test.beforeEach(t => {
   t.context.webmiddle = new WebMiddle();
 });
 
-// for httpbin.org
+// phantomjs wraps non-html content into a "pre" element
 function getJSON(content) {
   const start = content.indexOf('>{') + 1;
   const end = content.indexOf('}\n</pre>') + 1;
