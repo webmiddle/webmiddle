@@ -6,7 +6,7 @@ import WebMiddle from 'webmiddle';
 
 const jsonResource = {
   name: 'jsonResource',
-  contentType: 'text/json',
+  contentType: 'application/json',
   content: `
     [
       {
@@ -63,161 +63,161 @@ test('fullconversion', async t => {
   );
 
   t.deepEqual(JSON.parse(output.content), {
-  "type": "root",
-  "attributes": {},
-  "children": [
-    [
+    "type": "root",
+    "attributes": {},
+    "children": [
       [
-        {
-          "type": "id",
-          "attributes": {},
-          "children": [
-            "978-0641723445"
-          ]
-        },
-        {
-          "type": "cat",
-          "attributes": {},
-          "children": [
-            [
-              "book",
-              "hardcover"
+        [
+          {
+            "type": "id",
+            "attributes": {},
+            "children": [
+              "978-0641723445"
             ]
-          ]
-        },
-        {
-          "type": "name",
-          "attributes": {},
-          "children": [
-            "The Lightning Thief"
-          ]
-        },
-        {
-          "type": "author",
-          "attributes": {},
-          "children": [
-            "Rick Riordan"
-          ]
-        },
-        {
-          "type": "series_t",
-          "attributes": {},
-          "children": [
-            "Percy Jackson and the Olympians"
-          ]
-        },
-        {
-          "type": "sequence_i",
-          "attributes": {},
-          "children": [
-            1
-          ]
-        },
-        {
-          "type": "genre_s",
-          "attributes": {},
-          "children": [
-            "fantasy"
-          ]
-        },
-        {
-          "type": "inStock",
-          "attributes": {},
-          "children": [
-            true
-          ]
-        },
-        {
-          "type": "price",
-          "attributes": {},
-          "children": [
-            12.5
-          ]
-        },
-        {
-          "type": "pages_i",
-          "attributes": {},
-          "children": [
-            384
-          ]
-        }
-      ],
-      [
-        {
-          "type": "id",
-          "attributes": {},
-          "children": [
-            "978-1423103349"
-          ]
-        },
-        {
-          "type": "cat",
-          "attributes": {},
-          "children": [
-            [
-              "book",
-              "paperback"
+          },
+          {
+            "type": "cat",
+            "attributes": {},
+            "children": [
+              [
+                "book",
+                "hardcover"
+              ]
             ]
-          ]
-        },
-        {
-          "type": "name",
-          "attributes": {},
-          "children": [
-            "The Sea of Monsters"
-          ]
-        },
-        {
-          "type": "author",
-          "attributes": {},
-          "children": [
-            "Rick Riordan"
-          ]
-        },
-        {
-          "type": "series_t",
-          "attributes": {},
-          "children": [
-            "Percy Jackson and the Olympians"
-          ]
-        },
-        {
-          "type": "sequence_i",
-          "attributes": {},
-          "children": [
-            2
-          ]
-        },
-        {
-          "type": "genre_s",
-          "attributes": {},
-          "children": [
-            "fantasy"
-          ]
-        },
-        {
-          "type": "inStock",
-          "attributes": {},
-          "children": [
-            true
-          ]
-        },
-        {
-          "type": "price",
-          "attributes": {},
-          "children": [
-            6.49
-          ]
-        },
-        {
-          "type": "pages_i",
-          "attributes": {},
-          "children": [
-            304
-          ]
-        }
+          },
+          {
+            "type": "name",
+            "attributes": {},
+            "children": [
+              "The Lightning Thief"
+            ]
+          },
+          {
+            "type": "author",
+            "attributes": {},
+            "children": [
+              "Rick Riordan"
+            ]
+          },
+          {
+            "type": "series_t",
+            "attributes": {},
+            "children": [
+              "Percy Jackson and the Olympians"
+            ]
+          },
+          {
+            "type": "sequence_i",
+            "attributes": {},
+            "children": [
+              1
+            ]
+          },
+          {
+            "type": "genre_s",
+            "attributes": {},
+            "children": [
+              "fantasy"
+            ]
+          },
+          {
+            "type": "inStock",
+            "attributes": {},
+            "children": [
+              true
+            ]
+          },
+          {
+            "type": "price",
+            "attributes": {},
+            "children": [
+              12.5
+            ]
+          },
+          {
+            "type": "pages_i",
+            "attributes": {},
+            "children": [
+              384
+            ]
+          }
+        ],
+        [
+          {
+            "type": "id",
+            "attributes": {},
+            "children": [
+              "978-1423103349"
+            ]
+          },
+          {
+            "type": "cat",
+            "attributes": {},
+            "children": [
+              [
+                "book",
+                "paperback"
+              ]
+            ]
+          },
+          {
+            "type": "name",
+            "attributes": {},
+            "children": [
+              "The Sea of Monsters"
+            ]
+          },
+          {
+            "type": "author",
+            "attributes": {},
+            "children": [
+              "Rick Riordan"
+            ]
+          },
+          {
+            "type": "series_t",
+            "attributes": {},
+            "children": [
+              "Percy Jackson and the Olympians"
+            ]
+          },
+          {
+            "type": "sequence_i",
+            "attributes": {},
+            "children": [
+              2
+            ]
+          },
+          {
+            "type": "genre_s",
+            "attributes": {},
+            "children": [
+              "fantasy"
+            ]
+          },
+          {
+            "type": "inStock",
+            "attributes": {},
+            "children": [
+              true
+            ]
+          },
+          {
+            "type": "price",
+            "attributes": {},
+            "children": [
+              6.49
+            ]
+          },
+          {
+            "type": "pages_i",
+            "attributes": {},
+            "children": [
+              304
+            ]
+          }
+        ]
       ]
     ]
-  ]
   });
 });
