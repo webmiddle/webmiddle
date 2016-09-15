@@ -16,7 +16,7 @@ test('GET https page', async t => {
   const output = await t.context.webmiddle.evaluate(
     <HttpRequest
       name="virtual"
-      contentType="text/json"
+      contentType="application/json"
       method="GET"
       url={`https://httpbin.org/get?number=${escape(number)}&static=${escape('test this number')}`}
     />
@@ -35,7 +35,7 @@ test('POST https page: form data as string', async t => {
   const output = await t.context.webmiddle.evaluate(
     <HttpRequest
       name="virtual"
-      contentType="text/json"
+      contentType="application/json"
       method="POST"
       url="https://httpbin.org/post"
       body={`number=${encodeURIComponent(number)}&static=${encodeURIComponent('test this number')}`}
@@ -55,7 +55,7 @@ test('POST https page: form data as object', async t => {
   const output = await t.context.webmiddle.evaluate(
     <HttpRequest
       name="virtual"
-      contentType="text/json"
+      contentType="application/json"
       method="POST"
       url="https://httpbin.org/post"
       body={{
@@ -78,7 +78,7 @@ test('POST https page: json data as object', async t => {
   const output = await t.context.webmiddle.evaluate(
     <HttpRequest
       name="virtual"
-      contentType="text/json"
+      contentType="application/json"
       method="POST"
       url="https://httpbin.org/post"
       body={{
@@ -104,7 +104,7 @@ test('httpHeaders', async t => {
   const output = await t.context.webmiddle.evaluate(
     <HttpRequest
       name="virtual"
-      contentType="text/json"
+      contentType="application/json"
       method="GET"
       url="https://httpbin.org/get"
       httpHeaders={{
