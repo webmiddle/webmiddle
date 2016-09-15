@@ -94,7 +94,7 @@ const VirtualToJson = async ({ name, from, webmiddle }) => {
 
     return {
       name,
-      contentType: 'text/json',
+      contentType: 'application/json',
       content: JSON.stringify(target, null, 2),
     };
   } catch (e) {
