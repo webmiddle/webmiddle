@@ -16,7 +16,7 @@ const Parallel = ({ name, children, webmiddle }) => {
       }
 
       await Promise.all(promises);
-      resolve({ name, contentType: 'text/json', content: JSON.stringify(resources) });
+      resolve({ name, contentType: 'application/json', content: JSON.stringify(resources) });
     } catch (e) {
       console.log('Parallel', e);
       reject(e);
