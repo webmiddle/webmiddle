@@ -127,7 +127,7 @@ async ({ name, from, fullConversion, children, webmiddle }) => {
   return {
     name,
     contentType: 'application/x-webmiddle-virtual',
-    content: JSON.stringify(target, null, 2),
+    content: target,
   };
 };
 

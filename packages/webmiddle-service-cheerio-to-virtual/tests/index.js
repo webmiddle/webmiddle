@@ -57,7 +57,7 @@ test('condition', async t => {
     </CheerioToVirtual>
   );
 
-  t.deepEqual(JSON.parse(output.content), {
+  t.deepEqual(output.content, {
     "type": "root",
     "attributes": {},
     "children": [
@@ -92,7 +92,7 @@ test('helpers: elMap + elAttr', async t => {
     </CheerioToVirtual>
   );
 
-  t.deepEqual(JSON.parse(output.content), {
+  t.deepEqual(output.content, {
     "type": "root",
     "attributes": {},
     "children": [
@@ -141,7 +141,7 @@ test('helpers: elPipe + elMap + elText + elJoin', async t => {
     </CheerioToVirtual>
   );
 
-  t.deepEqual(JSON.parse(output.content), {
+  t.deepEqual(output.content, {
     "type": "root",
     "attributes": {},
     "children": [
@@ -180,7 +180,7 @@ test('fullconversion', async t => {
     />
   );
 
-  t.deepEqual(JSON.parse(output.content), {
+  t.deepEqual(output.content, {
     "type": "root",
     "attributes": {},
     "children": [
