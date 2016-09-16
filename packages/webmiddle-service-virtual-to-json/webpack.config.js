@@ -14,9 +14,9 @@ fs.readdirSync('node_modules')
   });
 
 // core NodeJS modules
-['fs'].forEach(function(mod) {
+/*['fs'].forEach(function(mod) {
   externals[mod] = 'commonjs ' + mod;
-});
+});*/
 
 module.exports = function webpackConfig(entryFilename, outputPath, env) {
   var debug = (env !== 'production');
@@ -36,6 +36,7 @@ module.exports = function webpackConfig(entryFilename, outputPath, env) {
       //'babel-polyfill',
       entryFilename
     ],
+    target: 'node',
     output: {
       publicPath: '/',
       path: path.resolve(__dirname, outputPath), // make absolute
@@ -47,6 +48,7 @@ module.exports = function webpackConfig(entryFilename, outputPath, env) {
     node: {
       __filename: true,
       fs: "empty",
+      process: false,
     },
 
     resolve: {
