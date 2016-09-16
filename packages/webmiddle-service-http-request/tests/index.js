@@ -7,7 +7,7 @@ test.beforeEach(t => {
 });
 
 function getJSON(content) {
-  return JSON.parse(content);
+  return content;
 }
 
 test('GET https page', async t => {

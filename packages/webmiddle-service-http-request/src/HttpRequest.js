@@ -34,7 +34,11 @@ const HttpRequest =
       jar: true, // remember cookies for future use
     }, (error, response, content) => {
       if (!error && response.statusCode === 200) {
-        resolve({ name, contentType, content });
+        resolve({
+          name,
+          contentType,
+          content: (contentType === 'application/json') ? JSON.parse(content) : content,
+        });
       } else {
         reject(error || response.statusCode);
       }
