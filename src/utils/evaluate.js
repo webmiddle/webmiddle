@@ -23,8 +23,6 @@ export default async function evaluate(value, options = {}) {
     return this.evaluate(promiseResult, options);
   }
 
-  result = {};
-
   if (isVirtual(result)) {
     //console.log('evaluate virtual');
     const { result: virtualResult, webmiddle } = await this.callVirtual(result);
