@@ -44,7 +44,7 @@ test('main', async t => {
 
   t.is(output.name, 'resources', 'name');
   t.is(output.contentType, 'application/json', 'contentType');
-  t.deepEqual(JSON.parse(output.content), {
+  t.deepEqual(output.content, {
     firstResource: {
       name: 'firstResource',
       contentType: 'text/plain',
