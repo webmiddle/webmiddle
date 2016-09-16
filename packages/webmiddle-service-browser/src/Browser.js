@@ -99,7 +99,11 @@ const Browser =
       sitepage.close();
       phInstance.exit();
 
-      resolve({ name, contentType, content });
+      resolve({
+        name,
+        contentType,
+        content: (contentType === 'application/json') ? JSON.parse(content) : content,
+      });
     })
     .catch(error => {
       phInstance.exit();
