@@ -8,37 +8,34 @@ function isRealNaN(target) {
 }
 
 export default async function evaluate(value, options = {}) {
-  try {
-    //console.log('evaluate', value);
-    let result = value;
+  //console.log('evaluate', value);
+  let result = value;
 
-    if (typeof result === 'function') {
-      //console.log('evaluate function');
-      result = result(...(options.functionParameters || []));
-      return this.evaluate(result, options);
-    }
-
-    const promiseResult = await Promise.resolve(result);
-    if (promiseResult !== result && (!isRealNaN(promiseResult) || !isRealNaN(result))) {
-      //console.log('evaluate promise result', promiseResult, result);
-      return this.evaluate(promiseResult, options);
-    }
-
-    if (isVirtual(result)) {
-      //console.log('evaluate virtual');
-      const { result: virtualResult, webmiddle } = await this.callVirtual(result);
-      if (virtualResult !== result) {
-        return webmiddle.evaluate(virtualResult, options);
-      }
-    }
-
-    if (!isResource(result) && options.expectResource) {
-      throw new Error(`Expected a resource from ${JSON.stringify(value)}, got ${JSON.stringify(result)}`);
-    }
-
-    return result;
-  } catch (e) {
-    console.log('evaluate', e);
-    throw e;
+  if (typeof result === 'function') {
+    //console.log('evaluate function');
+    result = result(...(options.functionParameters || []));
+    return this.evaluate(result, options);
   }
+
+  const promiseResult = await Promise.resolve(result);
+  if (promiseResult !== result && (!isRealNaN(promiseResult) || !isRealNaN(result))) {
+    //console.log('evaluate promise result', promiseResult, result);
+    return this.evaluate(promiseResult, options);
+  }
+
+  result = {};
+
+  if (isVirtual(result)) {
+    //console.log('evaluate virtual');
+    const { result: virtualResult, webmiddle } = await this.callVirtual(result);
+    if (virtualResult !== result) {
+      return webmiddle.evaluate(virtualResult, options);
+    }
+  }
+
+  if (!isResource(result) && options.expectResource) {
+    throw new Error(`Expected a resource from ${JSON.stringify(value)}, got ${JSON.stringify(result)}`);
+  }
+
+  return result;
 };
