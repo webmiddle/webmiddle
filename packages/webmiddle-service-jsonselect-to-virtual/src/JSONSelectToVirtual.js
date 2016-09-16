@@ -77,34 +77,29 @@ async function process(value, sourceEl, source, webmiddle) {
 
 const JSONSelectToVirtual =
 async ({ name, from, fullConversion, children, webmiddle }) => {
-  try {
-    const source = JSON.parse(from.content);
+  const source = JSON.parse(from.content);
 
-    let targetChildren;
-    if (fullConversion) {
-      if (children.length !== 0) {
-        console.warn('children are ignored when fullConversion is true');
-      }
-      targetChildren = [await process(source, [source], source, webmiddle)];
-    } else {
-      targetChildren = await processArray(children, [source], source, webmiddle);
+  let targetChildren;
+  if (fullConversion) {
+    if (children.length !== 0) {
+      console.warn('children are ignored when fullConversion is true');
     }
-
-    const target = {
-      type: 'root',
-      attributes: {},
-      children: targetChildren,
-    };
-
-    return {
-      name,
-      contentType: 'application/x-webmiddle-virtual',
-      content: JSON.stringify(target, null, 2),
-    };
-  } catch (e) {
-    console.log('JSONSelectToVirtual', e);
-    throw e;
+    targetChildren = [await process(source, [source], source, webmiddle)];
+  } else {
+    targetChildren = await processArray(children, [source], source, webmiddle);
   }
+
+  const target = {
+    type: 'root',
+    attributes: {},
+    children: targetChildren,
+  };
+
+  return {
+    name,
+    contentType: 'application/x-webmiddle-virtual',
+    content: JSON.stringify(target, null, 2),
+  };
 };
 
 JSONSelectToVirtual.propTypes = {
