@@ -5,7 +5,7 @@ import WebMiddle from 'webmiddle';
 const virtualResource = {
   name: 'virtualResource',
   contentType: 'application/x-webmiddle-virtual',
-  content: `
+  content:
     {
       "type": "root",
       "attributes": {},
@@ -164,7 +164,7 @@ const virtualResource = {
         ]
       ]
     }
-  `,
+  ,
 };
 
 test.beforeEach(t => {
@@ -180,7 +180,7 @@ test('fullConversion', async t => {
     />
   );
 
-  t.deepEqual(JSON.parse(output.content), {
+  t.deepEqual(output.content, {
     root: [
       {
         "id" : "978-0641723445",

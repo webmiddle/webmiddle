@@ -87,14 +87,14 @@ async function process(value, webmiddle) {
 }
 
 const VirtualToJson = async ({ name, from, webmiddle }) => {
-  const source = JSON.parse(from.content);
+  const source = from.content;
 
   const target = await processVirtual(source, webmiddle);
 
   return {
     name,
     contentType: 'application/json',
-    content: JSON.stringify(target, null, 2),
+    content: target,
   };
 };
 
