@@ -103,37 +103,32 @@ async function process(value, sourceEl, source, webmiddle) {
 
 const CheerioToVirtual =
 async ({ name, from, fullConversion, children, webmiddle }) => {
-  try {
-    // parse html or xml
-    const source = cheerio.load(from.content, {
-      xmlMode: from.contentType === 'text/xml',
-    });
+  // parse html or xml
+  const source = cheerio.load(from.content, {
+    xmlMode: from.contentType === 'text/xml',
+  });
 
-    let targetChildren;
-    if (fullConversion) {
-      if (children.length !== 0) {
-        console.warn('children are ignored when fullConversion is true');
-      }
-      targetChildren = await processCheerioElement(source.root(), source.root(), source, webmiddle);
-    } else {
-      targetChildren = await processArray(children, source.root(), source, webmiddle);
+  let targetChildren;
+  if (fullConversion) {
+    if (children.length !== 0) {
+      console.warn('children are ignored when fullConversion is true');
     }
-
-    const target = {
-      type: 'root',
-      attributes: {},
-      children: targetChildren,
-    };
-
-    return {
-      name,
-      contentType: 'application/x-webmiddle-virtual',
-      content: JSON.stringify(target, null, 2),
-    };
-  } catch (e) {
-    console.log('CheerioToVirtual', e);
-    throw e;
+    targetChildren = await processCheerioElement(source.root(), source.root(), source, webmiddle);
+  } else {
+    targetChildren = await processArray(children, source.root(), source, webmiddle);
   }
+
+  const target = {
+    type: 'root',
+    attributes: {},
+    children: targetChildren,
+  };
+
+  return {
+    name,
+    contentType: 'application/x-webmiddle-virtual',
+    content: JSON.stringify(target, null, 2),
+  };
 };
 
 CheerioToVirtual.propTypes = {
