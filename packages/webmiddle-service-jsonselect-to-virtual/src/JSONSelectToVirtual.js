@@ -77,7 +77,7 @@ async function process(value, sourceEl, source, webmiddle) {
 
 const JSONSelectToVirtual =
 async ({ name, from, fullConversion, children, webmiddle }) => {
-  const source = JSON.parse(from.content);
+  const source = from.content;
 
   let targetChildren;
   if (fullConversion) {
@@ -98,7 +98,7 @@ async ({ name, from, fullConversion, children, webmiddle }) => {
   return {
     name,
     contentType: 'application/x-webmiddle-virtual',
-    content: JSON.stringify(target, null, 2),
+    content: target,
   };
 };
 

@@ -7,7 +7,7 @@ import WebMiddle from 'webmiddle';
 const jsonResource = {
   name: 'jsonResource',
   contentType: 'application/json',
-  content: `
+  content:
     [
       {
         "id" : "978-0641723445",
@@ -34,7 +34,7 @@ const jsonResource = {
         "pages_i" : 304
       }
     ]
-  `,
+  ,
 };
 
 test.beforeEach(t => {
@@ -62,7 +62,7 @@ test('fullconversion', async t => {
     />
   );
 
-  t.deepEqual(JSON.parse(output.content), {
+  t.deepEqual(output.content, {
     "type": "root",
     "attributes": {},
     "children": [
