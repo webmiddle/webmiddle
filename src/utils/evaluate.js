@@ -25,9 +25,20 @@ export default async function evaluate(value, options = {}) {
 
   if (isVirtual(result)) {
     //console.log('evaluate virtual');
+    const topVirtual = result;
+
     const { result: virtualResult, webmiddle } = await this.callVirtual(result);
     if (virtualResult !== result) {
-      return webmiddle.evaluate(virtualResult, options);
+      result = await webmiddle.evaluate(virtualResult, options);
+      if (isResource(result)) {
+        // resource overrides by top virtual
+        ['name', 'contentType'].forEach(p => {
+          if (typeof topVirtual.attributes[p] !== 'undefined') {
+            result[p] = topVirtual.attributes[p];
+          }
+        });
+      }
+      return result;
     }
   }
 

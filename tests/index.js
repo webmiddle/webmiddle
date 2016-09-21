@@ -59,19 +59,23 @@ test('callVirtual: service must be called correctly', async t => {
 });
 
 test('callVirtual: resource overrides', async t => {
+  // bottom to parent
   const Service = async () => ({
     name: 'some',
     contentType: 'text/html',
     content: '<div></div>',
   });
-  const virtual = (
+  const TopService = () => (
     <Service name="rawtext" contentType="text/plain" />
   );
 
-  const output = await t.context.webmiddle.callVirtual(virtual);
-  const resource = output.result;
-  t.is(resource.name, 'rawtext', 'name');
-  t.is(resource.contentType, 'text/plain', 'contentType');
+  const output = await t.context.webmiddle.evaluate(
+    <TopService name="other" />
+  );
+
+  t.is(output.name, 'other', 'name');
+  t.is(output.contentType, 'text/plain', 'contentType');
+  t.is(output.content, '<div></div>', 'content');
 });
 
 test('registerService', t => {

@@ -16,14 +16,5 @@ export default async function callVirtual(virtual) {
     webmiddle,
   });
 
-  if (isResource(result)) {
-    // resource overrides
-    ['name', 'contentType'].forEach(p => {
-      if (typeof virtual.attributes[p] !== 'undefined') {
-        result[p] = virtual.attributes[p];
-      }
-    });
-  }
-
   return { result, webmiddle };
 };
