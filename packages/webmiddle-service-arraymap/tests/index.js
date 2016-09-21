@@ -8,13 +8,15 @@ test.beforeEach(t => {
 
 test('main', async t => {
   const output = await t.context.webmiddle.evaluate(
-    <ArrayMap name="resources" array={[1, 2]}>
-      {(num, index) => ({
+    <ArrayMap
+      name="resources"
+      array={[1, 2]}
+      callback={(num, index) => ({
         name: `resource ${index}`,
         contentType: 'text/plain',
         content: `${num} ${index}`,
       })}
-    </ArrayMap>
+    />
   );
 
   t.is(output.name, 'resources', 'name');
@@ -38,9 +40,10 @@ test('expect resource', async t => {
 
   try {
     await t.context.webmiddle.evaluate(
-      <ArrayMap array={[0]}>
-        <Service />
-      </ArrayMap>
+      <ArrayMap
+        array={[0]}
+        callback={() => <Service />}
+      />
     );
     t.fail('expected rejection');
   } catch (e) {
