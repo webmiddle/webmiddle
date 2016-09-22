@@ -28,7 +28,7 @@ function waitForFn(config) {
 const Browser =
 ({ name, contentType, url, method = 'GET', body = {}, httpHeaders = {}, cookies = {}, waitFor }) => {
   // TODO: cookies
-  return new Promise((resolve, reject) => {
+  return Promise.resolve().then(async () => {
     let sitepage = null;
     let phInstance = null;
     const pageResponses = {};
@@ -48,7 +48,7 @@ const Browser =
       }
     }
 
-    phantom.create()
+    return phantom.create()
     .then(instance => {
       phInstance = instance;
       return instance.createPage();
@@ -93,21 +93,22 @@ const Browser =
           , waitFor),
         });
       }
+      return Promise.resolve();
     })
     .then(() => sitepage.property('content'))
     .then(content => {
       sitepage.close();
       phInstance.exit();
 
-      resolve({
+      return {
         name,
         contentType,
         content: (contentType === 'application/json') ? JSON.parse(content) : content,
-      });
+      };
     })
     .catch(error => {
       phInstance.exit();
-      reject(error);
+      throw error;
     });
   });
 };
