@@ -76,9 +76,15 @@ async function processCheerioElement(el, sourceEl, source, webmiddle) {
 
 // @return raw xml conversion of value
 async function process(value, sourceEl, source, webmiddle) {
-  let result = await webmiddle.evaluate(value, {
-    functionParameters: [sourceEl, source],
-  });
+  let result;
+  try {
+    result = await webmiddle.evaluate(value, {
+      functionParameters: [sourceEl, source],
+    });
+  } catch (err) {
+    console.error(err instanceof Error ? err.stack : err);
+    result = null;
+  }
 
   if (webmiddle.isVirtual(result)) {
     // virtual type is not a function,
