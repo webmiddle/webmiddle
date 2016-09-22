@@ -1,21 +1,19 @@
 import WebMiddle, { PropTypes } from 'webmiddle';
 
-const Pipe = ({ children, webmiddle }) => {
-  return Promise.resolve().then(async () => {
-    const resources = {};
-    let lastResource;
+const Pipe = async ({ children, webmiddle }) => {
+  const resources = {};
+  let lastResource;
 
-    for (const child of children) {
-      const resource = await webmiddle.evaluate(child, {
-        expectResource: true,
-        functionParameters: [resources],
-      });
-      resources[resource.name] = resource;
-      lastResource = resource;
-    }
+  for (const child of children) {
+    const resource = await webmiddle.evaluate(child, {
+      expectResource: true,
+      functionParameters: [resources],
+    });
+    resources[resource.name] = resource;
+    lastResource = resource;
+  }
 
-    return lastResource;
-  });
+  return lastResource;
 };
 
 Pipe.propTypes = {
