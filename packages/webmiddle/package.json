@@ -33,8 +33,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "lodash.clonedeep": "^4.5.0",
     "lodash.find": "^4.3.0",
+    "lodash.get": "^4.4.2",
     "lodash.isequal": "^4.4.0",
+    "lodash.isplainobject": "^4.0.6",
+    "lodash.merge": "^4.6.0",
     "lodash.sortby": "^4.7.0",
     "proptypes": "^0.14.3",
     "virtual-element": "^1.2.0"

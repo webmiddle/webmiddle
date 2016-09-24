@@ -4,6 +4,10 @@ import isResource from './utils/isResource';
 import callVirtual from './utils/callVirtual';
 import evaluate from './utils/evaluate';
 import PropTypes from 'proptypes';
+import get from 'lodash.get';
+import cloneDeep from 'lodash.clonedeep';
+import isPlainObject from 'lodash.isplainobject';
+import merge from 'lodash.merge';
 
 export { PropTypes };
 
@@ -37,6 +41,8 @@ export default class WebMiddle {
     for (const path of Object.keys(userServices)) {
       this.registerService(path, userServices[path]);
     }
+
+    this.settings = options.settings || {};
   }
 
   registerService(path, Service) {
@@ -58,5 +64,19 @@ export default class WebMiddle {
     if (Service) return Service;
     if (this.parent) return this.parent.service(path);
     return undefined;
+  }
+
+  setting(path) {
+    const setting = get(this.settings, path);
+    const parentSetting = this.parent ? this.parent.setting(path) : undefined;
+
+    let finalSetting = setting;
+    if (isPlainObject(setting) && isPlainObject(parentSetting)) {
+      finalSetting = merge({}, parentSetting, setting);
+    } else if (typeof setting === 'undefined' && typeof parentSetting !== 'undefined') {
+      finalSetting = parentSetting;
+    }
+
+    return cloneDeep(finalSetting);
   }
 }

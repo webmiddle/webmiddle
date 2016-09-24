@@ -149,3 +149,64 @@ test('evaluate: expectResource', async t => {
     t.pass();
   }
 });
+
+test('settings', async t => {
+  t.context.webmiddle.settings = {
+    foo: 'bar',
+    obj: {
+      test: 'fun',
+    },
+  };
+
+  t.is(t.context.webmiddle.setting('not existing'), undefined, 'not existing');
+
+  t.is(t.context.webmiddle.setting('foo'), 'bar', 'simple value');
+
+  t.is(t.context.webmiddle.setting('obj.test'), 'fun', 'path');
+
+  const obj = t.context.webmiddle.setting('obj');
+  t.deepEqual(obj, {
+    test: 'fun',
+  }, 'object');
+
+  obj.test = 'not fun';
+  t.deepEqual(t.context.webmiddle.setting('obj'), {
+    test: 'fun',
+  }, 'deep clone');
+});
+
+test('settings: with parent', async t => {
+  const parentWebmiddle = new WebMiddle({
+    settings: {
+      obj: {
+        test: 'not fun',
+        debug: 'fun',
+        other: 'whatever',
+      },
+      arr: ['a', 'b', 'c'],
+    },
+  });
+
+  const webmiddle = new WebMiddle({
+    parent: parentWebmiddle,
+    settings: {
+      obj: {
+        test: 'fun',
+        debug: 'not fun',
+      },
+      arr: ['d', 'e', 'f'],
+    },
+  });
+
+  t.deepEqual(webmiddle.setting('obj'), {
+    test: 'fun',
+    debug: 'not fun',
+    other: 'whatever',
+  });
+
+  t.is(webmiddle.setting('obj.other'), 'whatever', 'path');
+
+  t.deepEqual(webmiddle.setting('arr'), [
+    'd', 'e', 'f',
+  ], 'don\'t merge not plain objects (e.g. arrays)');
+});
