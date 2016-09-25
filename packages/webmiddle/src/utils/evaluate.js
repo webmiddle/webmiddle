@@ -27,18 +27,25 @@ export default async function evaluate(value, options = {}) {
     //console.log('evaluate virtual');
     const topVirtual = result;
 
-    const { result: virtualResult, webmiddle } = await this.callVirtual(result);
-    if (virtualResult !== result) {
-      result = await webmiddle.evaluate(virtualResult, options);
-      if (isResource(result)) {
-        // resource overrides by top virtual
-        ['name', 'contentType'].forEach(p => {
-          if (typeof topVirtual.attributes[p] !== 'undefined') {
-            result[p] = topVirtual.attributes[p];
-          }
-        });
+    const { result: virtualResult, webmiddle, topWebmiddle } = await this.callVirtual(result);
+    try {
+      if (virtualResult !== result) {
+        result = await webmiddle.evaluate(virtualResult, options);
+        if (isResource(result)) {
+          // resource overrides by top virtual
+          ['name', 'contentType'].forEach(p => {
+            if (typeof topVirtual.attributes[p] !== 'undefined') {
+              result[p] = topVirtual.attributes[p];
+            }
+          });
+        }
+        return result;
       }
-      return result;
+    } finally {
+      if (topWebmiddle !== this) {
+        // unset temp parent
+        topWebmiddle.parent = undefined;
+      }
     }
   }
 

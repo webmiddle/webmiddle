@@ -16,11 +16,22 @@ export default async function callVirtual(virtual) {
   const service = virtual.type;
 
   if (typeof service !== 'function') {
-    return { result: virtual, webmiddle: this };
+    return { result: virtual, webmiddle: this, topWebmiddle: this };
   }
 
   // TODO: merge service.webmiddle with this.
   const webmiddle = service.webmiddle || this;
+
+  // Set temp parent
+  // Note: the step is also skipped in case "this"
+  // is parent of an higher service.webmiddle parent
+  let topWebmiddle = webmiddle;
+  while (topWebmiddle.parent && topWebmiddle !== this) {
+    topWebmiddle = topWebmiddle.parent;
+  }
+  if (topWebmiddle !== this) {
+    topWebmiddle.parent = this;
+  }
 
   const props = {
     ...virtual.attributes,
@@ -33,5 +44,5 @@ export default async function callVirtual(virtual) {
 
   const result = await service(props);
 
-  return { result, webmiddle };
+  return { result, webmiddle, topWebmiddle };
 };

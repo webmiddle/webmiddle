@@ -210,3 +210,23 @@ test('settings: with parent', async t => {
     'd', 'e', 'f',
   ], 'don\'t merge not plain objects (e.g. arrays)');
 });
+
+test('temp parent', async t => {
+  const Service = ({ webmiddle }) => {
+    return webmiddle.setting('name');
+  };
+  Service.webmiddle = new WebMiddle();
+
+  const webmiddle = new WebMiddle({
+    settings: {
+      name: 'temp parent',
+    },
+  });
+
+  const output = await webmiddle.evaluate(
+    <Service />
+  );
+
+  t.is(output, 'temp parent');
+  t.is(Service.webmiddle.parent, undefined);
+});
