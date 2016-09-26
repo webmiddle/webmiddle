@@ -1,6 +1,6 @@
 import WebMiddle, { PropTypes } from 'webmiddle';
 
-const Pipe = async ({ children, webmiddle }) => {
+async function Pipe({ children, webmiddle }) {
   const resources = {};
   let lastResource;
 
@@ -14,7 +14,7 @@ const Pipe = async ({ children, webmiddle }) => {
   }
 
   return lastResource;
-};
+}
 
 Pipe.propTypes = {
   children: PropTypes.array.isRequired,

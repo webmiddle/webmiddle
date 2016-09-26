@@ -86,7 +86,7 @@ async function process(value, webmiddle) {
   return result;
 }
 
-const VirtualToJson = async ({ name, from, webmiddle }) => {
+async function VirtualToJson({ name, from, webmiddle }) {
   const source = from.content;
 
   const target = await processVirtual(source, webmiddle);
@@ -96,11 +96,12 @@ const VirtualToJson = async ({ name, from, webmiddle }) => {
     contentType: 'application/json',
     content: target,
   };
-};
+}
 
 VirtualToJson.propTypes = {
   name: PropTypes.string.isRequired,
   from: PropTypes.object.isRequired, // resource
+  webmiddle: PropTypes.object.isRequired,
 };
 
 export default VirtualToJson;

@@ -1,17 +1,15 @@
 import WebMiddle, { PropTypes } from 'webmiddle';
 
-const ArrayMap = ({ name, array, callback, webmiddle }) => {
-  return Promise.resolve().then(async () => {
-    const resources = await Promise.all(array.map((value, key) => {
-      return webmiddle.evaluate(callback, {
-        expectResource: true,
-        functionParameters: [value, key],
-      });
-    }));
+async function ArrayMap({ name, array, callback, webmiddle }) {
+  const resources = await Promise.all(array.map((value, key) => {
+    return webmiddle.evaluate(callback, {
+      expectResource: true,
+      functionParameters: [value, key],
+    });
+  }));
 
-    return ({ name, contentType: 'application/json', content: resources });
-  });
-};
+  return ({ name, contentType: 'application/json', content: resources });
+}
 
 ArrayMap.propTypes = {
   name: PropTypes.string.isRequired,

@@ -81,8 +81,9 @@ async function process(value, sourceEl, source, webmiddle) {
   return result;
 }
 
-const JSONSelectToVirtual =
-async ({ name, from, fullConversion, children, webmiddle }) => {
+async function JSONSelectToVirtual({
+  name, from, fullConversion, children, webmiddle,
+}) {
   const source = from.content;
 
   let targetChildren;
@@ -106,7 +107,7 @@ async ({ name, from, fullConversion, children, webmiddle }) => {
     contentType: 'application/x-webmiddle-virtual',
     content: target,
   };
-};
+}
 
 JSONSelectToVirtual.propTypes = {
   name: PropTypes.string.isRequired,

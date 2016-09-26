@@ -1,6 +1,6 @@
 import WebMiddle, { PropTypes } from 'webmiddle';
 
-const Parallel = async ({ name, children, webmiddle }) => {
+async function Parallel({ name, children, webmiddle }) {
   const resources = {};
   const promises = [];
 
@@ -15,7 +15,7 @@ const Parallel = async ({ name, children, webmiddle }) => {
 
   await Promise.all(promises);
   return { name, contentType: 'application/json', content: resources };
-};
+}
 
 Parallel.propTypes = {
   name: PropTypes.string.isRequired,

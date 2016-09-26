@@ -25,93 +25,92 @@ function waitForFn(config) {
   });
 }
 
-const Browser =
-({ name, contentType, url, method = 'GET', body = {}, httpHeaders = {}, cookies = {}, waitFor }) => {
-  // TODO: cookies
-  return Promise.resolve().then(async () => {
-    let sitepage = null;
-    let phInstance = null;
-    const pageResponses = {};
-    let finalUrl = url;
+// TODO: cookies
+async function Browser({
+  name, contentType, url, method = 'GET', body = {}, httpHeaders = {}, cookies = {}, waitFor,
+}) {
+  let sitepage = null;
+  let phInstance = null;
+  const pageResponses = {};
+  let finalUrl = url;
 
-    if (typeof body === 'object' && body !== null) {
-      // body as string
-      if (httpHeaders && httpHeaders['Content-Type'] === 'application/json') {
-        body = JSON.stringify(body);
-      } else {
-        // default: convert to form data
-        body = Object.keys(body).reduce((list, prop) => {
-          const value = body[prop];
-          list.push(`${encodeURIComponent(prop)}=${encodeURIComponent(value)}`);
-          return list;
-        }, []).join('&');
-      }
+  if (typeof body === 'object' && body !== null) {
+    // body as string
+    if (httpHeaders && httpHeaders['Content-Type'] === 'application/json') {
+      body = JSON.stringify(body);
+    } else {
+      // default: convert to form data
+      body = Object.keys(body).reduce((list, prop) => {
+        const value = body[prop];
+        list.push(`${encodeURIComponent(prop)}=${encodeURIComponent(value)}`);
+        return list;
+      }, []).join('&');
+    }
+  }
+
+  return phantom.create()
+  .then(instance => {
+    phInstance = instance;
+    return instance.createPage();
+  })
+  .then(page => {
+    sitepage = page;
+
+    //page.customHeaders = httpHeaders; // TODO: doesn't seem to work
+
+    // track final response (after redirects)
+    // https://github.com/ariya/phantomjs/issues/10185#issuecomment-38856203
+    page.on('onResourceReceived', (response) => {
+      pageResponses[response.url] = response;
+    });
+    page.on('onUrlChanged', (targetUrl) => {
+      finalUrl = targetUrl;
+    });
+
+    // TODO: are httpHeaders still sent in case of redirect?
+    const settings = {
+      operation: method,
+      headers: httpHeaders,
+      data: body,
+    };
+
+    return page.open(url, settings);
+  })
+  .then(status => {
+    const pageResponse = pageResponses[finalUrl];
+
+    if (status !== 'success' || pageResponse.status !== 200) {
+      throw pageResponse;
     }
 
-    return phantom.create()
-    .then(instance => {
-      phInstance = instance;
-      return instance.createPage();
-    })
-    .then(page => {
-      sitepage = page;
-
-      //page.customHeaders = httpHeaders; // TODO: doesn't seem to work
-
-      // track final response (after redirects)
-      // https://github.com/ariya/phantomjs/issues/10185#issuecomment-38856203
-      page.on('onResourceReceived', (response) => {
-        pageResponses[response.url] = response;
+    if (waitFor) {
+      return waitForFn({
+        debug: true,  // optional
+        interval: 0,  // optional
+        timeout: 10000,  // optional
+        check: () => sitepage.evaluate((waitFor) =>
+          document.querySelector(waitFor) !== null
+        , waitFor),
       });
-      page.on('onUrlChanged', (targetUrl) => {
-        finalUrl = targetUrl;
-      });
+    }
+    return Promise.resolve();
+  })
+  .then(() => sitepage.property('content'))
+  .then(content => {
+    sitepage.close();
+    phInstance.exit();
 
-      // TODO: are httpHeaders still sent in case of redirect?
-      const settings = {
-        operation: method,
-        headers: httpHeaders,
-        data: body,
-      };
-
-      return page.open(url, settings);
-    })
-    .then(status => {
-      const pageResponse = pageResponses[finalUrl];
-
-      if (status !== 'success' || pageResponse.status !== 200) {
-        throw pageResponse;
-      }
-
-      if (waitFor) {
-        return waitForFn({
-          debug: true,  // optional
-          interval: 0,  // optional
-          timeout: 10000,  // optional
-          check: () => sitepage.evaluate((waitFor) =>
-            document.querySelector(waitFor) !== null
-          , waitFor),
-        });
-      }
-      return Promise.resolve();
-    })
-    .then(() => sitepage.property('content'))
-    .then(content => {
-      sitepage.close();
-      phInstance.exit();
-
-      return {
-        name,
-        contentType,
-        content: (contentType === 'application/json') ? JSON.parse(content) : content,
-      };
-    })
-    .catch(error => {
-      phInstance.exit();
-      throw error;
-    });
+    return {
+      name,
+      contentType,
+      content: (contentType === 'application/json') ? JSON.parse(content) : content,
+    };
+  })
+  .catch(error => {
+    phInstance.exit();
+    throw error;
   });
-};
+}
 
 Browser.propTypes = {
   name: PropTypes.string.isRequired,

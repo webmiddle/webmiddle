@@ -1,9 +1,10 @@
 import WebMiddle, { PropTypes } from 'webmiddle';
 import request from 'request';
 
-const HttpRequest =
-({ name, contentType, url, method = 'GET', body = {}, httpHeaders = {}, cookies = {} }) => {
-  // TODO: cookies
+// TODO: cookies
+function HttpRequest({
+  name, contentType, url, method = 'GET', body = {}, httpHeaders = {}, cookies = {},
+}) {
   return new Promise((resolve, reject) => {
     try {
       const isJsonBody = httpHeaders && httpHeaders['Content-Type'] === 'application/json';
@@ -48,7 +49,7 @@ const HttpRequest =
       reject(err);
     }
   });
-};
+}
 
 HttpRequest.propTypes = {
   name: PropTypes.string.isRequired,

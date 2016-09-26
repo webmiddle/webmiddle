@@ -107,8 +107,9 @@ async function process(value, sourceEl, source, webmiddle) {
   return result;
 }
 
-const CheerioToVirtual =
-async ({ name, from, fullConversion, children, webmiddle }) => {
+async function CheerioToVirtual({
+  name, from, fullConversion, children, webmiddle,
+}) {
   // parse html or xml
   const source = cheerio.load(from.content, {
     xmlMode: from.contentType === 'text/xml',
@@ -135,7 +136,7 @@ async ({ name, from, fullConversion, children, webmiddle }) => {
     contentType: 'application/x-webmiddle-virtual',
     content: target,
   };
-};
+}
 
 CheerioToVirtual.propTypes = {
   name: PropTypes.string.isRequired,
