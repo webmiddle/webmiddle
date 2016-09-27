@@ -103,6 +103,8 @@ test('limit', async t => {
     });
   };
 
+  current = 0;
+  overLimit = false;
   await t.context.webmiddle.evaluate(
     <Parallel name="resources" limit={limit}>
       {range(100).map(i => (
@@ -113,6 +115,8 @@ test('limit', async t => {
 
   t.is(overLimit, false, 'with limit');
 
+  current = 0;
+  overLimit = false;
   await t.context.webmiddle.evaluate(
     <Parallel name="resources" limit={0}>
       {range(100).map(i => (
