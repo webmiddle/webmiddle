@@ -2,6 +2,10 @@ import test from 'ava';
 import ArrayMap from '../src/index.js';
 import WebMiddle from 'webmiddle';
 
+function range(num) {
+  return [...Array(num).keys()];
+}
+
 test.beforeEach(t => {
   t.context.webmiddle = new WebMiddle();
 });
@@ -49,4 +53,59 @@ test('expect resource', async t => {
   } catch (e) {
     t.pass();
   }
+});
+
+test('limit', async t => {
+  const limit = 10;
+  let current = 0;
+  let overLimit = false;
+
+  const Service = () => {
+    current++;
+    //console.log('exec', current);
+    if (current > limit) {
+      overLimit = true;
+    }
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        current--;
+        //console.log('done', current);
+        resolve({
+          name: 'whatever',
+          contentType: 'text/plain',
+          content: 'whatever',
+        });
+      }, 100);
+    });
+  };
+
+  current = 0;
+  overLimit = false;
+  await t.context.webmiddle.evaluate(
+    <ArrayMap
+      name="resources"
+      array={range(100)}
+      callback={num => (
+        <Service name={num} />
+      )}
+      limit={limit}
+    />
+  );
+
+  t.is(overLimit, false, 'with limit');
+
+  current = 0;
+  overLimit = false;
+  await t.context.webmiddle.evaluate(
+    <ArrayMap
+      name="resources"
+      array={range(100)}
+      callback={num => (
+        <Service name={num} />
+      )}
+      limit={0}
+    />
+  );
+
+  t.is(overLimit, true, 'without limit');
 });
