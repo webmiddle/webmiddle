@@ -2,6 +2,10 @@ import test from 'ava';
 import Parallel from '../src/index.js';
 import WebMiddle from 'webmiddle';
 
+function range(num) {
+  return [...Array(num).keys()];
+}
+
 test.beforeEach(t => {
   t.context.webmiddle = new WebMiddle();
 });
@@ -73,4 +77,49 @@ test('expect resource', async t => {
   } catch (e) {
     t.pass();
   }
+});
+
+test('limit', async t => {
+  const limit = 10;
+  let current = 0;
+  let overLimit = false;
+
+  const Service = () => {
+    current++;
+    //console.log('exec', current);
+    if (current > limit) {
+      overLimit = true;
+    }
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        current--;
+        //console.log('done', current);
+        resolve({
+          name: 'whatever',
+          contentType: 'text/plain',
+          content: 'whatever',
+        });
+      }, 100);
+    });
+  };
+
+  await t.context.webmiddle.evaluate(
+    <Parallel name="resources" limit={limit}>
+      {range(100).map(i => (
+        <Service name={i} />
+      ))}
+    </Parallel>
+  );
+
+  t.is(overLimit, false, 'with limit');
+
+  await t.context.webmiddle.evaluate(
+    <Parallel name="resources" limit={0}>
+      {range(100).map(i => (
+        <Service name={i} />
+      ))}
+    </Parallel>
+  );
+
+  t.is(overLimit, true, 'without limit');
 });
