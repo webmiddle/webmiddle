@@ -3,11 +3,18 @@ import request from 'request';
 
 // TODO: cookies
 function HttpRequest({
-  name, contentType, url, method = 'GET', body = {}, httpHeaders = {}, cookies = {},
+  name, contentType, url, method = 'GET', body = {}, httpHeaders = {}, webmiddle,
 }) {
   return new Promise((resolve, reject) => {
     try {
       const isJsonBody = httpHeaders && httpHeaders['Content-Type'] === 'application/json';
+
+      // remember cookies for future use
+      // HACK: "request" and "cookieManager" both use "tough-cookie",
+      // thus we just use the webmiddle cookie jar directly.
+      // Things might go wrong in case of incompatible versions!
+      const jar = request.jar();
+      jar._jar = webmiddle.cookieManager.jar;
 
       if (typeof body === 'object' && body !== null) {
         // body as string
@@ -33,7 +40,7 @@ function HttpRequest({
           'Content-Type': !isJsonBody ? 'application/x-www-form-urlencoded' : undefined,
           ...httpHeaders,
         },
-        jar: true, // remember cookies for future use
+        jar,
       }, (error, response, content) => {
         if (!error && response.statusCode === 200) {
           resolve({
@@ -61,7 +68,7 @@ HttpRequest.propTypes = {
     PropTypes.string,
   ]),
   httpHeaders: PropTypes.object,
-  cookies: PropTypes.object,
+  webmiddle: PropTypes.object.isRequired,
 };
 
 export default HttpRequest;
