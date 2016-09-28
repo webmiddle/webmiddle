@@ -8,6 +8,7 @@ import get from 'lodash.get';
 import cloneDeep from 'lodash.clonedeep';
 import isPlainObject from 'lodash.isplainobject';
 import merge from 'lodash.merge';
+import CookieManager from 'webmiddle-manager-cookie';
 
 export { PropTypes };
 
@@ -43,6 +44,11 @@ export default class WebMiddle {
     }
 
     this.settings = options.settings || {};
+
+    global.webmiddle = global.webmiddle || {
+      cookieManager: new CookieManager(),
+    };
+    this.cookieManager = global.webmiddle.cookieManager;
   }
 
   registerService(path, Service) {

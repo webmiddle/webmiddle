@@ -12,7 +12,7 @@ export default async function evaluate(value, options = {}) {
   let result = value;
 
   if (typeof result === 'function') {
-    //console.log('evaluate function');
+    //console.log('evaluate function', result);
     result = result(...(options.functionParameters || []));
     return this.evaluate(result, options);
   }
@@ -24,7 +24,7 @@ export default async function evaluate(value, options = {}) {
   }
 
   if (isVirtual(result)) {
-    //console.log('evaluate virtual');
+    //console.log('evaluate virtual', result);
     const topVirtual = result;
 
     const { result: virtualResult, webmiddle, topWebmiddle } = await this.callVirtual(result);
