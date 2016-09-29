@@ -15,6 +15,7 @@ function getJSON(content) {
   return json;
 }
 
+/*
 test('GET https page', async t => {
   const number = Math.round(Math.random() * 100);
 
@@ -103,8 +104,6 @@ test('POST https page: json data as object', async t => {
   });
 });
 
-// TODO: cookies
-
 test('httpHeaders', async t => {
   const output = await t.context.webmiddle.evaluate(
     <Browser
@@ -137,4 +136,50 @@ test('waitFor', async t => {
   );
 
   t.pass();
+});*/
+
+test('cookies', async t => {
+  // save to jar
+
+  let v2 = Math.floor(Math.random() * 100) + 1;
+  let v1 = Math.floor(Math.random() * 100) + 1;
+
+  await t.context.webmiddle.evaluate(
+    <Browser
+      name="virtual"
+      contentType="text/html"
+      method="GET"
+      url={`https://httpbin.org/cookies/set?k2=${v2}&k1=${v1}`}
+    />
+  );
+
+  const cookies = t.context.webmiddle.cookieManager.jar.getCookiesSync('https://httpbin.org');
+
+  t.is(cookies[0].key, 'k2');
+  t.is(cookies[0].value, String(v2));
+
+  t.is(cookies[1].key, 'k1');
+  t.is(cookies[1].value, String(v1));
+
+  // read from jar
+
+  v2 = Math.floor(Math.random() * 100) + 1;
+  v1 = Math.floor(Math.random() * 100) + 1;
+  cookies[0].value = String(v2);
+  cookies[1].value = String(v1);
+
+  const output = await t.context.webmiddle.evaluate(
+    <Browser
+      name="virtual"
+      contentType="text/html"
+      method="GET"
+      url="https://httpbin.org/cookies"
+    />
+  );
+
+  const json = getJSON(output.content);
+  t.deepEqual(json.cookies, {
+    k2: String(v2),
+    k1: String(v1),
+  });
 });

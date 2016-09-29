@@ -25,9 +25,24 @@ function waitForFn(config) {
   });
 }
 
+function setCookies(page, webmiddle) {
+  const allCookies = webmiddle.cookieManager.jar.toJSON().cookies;
+  return Promise.all(allCookies.map(cookie =>
+    page.addCookie({
+      name: cookie.key,
+      value: cookie.value,
+      domain: cookie.domain,
+      path: cookie.path,
+      httponly: cookie.httpOnly,
+      secure: cookie.secure,
+      expires: cookie.expires,
+    })
+  ));
+}
+
 // TODO: cookies
 async function Browser({
-  name, contentType, url, method = 'GET', body = {}, httpHeaders = {}, cookies = {}, waitFor,
+  name, contentType, url, method = 'GET', body = {}, httpHeaders = {}, waitFor, webmiddle,
 }) {
   let sitepage = null;
   let phInstance = null;
@@ -53,15 +68,28 @@ async function Browser({
     phInstance = instance;
     return instance.createPage();
   })
-  .then(page => {
+  .then(async page => {
     sitepage = page;
 
     //page.customHeaders = httpHeaders; // TODO: doesn't seem to work
 
-    // track final response (after redirects)
-    // https://github.com/ariya/phantomjs/issues/10185#issuecomment-38856203
     page.on('onResourceReceived', (response) => {
+      // track final response (after redirects)
+      // https://github.com/ariya/phantomjs/issues/10185#issuecomment-38856203
       pageResponses[response.url] = response;
+
+      // save new cookies
+      response.headers.forEach(header => {
+        if (header.name.toLowerCase() === 'set-cookie') {
+          const values = header.value.split('\n');
+          values.forEach(value => {
+            const cookie = webmiddle.cookieManager.Cookie.parse(value, {
+              loose: true,
+            });
+            webmiddle.cookieManager.jar.setCookieSync(cookie, response.url, {});
+          });
+        }
+      });
     });
     page.on('onUrlChanged', (targetUrl) => {
       finalUrl = targetUrl;
@@ -73,6 +101,12 @@ async function Browser({
       headers: httpHeaders,
       data: body,
     };
+
+    // TODO: check if all cookies are added, it might be that
+    // those not relevant to the page url are discarded
+    // (even though at this moment the page doesn't even have an url)
+    // Also check in case of redirects or XHR.
+    await setCookies(page, webmiddle);
 
     return page.open(url, settings);
   })
@@ -122,8 +156,8 @@ Browser.propTypes = {
     PropTypes.string,
   ]),
   httpHeaders: PropTypes.object,
-  cookies: PropTypes.object,
   waitFor: PropTypes.string,
+  webmiddle: PropTypes.object.isRequired,
 };
 
 export default Browser;
