@@ -85,4 +85,8 @@ export default class WebMiddle {
 
     return cloneDeep(finalSetting);
   }
+
+  log(...args) {
+    if (this.setting('verbose')) console.log(...args);
+  }
 }

@@ -8,23 +8,23 @@ function isRealNaN(target) {
 }
 
 export default async function evaluate(value, options = {}) {
-  //console.log('evaluate', value);
+  this.log('evaluate', value);
   let result = value;
 
   if (typeof result === 'function') {
-    //console.log('evaluate function', result);
+    this.log('evaluate function', result);
     result = result(...(options.functionParameters || []));
     return this.evaluate(result, options);
   }
 
   const promiseResult = await Promise.resolve(result);
   if (promiseResult !== result && (!isRealNaN(promiseResult) || !isRealNaN(result))) {
-    //console.log('evaluate promise result', promiseResult, result);
+    this.log('evaluate promise result', promiseResult, result);
     return this.evaluate(promiseResult, options);
   }
 
   if (isVirtual(result)) {
-    //console.log('evaluate virtual', result);
+    this.log('evaluate virtual', result);
     const topVirtual = result;
 
     const { result: virtualResult, webmiddle, topWebmiddle } = await this.callVirtual(result);
