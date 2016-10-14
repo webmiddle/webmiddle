@@ -249,3 +249,21 @@ test('retries', async t => {
   t.is(tries, retries + 1);
 });
 
+test('service options', async t => {
+  const Service = ({ options }) => {
+    return options.otherOption + ' ' +
+           options.myCustomOption + ' ' +
+           options.anotherOption;
+  };
+  Service.options = {
+    otherOption: 'some',
+    myCustomOption: 'foo',
+  };
+
+  const output = await t.context.webmiddle.evaluate(<Service />, {
+    otherOption: 'bar',
+    anotherOption: 'again',
+  });
+
+  t.is(output, 'some foo again');
+});
