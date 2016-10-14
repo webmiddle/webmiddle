@@ -27,7 +27,7 @@ export default async function evaluate(value, options = {}) {
     this.log('evaluate virtual', result);
     const topVirtual = result;
 
-    const { result: virtualResult, webmiddle, topWebmiddle } = await this.callVirtual(result);
+    const { result: virtualResult, webmiddle, linkedWebmiddle } = await this.callVirtual(result);
     try {
       if (virtualResult !== result) {
         result = await webmiddle.evaluate(virtualResult, options);
@@ -42,9 +42,9 @@ export default async function evaluate(value, options = {}) {
         return result;
       }
     } finally {
-      if (topWebmiddle !== this) {
-        // unset temp parent
-        topWebmiddle.parent = undefined;
+      if (linkedWebmiddle) {
+        // unlink (unset temp parent)
+        linkedWebmiddle.parent = undefined;
       }
     }
   }
