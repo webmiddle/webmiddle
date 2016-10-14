@@ -27,7 +27,11 @@ export default async function evaluate(value, options = {}) {
     this.log('evaluate virtual', result);
     const topVirtual = result;
 
-    const { result: virtualResult, webmiddle, linkedWebmiddle } = await this.callVirtual(result);
+    const {
+      result: virtualResult,
+      webmiddle,
+      linkedWebmiddle,
+    } = await this.callVirtual(result, options);
     try {
       if (virtualResult !== result) {
         result = await webmiddle.evaluate(virtualResult, options);

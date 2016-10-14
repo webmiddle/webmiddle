@@ -44,19 +44,23 @@ async function callService(service, props) {
     const result = await service(props);
     return result;
   } catch (err) {
-    if (props.retries === 0) { // < 0 for infinite retries
+    const retries = props.options.retries || 0;
+    if (retries === 0) { // < 0 for infinite retries
       throw err;
     }
     console.error((err instanceof Error) ? err.stack : err);
-    console.log('Retries left:', (props.retries < 0) ? '(infinity)' : props.retries);
+    console.log('Retries left:', (retries < 0) ? '(infinity)' : retries);
     return callService(service, {
       ...props,
-      retries: (props.retries < 0) ? props.retries : (props.retries - 1),
+      options: {
+        ...props.options,
+        retries: (retries < 0) ? retries : (retries - 1),
+      },
     });
   }
 }
 
-export default async function callVirtual(virtual) {
+export default async function callVirtual(virtual, options = {}) {
   const service = virtual.type;
 
   if (typeof service !== 'function') {
@@ -73,9 +77,9 @@ export default async function callVirtual(virtual) {
 
   const props = {
     ...virtual.attributes,
-    retries: virtual.attributes.retries || 0,
     children: virtual.children,
     webmiddle,
+    options,
   };
   if (service.propTypes) {
     validateProps(virtual.attributes, service.propTypes);
