@@ -9,7 +9,7 @@ function getDirectories(srcpath) {
 }
 
 const currentDirectory = path.basename(__dirname);
-const targetDirectories = getDirectories(path(__dirname, '../packages'));
+const targetDirectories = getDirectories(path.resolve(__dirname, '../packages'));
 
 var command = process.argv[2] || 'npm';
 // http://stackoverflow.com/a/17537559
@@ -23,7 +23,7 @@ console.log(command, commandArguments);
 
 targetDirectories.forEach(dir => {
   const childProcess = spawn(command, commandArguments, {
-    cwd: path.resolve(__dirname, `../${dir}`),
+    cwd: path.resolve(__dirname, `../packages/${dir}`),
   });
   childProcess.stdout.on('data', function (data) {
     console.log(dir, 'stdout: ' + data.toString());
