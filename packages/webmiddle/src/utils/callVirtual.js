@@ -38,6 +38,24 @@ function areWebmiddlesRelated(first, second) {
          (firstAncestors.indexOf(second) !== -1 || secondAncestors.indexOf(first) !== -1);
 }
 
+// Call the service multiple times based on the "retries" prop.
+async function callService(service, props) {
+  try {
+    const result = await service(props);
+    return result;
+  } catch (err) {
+    if (props.retries === 0) { // < 0 for infinite retries
+      throw err;
+    }
+    console.error((err instanceof Error) ? err.stack : err);
+    console.log('Retries left:', (props.retries < 0) ? '(infinity)' : props.retries);
+    return callService(service, {
+      ...props,
+      retries: (props.retries < 0) ? props.retries : (props.retries - 1),
+    });
+  }
+}
+
 export default async function callVirtual(virtual) {
   const service = virtual.type;
 
@@ -55,6 +73,7 @@ export default async function callVirtual(virtual) {
 
   const props = {
     ...virtual.attributes,
+    retries: virtual.attributes.retries || 0,
     children: virtual.children,
     webmiddle,
   };
@@ -62,7 +81,7 @@ export default async function callVirtual(virtual) {
     validateProps(virtual.attributes, service.propTypes);
   }
 
-  const result = await service(props);
+  const result = await callService(service, props);
 
   return { result, webmiddle, linkedWebmiddle };
 };

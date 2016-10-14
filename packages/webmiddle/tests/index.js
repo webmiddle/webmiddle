@@ -37,8 +37,9 @@ test('callVirtual: when type is not a function', async t => {
 });
 
 test('callVirtual: service must be called correctly', async t => {
-  const Service = async ({ children, webmiddle, ...args }) => ({
+  const Service = async ({ retries, children, webmiddle, ...args }) => ({
     args,
+    retries,
     children,
     webmiddle,
   });
@@ -230,3 +231,23 @@ test('temp parent', async t => {
   t.is(output, 'temp parent');
   t.is(Service.webmiddle.parent, undefined);
 });
+
+test('retries', async t => {
+  let tries = 0;
+  const Service = ({ retries }) => {
+    tries++;
+    return Promise.reject(`retries service always fails: ${retries}`);
+  };
+
+  const retries = Math.floor(Math.random() * 3) + 0;
+  try {
+    await t.context.webmiddle.evaluate(
+      <Service retries={retries} />
+    );
+  } catch (err) {
+    // no-op: the service is going to fail, we're good with that
+  }
+
+  t.is(tries, retries + 1);
+});
+
