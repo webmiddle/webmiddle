@@ -15,10 +15,10 @@ function validateProps(props, propTypes) {
 function getWebmiddleAncestors(webmiddle) {
   const ancestors = [];
 
-  let topWebmiddle = webmiddle;
-  while (topWebmiddle.parent) {
-    topWebmiddle = topWebmiddle.parent;
-    ancestors.push(topWebmiddle);
+  let currentWebmiddle = webmiddle;
+  while (currentWebmiddle.parent) {
+    currentWebmiddle = currentWebmiddle.parent;
+    ancestors.push(currentWebmiddle);
   }
 
   return ancestors;
@@ -26,7 +26,7 @@ function getWebmiddleAncestors(webmiddle) {
 
 function getTopWebmiddle(webmiddle) {
   const ancestors = getWebmiddleAncestors(webmiddle);
-  return (ancestors.length > 0) ? ancestors[ancestors.length - 1] : null;
+  return (ancestors.length > 0) ? ancestors[ancestors.length - 1] : webmiddle;
 }
 
 // Two webmiddles are related if they are the same
