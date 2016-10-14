@@ -58,8 +58,8 @@ export default async function callVirtual(virtual) {
     children: virtual.children,
     webmiddle,
   };
-  if (virtual.propTypes) {
-    validateProps(virtual.attributes, virtual.propTypes);
+  if (service.propTypes) {
+    validateProps(virtual.attributes, service.propTypes);
   }
 
   const result = await service(props);
