@@ -267,3 +267,23 @@ test('service options', async t => {
 
   t.is(output, 'some foo again');
 });
+
+test('service options: as a function', async t => {
+  const Service = ({ options }) => {
+    return options.otherOption + ' ' +
+           options.myCustomOption + ' ' +
+           options.anotherOption;
+  };
+  Service.options = ({ attr, options }) => ({
+    otherOption: attr,
+    myCustomOption: options.otherOption,
+  });
+
+  const output = await t.context.webmiddle.evaluate(<Service attr="more" />, {
+    otherOption: 'bar',
+    anotherOption: 'again',
+  });
+
+  t.is(output, 'more bar again');
+});
+

@@ -75,17 +75,20 @@ export default async function callVirtual(virtual, options = {}) {
     linkedWebmiddle.parent = this;
   }
 
-  const extendedOptions = {
-    ...options,
-    ...(service.options || {}),
-  };
-
   const props = {
     ...virtual.attributes,
     children: virtual.children,
     webmiddle,
-    options: extendedOptions,
+    options,
   };
+  // options prop
+  const serviceOptions = (typeof service.options === 'function') ?
+    service.options(props) : service.options;
+  props.options = {
+    ...options,
+    ...(serviceOptions || {}),
+  };
+
   if (service.propTypes) {
     validateProps(virtual.attributes, service.propTypes);
   }
