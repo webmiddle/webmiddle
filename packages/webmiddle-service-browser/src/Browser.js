@@ -146,6 +146,10 @@ async function Browser({
   });
 }
 
+Browser.options = ({ webmiddle }) => ({
+  retries: webmiddle.setting('network.retries'),
+});
+
 Browser.propTypes = {
   name: PropTypes.string.isRequired,
   contentType: PropTypes.string.isRequired,

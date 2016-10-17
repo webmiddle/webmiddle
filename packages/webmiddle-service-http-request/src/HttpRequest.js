@@ -58,6 +58,10 @@ function HttpRequest({
   });
 }
 
+HttpRequest.options = ({ webmiddle }) => ({
+  retries: webmiddle.setting('network.retries'),
+});
+
 HttpRequest.propTypes = {
   name: PropTypes.string.isRequired,
   contentType: PropTypes.string.isRequired,

@@ -3,7 +3,13 @@ import Browser from '../src/index.js';
 import WebMiddle from 'webmiddle';
 
 test.beforeEach(t => {
-  t.context.webmiddle = new WebMiddle();
+  t.context.webmiddle = new WebMiddle({
+    settings: {
+      network: {
+        retries: 3,
+      },
+    },
+  });
 });
 
 // phantomjs wraps non-html content into a "pre" element
@@ -15,7 +21,6 @@ function getJSON(content) {
   return json;
 }
 
-/*
 test('GET https page', async t => {
   const number = Math.round(Math.random() * 100);
 
@@ -136,7 +141,7 @@ test('waitFor', async t => {
   );
 
   t.pass();
-});*/
+});
 
 test('cookies', async t => {
   // save to jar
