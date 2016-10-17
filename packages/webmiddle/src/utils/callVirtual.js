@@ -1,8 +1,8 @@
 // extracted from https://github.com/developit/propTypes README
-function validateProps(props, propTypes) {
+function validateProps(props, propTypes, service) {
   for (const prop in propTypes) {
     if (propTypes.hasOwnProperty(prop)) {
-      const err = propTypes[prop](props, prop, 'name', 'prop');
+      const err = propTypes[prop](props, prop, service, 'prop');
       if (err) {
         console.warn(err);
         return false;
@@ -90,7 +90,7 @@ export default async function callVirtual(virtual, options = {}) {
   };
 
   if (service.propTypes) {
-    validateProps(virtual.attributes, service.propTypes);
+    validateProps(virtual.attributes, service.propTypes, service);
   }
 
   const result = await callService(service, props);
