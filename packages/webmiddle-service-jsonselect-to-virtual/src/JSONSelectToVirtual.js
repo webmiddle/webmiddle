@@ -7,8 +7,7 @@ async function processVirtual(virtual, sourceEl, source, webmiddle) {
   if (!el) {
     el = sourceEl;
   } else if (typeof el === 'string') {
-    // TODO
-    el = JSONSelect.match(el, undefined, source);
+    el = JSONSelect.match(el, undefined, sourceEl);
   }
 
   const condition = virtual.attributes.condition;
