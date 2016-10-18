@@ -2,6 +2,9 @@
 function validateProps(props, propTypes, service) {
   for (const prop in propTypes) {
     if (propTypes.hasOwnProperty(prop)) {
+      if (typeof propTypes[prop] !== 'function') {
+        console.error('Error: invalid prop type', prop, propTypes, service);
+      }
       const err = propTypes[prop](props, prop, service, 'prop');
       if (err) {
         console.warn(err);
