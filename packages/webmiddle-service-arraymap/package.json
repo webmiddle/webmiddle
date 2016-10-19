@@ -10,7 +10,8 @@
     "test": "ava",
     "test:watch": "npm run test -- --watch",
     "clean": "rimraf dist",
-    "build": "npm run clean && babel src --out-dir dist --source-maps",
+    "babel": "babel src --out-dir dist --source-maps inline",
+    "build": "npm run clean && npm run babel",
     "build:watch": "npm run build -- --watch",
     "prepublish": "npm run build"
   },
