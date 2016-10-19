@@ -236,7 +236,7 @@ test('retries', async t => {
   let tries = 0;
   const Service = ({ options }) => {
     tries++;
-    return Promise.reject(`retries service always fails: ${options.retries}`);
+    return Promise.reject(`retries service always fails.`);
   };
 
   const retries = Math.floor(Math.random() * 3) + 0;
@@ -286,4 +286,3 @@ test('service options: as a function', async t => {
 
   t.is(output, 'more bar again');
 });
-

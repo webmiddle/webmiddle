@@ -3,7 +3,12 @@ function validateProps(props, propTypes, service) {
   for (const prop in propTypes) {
     if (propTypes.hasOwnProperty(prop)) {
       if (typeof propTypes[prop] !== 'function') {
-        console.error('Error: invalid prop type', prop, propTypes, service);
+        console.error(
+          'Error: invalid prop type',
+          prop,
+          propTypes,
+          (service && service.name) ? service.name : service
+        );
       }
       const err = propTypes[prop](props, prop, service, 'prop');
       if (err) {
@@ -47,7 +52,10 @@ async function callService(service, props) {
     const result = await service(props);
     return result;
   } catch (err) {
-    const retries = props.options.retries || 0;
+    let retries = props.options.retries;
+    if (typeof retries === 'function') retries = retries(err);
+    retries = retries || 0;
+
     if (retries === 0) { // < 0 for infinite retries
       throw err;
     }
