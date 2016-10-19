@@ -47,7 +47,7 @@ function areWebmiddlesRelated(first, second) {
 }
 
 // Call the service multiple times based on the "retries" prop.
-async function callService(service, props) {
+async function callService(service, props, tries = 1) {
   try {
     const result = await service(props);
     return result;
@@ -56,18 +56,13 @@ async function callService(service, props) {
     if (typeof retries === 'function') retries = retries(err);
     retries = retries || 0;
 
-    if (retries === 0) { // < 0 for infinite retries
+    if (tries === retries + 1) { // retries < 0 for infinite retries
       throw err;
     }
+    const retriesLeft = retries - (tries - 1);
     console.error((err instanceof Error) ? err.stack : err);
-    console.log('Retries left:', (retries < 0) ? '(infinity)' : retries);
-    return callService(service, {
-      ...props,
-      options: {
-        ...props.options,
-        retries: (retries < 0) ? retries : (retries - 1),
-      },
-    });
+    console.log('Retries left:', (retriesLeft < 0) ? '(infinity)' : retriesLeft);
+    return callService(service, props, tries + 1);
   }
 }
 
