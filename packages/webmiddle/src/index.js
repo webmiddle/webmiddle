@@ -5,7 +5,7 @@ import callVirtual from './utils/callVirtual';
 import evaluate from './utils/evaluate';
 import PropTypes from 'proptypes';
 import get from 'lodash.get';
-import cloneDeep from 'lodash.clonedeep';
+import cloneDeepWith from 'lodash.clonedeepwith';
 import isPlainObject from 'lodash.isplainobject';
 import merge from 'lodash.merge';
 import CookieManager from 'webmiddle-manager-cookie';
@@ -83,7 +83,10 @@ export default class WebMiddle {
       finalSetting = parentSetting;
     }
 
-    return cloneDeep(finalSetting);
+    return cloneDeepWith(finalSetting, value => {
+      // don't try to clone functions (since they are converted to an empty object)
+      if (typeof value === 'function') return value;
+    });
   }
 
   log(...args) {
