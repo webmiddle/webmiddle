@@ -1,4 +1,5 @@
 import WebMiddle, { PropTypes } from 'webmiddle';
+import HttpError from 'webmiddle/dist/utils/HttpError';
 import phantom from 'phantom';
 
 // promise-based implementation of http://stackoverflow.com/a/19070446
@@ -44,6 +45,8 @@ function setCookies(page, webmiddle) {
 async function Browser({
   name, contentType, url, method = 'GET', body = {}, httpHeaders = {}, waitFor, webmiddle,
 }) {
+  console.log('Browser', url);
+
   let sitepage = null;
   let phInstance = null;
   const pageResponses = {};
@@ -114,7 +117,7 @@ async function Browser({
     const pageResponse = pageResponses[finalUrl];
 
     if (status !== 'success' || pageResponse.status !== 200) {
-      throw pageResponse;
+      throw new HttpError(status, pageResponse ? pageResponse.status : null);
     }
 
     if (waitFor) {

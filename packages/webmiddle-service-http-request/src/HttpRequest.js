@@ -1,4 +1,5 @@
 import WebMiddle, { PropTypes } from 'webmiddle';
+import HttpError from 'webmiddle/dist/utils/HttpError';
 import request from 'request';
 
 // TODO: cookies
@@ -7,6 +8,8 @@ function HttpRequest({
 }) {
   return new Promise((resolve, reject) => {
     try {
+      console.log('HttpRequest', url);
+
       const isJsonBody = httpHeaders && httpHeaders['Content-Type'] === 'application/json';
 
       // remember cookies for future use
@@ -49,7 +52,7 @@ function HttpRequest({
             content: (contentType === 'application/json') ? JSON.parse(content) : content,
           });
         } else {
-          reject(error || response.statusCode);
+          reject(new HttpError(error, response ? response.statusCode : null));
         }
       });
     } catch (err) {
@@ -57,6 +60,7 @@ function HttpRequest({
     }
   });
 }
+
 
 HttpRequest.options = ({ webmiddle }) => ({
   retries: webmiddle.setting('network.retries'),
