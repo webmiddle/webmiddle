@@ -31,10 +31,11 @@ export default async function evaluate(value, options = {}) {
       result: virtualResult,
       webmiddle,
       linkedWebmiddle,
+      options: virtualOptions,
     } = await this.callVirtual(result, options);
     try {
       if (virtualResult !== result) {
-        result = await webmiddle.evaluate(virtualResult, options);
+        result = await webmiddle.evaluate(virtualResult, virtualOptions);
         if (isResource(result)) {
           // resource overrides by top virtual
           ['name', 'contentType'].forEach(p => {

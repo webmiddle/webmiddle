@@ -46,7 +46,10 @@ function areWebmiddlesRelated(first, second) {
          (firstAncestors.indexOf(second) !== -1 || secondAncestors.indexOf(first) !== -1);
 }
 
-// Call the service multiple times based on the "retries" prop.
+// Call the service multiple times based on the "retries" option.
+// As last resort, use the "catch" option.
+// Note: retries < 0 means infinite retries.
+// TODO: use webmiddle.evaluate for retries and catch?
 async function callService(service, props, tries = 1) {
   try {
     const result = await service(props);
@@ -54,9 +57,15 @@ async function callService(service, props, tries = 1) {
   } catch (err) {
     let retries = props.options.retries;
     if (typeof retries === 'function') retries = retries(err);
-    retries = retries || 0;
+    retries = (await retries) || 0;
 
-    if (tries === retries + 1) { // retries < 0 for infinite retries
+    if (tries === retries + 1) {
+      // last resort
+      let catchExpr = props.options.catch;
+      if (typeof catchExpr === 'function') catchExpr = catchExpr(err);
+      catchExpr = await catchExpr;
+      if (typeof catchExpr !== 'undefined') return catchExpr;
+
       throw err;
     }
     const retriesLeft = retries - (tries - 1);
@@ -70,7 +79,7 @@ export default async function callVirtual(virtual, options = {}) {
   const service = virtual.type;
 
   if (typeof service !== 'function') {
-    return { result: virtual, webmiddle: this, linkedWebmiddle: null };
+    return { result: virtual, webmiddle: this, linkedWebmiddle: null, options };
   }
 
   const webmiddle = service.webmiddle || this;
@@ -85,15 +94,20 @@ export default async function callVirtual(virtual, options = {}) {
     ...virtual.attributes,
     children: virtual.children,
     webmiddle,
-    options,
   };
-  // options prop
-  const serviceOptions = (typeof service.options === 'function') ?
-    service.options(props) : service.options;
-  props.options = {
-    ...options,
-    ...(serviceOptions || {}),
-  };
+  // options prop:
+  // 1) evaluate options
+  // 2) service options
+  // 3) attributes options
+  // the final options are obtained by merging.
+  props.options = { ...options };
+  [service.options, virtual.attributes.options].forEach(moreOptions => {
+    if (typeof moreOptions === 'function') moreOptions = moreOptions(props);
+    props.options = {
+      ...props.options,
+      ...(moreOptions || {}),
+    };
+  });
 
   if (service.propTypes) {
     validateProps(virtual.attributes, service.propTypes, service);
@@ -101,5 +115,5 @@ export default async function callVirtual(virtual, options = {}) {
 
   const result = await callService(service, props);
 
-  return { result, webmiddle, linkedWebmiddle };
+  return { result, webmiddle, linkedWebmiddle, options: props.options };
 };

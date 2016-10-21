@@ -232,22 +232,23 @@ test('temp parent', async t => {
   t.is(Service.webmiddle.parent, undefined);
 });
 
-test('retries', async t => {
-  let tries = 0;
-  const Service = ({ options }) => {
-    tries++;
-    return Promise.reject(`retries service always fails.`);
-  };
+[0, 1, 2, 3].forEach(n =>
+  test(`retries ${n}`, async (t) => {
+    let tries = 0;
+    const Service = ({ options }) => {
+      tries++;
+      return Promise.reject(`retries service always fails.`);
+    };
 
-  const retries = Math.floor(Math.random() * 3) + 0;
-  try {
-    await t.context.webmiddle.evaluate(<Service />, { retries });
-  } catch (err) {
-    // no-op: the service is going to fail, we're good with that
-  }
+    const retries = n;
+    try {
+      await t.context.webmiddle.evaluate(<Service />, { retries });
+    } catch (err) {
+      // no-op: the service is going to fail, we're good with that
+    }
 
-  t.is(tries, retries + 1);
-});
+    t.is(tries, retries + 1);
+  }));
 
 test('service options', async t => {
   const Service = ({ options }) => {
@@ -260,12 +261,18 @@ test('service options', async t => {
     myCustomOption: 'foo',
   };
 
-  const output = await t.context.webmiddle.evaluate(<Service />, {
+  const output = await t.context.webmiddle.evaluate((
+    <Service
+      options={{
+        myCustomOption: 'fun',
+      }}
+    />
+  ), {
     otherOption: 'bar',
     anotherOption: 'again',
   });
 
-  t.is(output, 'some foo again');
+  t.is(output, 'some fun again');
 });
 
 test('service options: as a function', async t => {
@@ -285,4 +292,23 @@ test('service options: as a function', async t => {
   });
 
   t.is(output, 'more bar again');
+});
+
+test('catch', async t => {
+  const SuccessService = () => 10;
+
+  const ThrowService = () => {
+    return Promise.reject('this service always fails (to test catch)');
+  };
+  const Service = () => <ThrowService />;
+
+  const output = await t.context.webmiddle.evaluate((
+    <Service
+      options={{
+        catch: (err) => <SuccessService />,
+      }}
+    />
+  ));
+
+  t.is(output, 10, 'exception handler is passed down the service call chain');
 });

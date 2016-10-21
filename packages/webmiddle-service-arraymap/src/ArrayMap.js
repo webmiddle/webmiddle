@@ -1,6 +1,6 @@
 import WebMiddle, { PropTypes } from 'webmiddle';
 
-async function ArrayMap({ name, array, callback, limit, webmiddle }) {
+async function ArrayMap({ name, array, callback, limit, webmiddle, options }) {
   const resources = [];
   const promises = []; // executing promises like in Parallel
 
@@ -11,6 +11,7 @@ async function ArrayMap({ name, array, callback, limit, webmiddle }) {
     }
 
     const promise = webmiddle.evaluate(callback, {
+      ...options,
       expectResource: true,
       functionParameters: [array[i], i],
     }).then(result => {
@@ -32,6 +33,7 @@ ArrayMap.propTypes = {
   callback: PropTypes.func.isRequired,
   limit: PropTypes.number,
   webmiddle: PropTypes.object.isRequired,
+  options: PropTypes.object.isRequired,
 };
 
 export default ArrayMap;
