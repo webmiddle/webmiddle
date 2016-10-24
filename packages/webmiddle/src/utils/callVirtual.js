@@ -110,7 +110,7 @@ export default async function callVirtual(virtual, options = {}) {
   });
 
   if (service.propTypes) {
-    validateProps(virtual.attributes, service.propTypes, service);
+    validateProps(props, service.propTypes, service);
   }
 
   const result = await callService(service, props);
