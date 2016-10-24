@@ -25,7 +25,7 @@ async function Resume({ savePath, children, webmiddle, options }) {
 
 Resume.propTypes = {
   savePath: PropTypes.string.isRequired,
-  children: PropTypes.object.isRequired,
+  children: PropTypes.array.isRequired,
   webmiddle: PropTypes.object.isRequired,
   options: PropTypes.object.isRequired,
 };
