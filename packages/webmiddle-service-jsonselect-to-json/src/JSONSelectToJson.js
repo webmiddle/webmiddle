@@ -26,7 +26,7 @@ function JSONSelectToJson(props) {
 JSONSelectToJson.propTypes = {
   name: PropTypes.string.isRequired,
   from: PropTypes.object.isRequired, // resource
-  children: PropTypes.object,
+  children: PropTypes.array,
 };
 
 export default JSONSelectToJson;

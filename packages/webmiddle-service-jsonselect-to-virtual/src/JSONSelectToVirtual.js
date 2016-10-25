@@ -111,7 +111,7 @@ async function JSONSelectToVirtual({
 JSONSelectToVirtual.propTypes = {
   name: PropTypes.string.isRequired,
   from: PropTypes.object.isRequired, // resource
-  fullConversion: PropTypes.object,
+  fullConversion: PropTypes.bool,
 };
 
 export default JSONSelectToVirtual;
