@@ -34,6 +34,8 @@ export default class WebMiddle {
   }
 
   constructor(options = {}) {
+    this.name = options.name;
+
     this.parent = options.parent;
 
     this.services = {}; // <path, Service>
