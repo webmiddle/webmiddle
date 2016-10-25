@@ -88,6 +88,7 @@ export default class WebMiddle {
     return cloneDeepWith(finalSetting, value => {
       // don't try to clone functions (since they are converted to an empty object)
       if (typeof value === 'function') return value;
+      return undefined; // default behaviour
     });
   }
 
