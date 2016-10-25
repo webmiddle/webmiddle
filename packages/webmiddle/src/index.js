@@ -54,17 +54,17 @@ export default class WebMiddle {
   }
 
   registerService(path, Service) {
-    const ComposedService = ({ children, ...props }) => (
+    const HigherService = ({ webmiddle, options, children, ...rest }) => (
       <Service
-        {...props}
+        {...rest}
       >
         {children}
       </Service>
     );
-    ComposedService.propTypes = Service.propTypes;
-    ComposedService.webmiddle = this;
+    HigherService.propTypes = Service.propTypes;
+    HigherService.webmiddle = this;
 
-    this.services[path] = ComposedService;
+    this.services[path] = HigherService;
   }
 
   service(path) {
