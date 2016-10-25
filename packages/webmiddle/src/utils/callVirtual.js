@@ -70,7 +70,10 @@ async function callService(service, props, tries = 1) {
     }
     const retriesLeft = retries - (tries - 1);
     console.error((err instanceof Error) ? err.stack : err);
-    console.log('Retries left:', (retriesLeft < 0) ? '(infinity)' : retriesLeft);
+    console.log(
+      'Retries left:', (retriesLeft < 0) ? '(infinity)' : retriesLeft,
+      'Tries', tries
+    );
     return callService(service, props, tries + 1);
   }
 }
