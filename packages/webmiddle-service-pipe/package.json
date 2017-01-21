@@ -1,12 +1,12 @@
 {
   "name": "webmiddle-service-pipe",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "main": "dist/index.js",
   "files": [
     "dist"
   ],
-   "scripts": {
+  "scripts": {
     "test": "ava",
     "test:watch": "npm run test -- --watch",
     "clean": "rimraf dist",
@@ -34,7 +34,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "webmiddle": "^0.0.1"
+    "webmiddle": "^0.1.0"
   },
   "devDependencies": {
     "ava": "^0.15.2",

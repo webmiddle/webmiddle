@@ -1,6 +1,6 @@
 {
   "name": "webmiddle-service-parallel",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -34,7 +34,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "webmiddle": "^0.0.1"
+    "webmiddle": "^0.1.0"
   },
   "devDependencies": {
     "ava": "^0.15.2",

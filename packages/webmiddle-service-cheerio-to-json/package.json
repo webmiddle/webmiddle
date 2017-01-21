@@ -1,6 +1,6 @@
 {
   "name": "webmiddle-service-cheerio-to-json",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -34,10 +34,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "webmiddle": "^0.0.1",
-    "webmiddle-service-pipe": "^0.0.1",
-    "webmiddle-service-cheerio-to-virtual": "^0.0.1",
-    "webmiddle-service-virtual-to-json": "^0.0.1"
+    "webmiddle": "^0.1.0",
+    "webmiddle-service-pipe": "^0.1.0",
+    "webmiddle-service-cheerio-to-virtual": "^0.1.0",
+    "webmiddle-service-virtual-to-json": "^0.1.0"
   },
   "devDependencies": {
     "ava": "^0.15.2",

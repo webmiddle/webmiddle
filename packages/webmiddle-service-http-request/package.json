@@ -1,6 +1,6 @@
 {
   "name": "webmiddle-service-http-request",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -35,7 +35,7 @@
   "license": "ISC",
   "dependencies": {
     "request": "^2.72.0",
-    "webmiddle": "^0.0.1"
+    "webmiddle": "^0.1.0"
   },
   "devDependencies": {
     "ava": "^0.15.2",
