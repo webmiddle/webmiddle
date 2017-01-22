@@ -8,6 +8,8 @@
 npm install --save webmiddle-service-resume
 ```
 
+## Usage
+
 ```jsx
 import WebMiddle, { PropTypes } from 'webmiddle';
 import Resume from 'webmiddle-service-resume';
