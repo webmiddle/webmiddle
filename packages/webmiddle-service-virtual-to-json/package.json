@@ -31,7 +31,10 @@
     ],
     "babel": "inherit"
   },
-  "author": "",
+  "author": {
+    "name": "Manuel Dell'Elce",
+    "url": "http://github.com/Maluen/"
+  },
   "license": "MIT",
   "dependencies": {
     "lodash.values": "^4.1.0",
