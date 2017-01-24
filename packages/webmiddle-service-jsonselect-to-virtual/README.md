@@ -79,7 +79,7 @@ webmiddle.evaluate(
 The following values can be specified as child in the virtual schema, as
 they will be **processed** in the same way of CheerioToVirtual:
 
--   Any element that can be **evaluated** by means of webmiddle.evaluate
+-   Any element that can be **evaluated** by means of the webmiddle.evaluate
     function.
 
 -   **virtual**
@@ -97,7 +97,7 @@ they will be **processed** in the same way of CheerioToVirtual:
 
 -   **elGet(selector, values):** if selector is set, then it starts by
     querying the collection of elements with such selector. The values
-    property is used in case the selector contains placeholders (see
+    property is used in case the selector contains placeholders (see the
     [JSONSelect documentation](https://github.com/lloyd/JSONSelect/blob/master/JSONSelect.md)).<br />
     Returns the first element of the (obtained) collection.
 
