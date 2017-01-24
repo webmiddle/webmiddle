@@ -35,6 +35,7 @@
     "name": "Manuel Dell'Elce",
     "url": "http://github.com/Maluen/"
   },
+  "repository": "webmiddle/webmiddle",
   "license": "MIT",
   "dependencies": {
     "lodash.values": "^4.1.0",
