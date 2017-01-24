@@ -17,6 +17,14 @@ These applications can range from simple web scrapers to web integration tools t
 
 Read the [Documentation](https://webmiddle.github.io/docs/) for a detailed description.
 
+## Create a new project
+
+```bash
+npm install -g yo
+npm install -g generator-webmiddle
+yo webmiddle
+```
+
 ## JSX services
 
 ```jsx
