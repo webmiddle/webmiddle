@@ -17,7 +17,7 @@ import WebMiddle, { PropTypes } from 'webmiddle';
 import Pipe from 'webmiddle-service-pipe';
 import HttpRequest from 'webmiddle-service-http-request';
 import CheerioToVirtual, { helpers } from 'webmiddle-service-cheerio-to-virtual';
-const { elText, alAttr, elMap } = helpers;
+const { elText, elAttr, elMap } = helpers;
 
 const MyService = ({ query }) => (
   <Pipe>
