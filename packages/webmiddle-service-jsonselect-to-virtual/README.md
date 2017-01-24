@@ -67,7 +67,7 @@ webmiddle.evaluate(
     apiKey="MY API KEY HERE"
     query="javascript"
     pageNumber={0}
-   />
+  />
 ).then(resource => {
   console.log(resource.contentType); // "application/x-webmiddle-virtual"
   console.log(resource.content); // { type, attributes, children }
