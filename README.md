@@ -2,14 +2,18 @@
 
 > JSX framework for multi-layer web data integration
 
+Because JSX can be more than just React.
+
 **Note:** this project is still in its early stages of development, any feedback or contribution is highly appreciated!
 <hr />
 
-WebMiddle is a Node.js framework that can be used for extracting, transforming and processing web data from several sources, by using a multi-layer approach, where each middleware abstracts one or more sources of data, so to produce a structured output that can be consumed by the higher-level middleware.
+WebMiddle is a JSX-driven Node.js framework for extracting, transforming and processing web data from multiple heterogeneous sources, using a multi-layer approach, where each web middleware, or webmiddle, abstracts one or more sources of data, so to produce a structured output with the format of your choice, that can be then consumed by the higher-level middleware.
 
-Each web middleware, or webmiddle, is implemented via JSX services, leading to a highly composable, extensible and declarative approach.
+Each web middleware is implemented via JSX services, leading to a highly composable, extensible and declarative approach.
 
 You can create complex wrappers and applications by registering multiple services to a webmiddle instance, specify settings and evaluate options, composing webmiddles and much more!
+
+These applications can range from simple web scrapers to web integration tools targeting both APIs, raw HTML pages, XML resources and so on.
 
 Read the [Documentation](https://webmiddle.github.io/docs/) for a detailed description.
 
@@ -52,13 +56,15 @@ FetchPageLinks.propTypes = {
 };
 ```
 
-**Yes, you got this right, JSX for defining application logic in a composable, functional and declarative manner :)**
+**Yes, you got this right, JSX for defining application logic :)**
 
 Services are the building blocks of the webmiddle framework, they can be defined and composed to perform all the web data integration tasks.
 
-[Pipe](/packages/webmiddle-service-pipe), [Browser](/packages/webmiddle-service-browser) and [HtmlToJson](/packages/webmiddle-service-cheerio-to-json) are all core services, however note that there is no actual difference between a core service and a service that you may want to develop yourself.  
+[Pipe](/packages/webmiddle-service-pipe), [Browser](/packages/webmiddle-service-browser) and [HtmlToJson](/packages/webmiddle-service-cheerio-to-json) are all core services, however there is no actual difference between a core service and a service that you may want to develop yourself.  
 
 This means that anyone can contribute by adding new services for doing the more disparate things!
+
+-> [Learn more](https://webmiddle.github.io/docs/jsx_services.html)
 
 ## WebMiddle instances
 
@@ -78,23 +84,29 @@ webmiddle.evaluate(
 });
 ```
 
+-> [Learn more](https://webmiddle.github.io/docs/technical_documentation/webmiddle.html)
+
 ## Multiple layers
 
 ![Multi layer](https://webmiddle.github.io/assets/img/documentation/webmiddle_multi-layer.png "Multi layer")
 
-This separation of concerns might seem cumbersome, but it makes possible to reuse the same site webmiddle in all sorts of projects, by writing wrappers that are often small and that in any case are wrapping content which is already semantic and supposedly well documented (differently than HTML pages).
+This separation of concerns might seem cumbersome, but it makes possible to reuse the same site webmiddle in all sorts of projects, by writing handlers that are often small and that in any case are wrapping content which is already semantic and supposedly well documented (differently than HTML pages).
 
-## Core services
+-> [Learn more](https://webmiddle.github.io/docs/multiple_layers.html)
 
-Out of the box features include
+## Core features
 
-- Concurrency
-- HTTP
-- PhantomJS
-- Cookie JAR
-- Caching
-- Error handling
-- Data conversion from/to multiple formats.
+Features currently provided via the core services and the WebMiddle class:
+
+- **Concurrency**, for executing multiple asynchronous services at the same time
+- **HTTP** requests
+- **PhantomJS** requests, for pages using client-side generated content
+- **Cookie JAR**, for sharing cookies among different services and webmiddle instances
+- **Caching**, for resuming work in case of crash
+- **Error handling**, via customizable retries and catch options
+- **Data conversion** from/to multiple formats
+  - Currently HTML/XML/JSON to JSON
+  - New formats can be easily added by targeting the apposite "virtual" intermediate format
 
 ## Want more services or webmiddles for popular sites?
 
@@ -102,7 +114,7 @@ Create your own and share them with the community as node modules!
 
 **NOTE**: If you think a service / feature is so common and general purpose that it should be in the core, please [open an issue](https://github.com/webmiddle/webmiddle/issues/new) or just do a pull request!
 
-## Help wanted
+## Contribute
 
 Here is a list of possibile core improvements that are still missing:
 - Web service layer (to expose the services via a REST API)
