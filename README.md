@@ -7,7 +7,7 @@ Because JSX can be more than just React.
 **Note:** this project is still in its early stages of development, any feedback or contribution is highly appreciated!
 <hr />
 
-WebMiddle is a JSX-driven Node.js framework for extracting, transforming and processing web data from multiple heterogeneous sources, using a multi-layer approach, where each web middleware, or webmiddle, abstracts one or more sources of data, so to produce a structured output with the format of your choice, that can be then consumed by the higher-level middleware.
+WebMiddle is a JSX-driven Node.js framework for extracting, transforming and processing web data from multiple heterogeneous sources, using a multi-layer approach, where each web middleware, or **webmiddle**, abstracts one or more sources of data, so to produce a structured output with the format of your choice, that can be then consumed by the higher-level middleware.
 
 Each web middleware is implemented via JSX services, leading to a highly composable, extensible and declarative approach.
 
