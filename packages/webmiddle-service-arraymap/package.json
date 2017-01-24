@@ -31,6 +31,15 @@
     ],
     "babel": "inherit"
   },
+  "keywords": [
+    "web",
+    "data",
+    "integration",
+    "extraction",
+    "scraper",
+    "jsx",
+    "framework"
+  ],
   "author": {
     "name": "Manuel Dell'Elce",
     "url": "http://github.com/Maluen/"
