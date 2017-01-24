@@ -19,7 +19,7 @@ import HttpRequest from 'webmiddle-service-http-request';
 import CheerioToVirtual, { helpers } from 'webmiddle-service-cheerio-to-virtual';
 const { elText, alAttr, elMap } = helpers;
 
-const MyService = (query) => (
+const MyService = ({ query }) => (
   <Pipe>
     <HttpRequest
       name="rawHtml"
