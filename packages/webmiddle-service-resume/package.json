@@ -32,7 +32,7 @@
     "babel": "inherit"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "mkdirp": "^0.5.1",
     "webmiddle": "^0.1.0",
