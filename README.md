@@ -1,13 +1,13 @@
 # WebMiddle
 
-> JSX framework for multi-layer web data integration
+> Node.js JSX framework for modular web scraping and data integration 
 
-Because JSX can be more than just React.
+Because JSX can be more than just React!
 
-**Note:** this project is still in its early stages of development, any feedback or contribution is highly appreciated!
+**Note:** this project is still in its early stages of development, any feedback or contribution is highly appreciated.
 <hr />
 
-WebMiddle is a JSX-driven Node.js framework for extracting, transforming and processing web data from multiple heterogeneous sources, using a multi-layer approach, where each web middleware, or **webmiddle**, abstracts one or more sources of data, so to produce a structured output with the format of your choice, that can be then consumed by the higher-level middleware.
+WebMiddle is a [JSX](https://facebook.github.io/react/docs/introducing-jsx.html)-driven [Node.js](https://nodejs.org/) framework for extracting, transforming and processing web data from multiple heterogeneous sources, using a multi-layer approach, where each web middleware, or **webmiddle**, abstracts one or more sources of data, so to produce a structured output with the format of your choice, that can be then consumed by the higher-level middleware.
 
 Each web middleware is implemented via JSX services, leading to a highly composable, extensible and declarative approach.
 
@@ -17,7 +17,9 @@ These applications can range from simple web scrapers to web integration tools t
 
 Read the [Documentation](https://webmiddle.github.io/docs/) for a detailed description.
 
-## Create a new project
+## Getting started
+
+You can use [Yeoman](http://yeoman.io/) to quickly scaffold a new project:
 
 ```bash
 npm install -g yo
@@ -25,7 +27,11 @@ npm install -g generator-webmiddle
 yo webmiddle
 ```
 
+-> [Learn more](https://webmiddle.github.io/docs/getting_started.html)
+
 ## JSX services
+
+In term of syntax, they are very similar to [react stateless functional components](https://medium.com/@housecor/react-stateless-functional-components-nine-wins-you-might-have-overlooked-997b0d933dbc#.91r5f1ish):
 
 ```jsx
 const FetchPageLinks = ({ url, query, waitFor }) =>
@@ -92,6 +98,29 @@ webmiddle.evaluate(
 });
 ```
 
+In our example, this would give you an output like the following:
+
+```json
+{
+  "root": {
+    "anchors": [
+      {
+        "anchor": {
+          "url": "http://nearley.js.org/",
+          "text": "Nearley – parser toolkit for JavaScript"
+        }
+      },
+      {
+        "anchor": {
+          "url": "https://sekao.net/blog/industry.html",
+          "text": "ClojureScript is the most-used functional language that compiles to JavaScript"
+        }
+      }
+    ]
+  }
+}
+```
+
 -> [Learn more](https://webmiddle.github.io/docs/technical_documentation/webmiddle.html)
 
 ## Multiple layers
@@ -116,15 +145,17 @@ Features currently provided via the core services and the WebMiddle class:
   - Currently HTML/XML/JSON to JSON
   - New formats can be easily added by targeting the apposite "virtual" intermediate format
 
-## Want more services or webmiddles for popular sites?
+## Open source ecosystem
 
-Create your own and share them with the community as node modules!
+Want more services or webmiddles for popular sites? Create your own and share them with the community as node modules!
+
+One of the main philosophies of the framework is reuse, by creating an ecosistem where webmiddles for websites, services, converters and so on can be published as separate npm modules, so that they can be used in other projects.
 
 **NOTE**: If you think a service / feature is so common and general purpose that it should be in the core, please [open an issue](https://github.com/webmiddle/webmiddle/issues/new) or just do a pull request!
 
-## Contribute
+## Future improvements
 
-Here is a list of important core improvements that are still missing:
+Here is a list of important features that are still missing and that should be in the core in the future:
 - Web service layer (to expose the services via a REST API)
 - Proxy support
 - HTTP/OAuth Authentication
@@ -132,4 +163,43 @@ Here is a list of important core improvements that are still missing:
 - Advanced logging and debugging
 - Easy form submissions
 - Access to queried server headers
-- Retry delay and timeouts
+- Delays and timeouts
+
+## Contributing
+
+This is a monorepo, i.e. all the core services and the main webmiddle package are all in this single repository.
+It is inspired by [Babel](https://github.com/babel/babel) and other projects, check out this [article](https://github.com/babel/babel/blob/master/doc/design/monorepo.md) to know why this isn't an horrible idea after all.
+
+It uses [Lerna](https://github.com/lerna/lerna) for managing the monorepo, as you might have guessed from the lerna.json file.
+You can install it by running:
+
+```bash
+npm install --global lerna
+```
+
+Once this is done, install all the dependencies and link the packages together by running:
+
+```bash
+lerna boostrap
+```
+
+Each [package](https://github.com/webmiddle/webmiddle/tree/master/packages) uses the same build / test system.
+
+Once you are inside a package folder, you can build it by running `npm run build` or `npm run build:watch` (for rebuilding on every change).
+
+Tests use [AVA](https://github.com/avajs/ava), thus they can be written in modern JavaScript, moreover they will also run concurrently.
+You can run the tests via `npm run test` or `npm run test:watch`. The latter option is highly recommended while developing, as it also produces a much more detailed output.
+
+For running the same npm command in each package, use `lerna run`, example:
+
+```bash
+lerna run build
+```
+
+For running arbitrary commands, use `lerna exec`, example:
+
+```bash
+lerna exec -- rm -rf ./node_modules
+```
+
+See [Lerna commands](https://github.com/lerna/lerna#commands) for more info.
