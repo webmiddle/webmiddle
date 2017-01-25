@@ -149,9 +149,9 @@ Features currently provided via the core services and the WebMiddle class:
 
 Want more services or webmiddles for popular sites? Create your own and share them with the community as node modules!
 
-One of the main philosophies of the framework is reuse, by creating an ecosistem where webmiddles for websites, services, converters and so on can be published as separate npm modules, so that they can be used in other projects.
+One of the main philosophies of the framework is **reuse**, by creating an ecosystem where webmiddles for websites, services, converters and so on can be published as separate npm modules, so that they can be used in other projects.
 
-**NOTE**: If you think a service / feature is so common and general purpose that it should be in the core, please [open an issue](https://github.com/webmiddle/webmiddle/issues/new) or just do a pull request!
+**NOTE**: If you think a service / feature is so common and general that it should be in the core, please [open an issue](https://github.com/webmiddle/webmiddle/issues/new) or just do a pull request!
 
 ## Future improvements
 
