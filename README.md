@@ -124,7 +124,7 @@ Create your own and share them with the community as node modules!
 
 ## Contribute
 
-Here is a list of possibile core improvements that are still missing:
+Here is a list of important core improvements that are still missing:
 - Web service layer (to expose the services via a REST API)
 - Proxy support
 - HTTP/OAuth Authentication
