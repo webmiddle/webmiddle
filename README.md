@@ -31,7 +31,7 @@ yo webmiddle
 
 ## JSX services
 
-In term of syntax, they are very similar to [react stateless functional components](https://medium.com/@housecor/react-stateless-functional-components-nine-wins-you-might-have-overlooked-997b0d933dbc#.91r5f1ish):
+In terms of syntax, they are very similar to [react stateless functional components](https://medium.com/@housecor/react-stateless-functional-components-nine-wins-you-might-have-overlooked-997b0d933dbc#.91r5f1ish):
 
 ```jsx
 const FetchPageLinks = ({ url, query, waitFor }) =>
@@ -98,7 +98,7 @@ webmiddle.evaluate(
 });
 ```
 
-In our example, this would give you an output like the following:
+This will give us an output like the following:
 
 ```json
 {
@@ -135,19 +135,19 @@ This separation of concerns might seem cumbersome, but it makes possible to reus
 
 Features currently provided via the core services and the WebMiddle class:
 
-- **Concurrency**, for executing multiple asynchronous services at the same time
-- **HTTP** requests
-- **PhantomJS** requests, for pages using client-side generated content
-- **Cookie JAR**, for sharing cookies among different services and webmiddle instances
-- **Caching**, for resuming work in case of crash
-- **Error handling**, via customizable retries and catch options
-- **Data conversion** from/to multiple formats
-  - Currently HTML/XML/JSON to JSON
-  - New formats can be easily added by targeting the apposite "virtual" intermediate format
+- **Concurrency**, for executing multiple asynchronous services at the same time.
+- **HTTP** requests.
+- **PhantomJS** requests, for SPAs and pages using client-side generated content.
+- **Cookie JAR**, for sharing cookies among different services and webmiddle instances.
+- **Caching**, for resuming work in case of crash.
+- **Error handling**, via customizable retries and catch options.
+- **Data conversion** from/to multiple formats.
+  - Currently HTML/XML/JSON to JSON.
+  - New formats can be easily added by targeting the apposite "virtual" intermediate format.
 
 ## Open source ecosystem
 
-Want more services or webmiddles for popular sites? Create your own and share them with the community as node modules!
+Create your own services and webmiddles and share them with the community as node modules!
 
 One of the main philosophies of the framework is **reuse**, by creating an ecosystem where webmiddles for websites, services, converters and so on can be published as separate npm modules, so that they can be used in other projects.
 
