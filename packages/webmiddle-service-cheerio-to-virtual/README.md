@@ -67,7 +67,7 @@ Such an object can thus represent any tree or even any graph structure,
 where nodes can be annotated with attributes.
 
 A resource whose content is a virtual has the custom contentType
-“**application/x-webmiddle-virtual**”.
+`application/x-webmiddle-virtual`.
 
 The virtual is used as an **intermediate format**, similarly to an
 intermediate language in a compiler; this separation allows other users

@@ -52,8 +52,8 @@ content will be JSON-parsed, otherwise it will be kept as is.
 In case of **http error**, the service fails with an **HttpError
 object** containing the error status code.
 
-The service sets the “**retries**” options as the one set in the
-“network.retries” webmiddle setting. This way such number can be
+The service sets the `retries` option as the one set in the
+`network.retries` webmiddle setting. This way such number can be
 configured at application/webmiddle level:
 
 ```jsx
