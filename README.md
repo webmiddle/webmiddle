@@ -17,6 +17,12 @@ These applications can range from simple web scrapers to web integration tools t
 
 Read the [Documentation](https://webmiddle.github.io/docs/) for a detailed description.
 
+## Examples
+
+- [The site webmiddle for The New York Times](https://github.com/Maluen/webmiddle-site-nytimes)
+- [The site webmiddle for Fox News](https://github.com/Maluen/webmiddle-site-foxnews)
+- [WebMiddle application for searching articles from news sites](https://github.com/Maluen/webmiddle-project-search-news)
+
 ## Getting started
 
 You can use [Yeoman](http://yeoman.io/) to quickly scaffold a new project:
