@@ -5,5 +5,5 @@ test.beforeEach(t => {
 });
 
 test('main', async t => {
- t.pass();
+  t.pass();
 });

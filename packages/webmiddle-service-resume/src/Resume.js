@@ -1,10 +1,10 @@
-import WebMiddle, { PropTypes } from 'webmiddle';
+import WebMiddle, { PropTypes, evaluate } from 'webmiddle';
 import path from 'path';
 import Pipe from 'webmiddle-service-pipe';
 import { fileExists, readFile, writeFile } from './utils/filesystem';
 
-async function Resume({ savePath, children, webmiddle, options }) {
-  const outputBasePath = webmiddle.setting('outputBasePath');
+async function Resume({ savePath, children }, context) {
+  const outputBasePath = context.webmiddle.setting('outputBasePath');
   let filename = path.resolve(outputBasePath, savePath);
   if (!filename.endsWith('.json')) filename += '.json';
 
@@ -13,11 +13,11 @@ async function Resume({ savePath, children, webmiddle, options }) {
     return JSON.parse(data);
   }
   // not exists
-  const resource = await webmiddle.evaluate((
+  const resource = await evaluate(context, (
     <Pipe>
       {children}
     </Pipe>
-  ), options);
+  ));
   await writeFile(filename, JSON.stringify(resource));
 
   return resource;
@@ -26,8 +26,6 @@ async function Resume({ savePath, children, webmiddle, options }) {
 Resume.propTypes = {
   savePath: PropTypes.string.isRequired,
   children: PropTypes.array.isRequired,
-  webmiddle: PropTypes.object.isRequired,
-  options: PropTypes.object.isRequired,
 };
 
 export default Resume;

@@ -1,3 +1,5 @@
+import createContext from './createContext';
+
 // extracted from https://github.com/developit/propTypes README
 function validateProps(props, propTypes, service) {
   for (const prop in propTypes) {
@@ -46,22 +48,26 @@ function areWebmiddlesRelated(first, second) {
          (firstAncestors.indexOf(second) !== -1 || secondAncestors.indexOf(first) !== -1);
 }
 
+function getLinkedWebmiddle(webmiddle, newWebmiddle) {
+  return areWebmiddlesRelated(webmiddle, newWebmiddle) ? null : getTopWebmiddle(newWebmiddle);
+}
+
 // Call the service multiple times based on the "retries" option.
 // As last resort, use the "catch" option.
 // Note: retries < 0 means infinite retries.
-// TODO: use webmiddle.evaluate for retries and catch?
-async function callService(service, props, tries = 1) {
+// TODO: use evaluate for retries and catch?
+async function callService(service, props, context, tries = 1) {
   try {
-    const result = await service(props);
+    const result = await service(props, context);
     return result;
   } catch (err) {
-    let retries = props.options.retries;
+    let retries = context.options.retries;
     if (typeof retries === 'function') retries = retries(err);
     retries = (await retries) || 0;
 
     if (tries === retries + 1) {
       // last resort
-      let catchExpr = props.options.catch;
+      let catchExpr = context.options.catch;
       if (typeof catchExpr === 'function') catchExpr = catchExpr(err);
       catchExpr = await catchExpr;
       if (typeof catchExpr !== 'undefined') return catchExpr;
@@ -74,49 +80,47 @@ async function callService(service, props, tries = 1) {
       'Retries left:', (retriesLeft < 0) ? '(infinity)' : retriesLeft,
       'Tries', tries
     );
-    return callService(service, props, tries + 1);
+    return callService(service, props, context, tries + 1);
   }
 }
 
-export default async function callVirtual(virtual, options = {}) {
-  const service = virtual.type;
+export default async function callVirtual(context, virtual) {
+  const service = (typeof virtual.type === 'function') ? virtual.type : null;
 
-  if (typeof service !== 'function') {
-    return { result: virtual, webmiddle: this, linkedWebmiddle: null, options };
-  }
+  // clone the context
+  context = { ...context };
 
-  const webmiddle = service.webmiddle || this;
-
-  const linkedWebmiddle = areWebmiddlesRelated(this, webmiddle) ? null : getTopWebmiddle(webmiddle);
+  // calculate new webmiddle
+  const newWebmiddle = (service && service.webmiddle) ? service.webmiddle : context.webmiddle;
+  const linkedWebmiddle = getLinkedWebmiddle(context.webmiddle, newWebmiddle);
   if (linkedWebmiddle) {
     // link (set temp parent)
-    linkedWebmiddle.parent = this;
+    linkedWebmiddle.parent = context.webmiddle;
   }
+  context.webmiddle = newWebmiddle;
 
   const props = {
     ...virtual.attributes,
     children: virtual.children,
-    webmiddle,
   };
-  // options prop:
-  // 1) evaluate options
-  // 2) service options
-  // 3) attributes options
+  // calculate new options:
+  // 1) context options
+  // 3) service options
   // the final options are obtained by merging.
-  props.options = { ...options };
-  [service.options, virtual.attributes.options].forEach(moreOptions => {
-    if (typeof moreOptions === 'function') moreOptions = moreOptions(props);
-    props.options = {
-      ...props.options,
+  const serviceOptions = (service && service.options) ? service.options : {};
+  [serviceOptions].forEach(moreOptions => {
+    if (typeof moreOptions === 'function') moreOptions = moreOptions(props, context);
+    context.options = {
+      ...context.options,
       ...(moreOptions || {}),
     };
   });
 
-  if (service.propTypes) {
+  if (service && service.propTypes) {
     validateProps(props, service.propTypes, service);
   }
 
-  const result = await callService(service, props);
+  const result = service ? await callService(service, props, context) : virtual;
 
-  return { result, webmiddle, linkedWebmiddle, options: props.options };
+  return { result, context, linkedWebmiddle };
 };

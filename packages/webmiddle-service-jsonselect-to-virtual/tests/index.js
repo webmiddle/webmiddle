@@ -1,6 +1,6 @@
 import test from 'ava';
 import JSONSelectToVirtual from '../src/index.js';
-import WebMiddle from 'webmiddle';
+import WebMiddle, { evaluate, createContext } from 'webmiddle';
 
 // TODO: helpers
 
@@ -42,7 +42,7 @@ test.beforeEach(t => {
 });
 
 test('must return virtual resource', async t => {
-  const output = await t.context.webmiddle.evaluate(
+  const output = await evaluate(createContext(t.context.webmiddle),
     <JSONSelectToVirtual
       name="virtual"
       from={jsonResource}
@@ -54,7 +54,7 @@ test('must return virtual resource', async t => {
 });
 
 test('fullconversion', async t => {
-  const output = await t.context.webmiddle.evaluate(
+  const output = await evaluate(createContext(t.context.webmiddle),
     <JSONSelectToVirtual
       name="virtual"
       from={jsonResource}

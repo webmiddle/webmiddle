@@ -1,6 +1,6 @@
 import test from 'ava';
 import Resume from '../src/index.js';
-import WebMiddle from 'webmiddle';
+import WebMiddle, { evaluate, createContext } from 'webmiddle';
 import path from 'path';
 import fs from 'fs';
 
@@ -46,7 +46,7 @@ test('main', async t => {
   };
 
   serviceExecuted = false;
-  const output = await t.context.webmiddle.evaluate(
+  const output = await evaluate(createContext(t.context.webmiddle),
     <Resume savePath="./main/resource">
       <Service />
     </Resume>
@@ -60,7 +60,7 @@ test('main', async t => {
   }, 'context');
 
   serviceExecuted = false;
-  const secondOutput = await t.context.webmiddle.evaluate(
+  const secondOutput = await evaluate(createContext(t.context.webmiddle),
     <Resume savePath="./main/resource">
       <Service />
     </Resume>
@@ -82,7 +82,7 @@ test('expect resource', async t => {
   const Service = () => 10; // a service that doesn't return a resource
 
   try {
-    await t.context.webmiddle.evaluate(
+    await evaluate(createContext(t.context.webmiddle),
       <Resume savePath="./expectResource/invalidResource">
         <Service />
       </Resume>

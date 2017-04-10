@@ -1,8 +1,4 @@
 import virtualElement from 'virtual-element';
-import isVirtual from './utils/isVirtual';
-import isResource from './utils/isResource';
-import callVirtual from './utils/callVirtual';
-import evaluate from './utils/evaluate';
 import PropTypes from 'proptypes';
 import get from 'lodash.get';
 import cloneDeepWith from 'lodash.clonedeepwith';
@@ -12,25 +8,17 @@ import CookieManager from 'webmiddle-manager-cookie';
 
 export { PropTypes };
 
+export isResource from './utils/isResource';
+export isVirtual from './utils/isVirtual';
+export createContext from './utils/createContext';
+export evaluate from './utils/evaluate';
+export callVirtual from './utils/callVirtual';
+export pickDefaults from './utils/pickDefaults';
+export WithOptions from './utils/WithOptions';
+
 export default class WebMiddle {
   static h(...args) {
     return virtualElement(...args);
-  }
-
-  isVirtual(...args) {
-    return isVirtual.apply(this, args);
-  }
-
-  isResource(...args) {
-    return isResource.apply(this, args);
-  }
-
-  callVirtual(...args) {
-    return callVirtual.apply(this, args);
-  }
-
-  evaluate(...args) {
-    return evaluate.apply(this, args);
   }
 
   constructor(options = {}) {
@@ -54,7 +42,7 @@ export default class WebMiddle {
   }
 
   registerService(path, Service) {
-    const HigherService = ({ webmiddle, options, children, ...rest }) => (
+    const HigherService = ({ children, ...rest }) => (
       <Service
         {...rest}
       >

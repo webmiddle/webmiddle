@@ -11,7 +11,7 @@ npm install --save webmiddle-service-http-request
 ## Usage
 
 ```jsx
-import WebMiddle, { PropTypes } from 'webmiddle';
+import WebMiddle, { PropTypes, evaluate, createContext } from 'webmiddle';
 import HttpRequest from 'webmiddle-service-http-request';
 
 const MyService = () => (
@@ -23,7 +23,7 @@ const MyService = () => (
 );
 
 const webmiddle = new WebMiddle();
-webmiddle.evaluate(<MyService />)
+evaluate(createContext(webmiddle), <MyService />)
 .then(resource => {
   console.log(resource.content); // the html page as a string
 });
@@ -57,9 +57,9 @@ The service sets the `retries` option as the one set in the
 configured at application/webmiddle level:
 
 ```jsx
-HttpRequest.options = ({ webmiddle }) => ({
-  retries: webmiddle.setting('network.retries'),
-});
+HttpRequest.options = (props, context) => (pickDefaults({
+  retries: context.webmiddle.setting('network.retries'),
+}, context.options));
 ```
 
 ## Properties

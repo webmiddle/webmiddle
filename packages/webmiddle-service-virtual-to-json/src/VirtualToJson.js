@@ -1,7 +1,7 @@
-import WebMiddle, { PropTypes } from 'webmiddle';
+import WebMiddle, { PropTypes, isVirtual } from 'webmiddle';
 import values from 'lodash.values';
 
-async function processVirtual(virtual, webmiddle) {
+async function processVirtual(virtual, context) {
   const targetAttributes = {};
   Object.keys(virtual.attributes).forEach((attributeName, i) => {
     targetAttributes[`@attribute#${i}`] = virtual.attributes[attributeName];
@@ -9,19 +9,19 @@ async function processVirtual(virtual, webmiddle) {
 
   const targetValue = await processArray(virtual.children, {
     ...targetAttributes,
-  }, webmiddle);
+  }, context);
 
   return {
     [virtual.type]: targetValue,
   };
 }
 
-async function processArray(array, result = {}, webmiddle) {
+async function processArray(array, result = {}, context) {
   let dataCount = 0;
 
   const usedProps = {}; // <prop, count>
   for (let i = 0; i < array.length; i++) {
-    const itemResult = await process(array[i], webmiddle);
+    const itemResult = await process(array[i], context);
 
     if (itemResult.type === 'prop') {
       if (usedProps[itemResult.prop] > 0) {
@@ -62,19 +62,19 @@ async function processArray(array, result = {}, webmiddle) {
   return result;
 }
 
-async function process(value, webmiddle) {
+async function process(value, context) {
   let result = value;
 
-  if (webmiddle.isVirtual(result)) {
+  if (isVirtual(result)) {
     result = {
       type: 'prop',
       prop: result.type,
-      value: (await processVirtual(result, webmiddle))[result.type],
+      value: (await processVirtual(result, context))[result.type],
     };
   } else if (Array.isArray(result)) {
     result = {
       type: 'data',
-      value: await processArray(result, undefined, webmiddle),
+      value: await processArray(result, undefined, context),
     };
   } else {
     result = {
@@ -86,10 +86,10 @@ async function process(value, webmiddle) {
   return result;
 }
 
-async function VirtualToJson({ name, from, webmiddle }) {
+async function VirtualToJson({ name, from }, context) {
   const source = from.content;
 
-  const target = await processVirtual(source, webmiddle);
+  const target = await processVirtual(source, context);
 
   return {
     name,
@@ -101,7 +101,6 @@ async function VirtualToJson({ name, from, webmiddle }) {
 VirtualToJson.propTypes = {
   name: PropTypes.string.isRequired,
   from: PropTypes.object.isRequired, // resource
-  webmiddle: PropTypes.object.isRequired,
 };
 
 export default VirtualToJson;

@@ -1,6 +1,6 @@
-import WebMiddle, { PropTypes } from 'webmiddle';
+import WebMiddle, { PropTypes, evaluate, createContext } from 'webmiddle';
 
-async function Parallel({ name, limit, children, webmiddle, options }) {
+async function Parallel({ name, limit, children }, context) {
   const resources = {};
 
   // Note: fullfilled promises are removed from this array
@@ -16,10 +16,10 @@ async function Parallel({ name, limit, children, webmiddle, options }) {
       await Promise.race(promises);
     }
 
-    const promise = webmiddle.evaluate(child, {
-      ...options,
+    const promise = evaluate(createContext(context, {
       expectResource: true,
-    }).then(result => {
+    }), child)
+    .then(result => {
       promises.splice(promises.indexOf(promise), 1);
       //console.log('fullfilled', promises.length);
       resources[result.name] = result;
@@ -36,8 +36,6 @@ Parallel.propTypes = {
   name: PropTypes.string.isRequired,
   limit: PropTypes.number,
   children: PropTypes.array.isRequired,
-  webmiddle: PropTypes.object.isRequired,
-  options: PropTypes.object.isRequired,
 };
 
 export default Parallel;

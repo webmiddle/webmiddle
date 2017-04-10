@@ -1,5 +1,6 @@
 import isVirtual from './isVirtual';
 import isResource from './isResource';
+import callVirtual from './callVirtual';
 
 // check if target is the actual NaN value:
 // NaN is the only value that is not equal to itself.
@@ -7,35 +8,36 @@ function isRealNaN(target) {
   return target !== target; // eslint-disable-line no-self-compare
 }
 
-export default async function evaluate(value, options = {}) {
-  this.log('evaluate', value);
+export default async function evaluate(context, value) {
+  context.webmiddle.log('evaluate', value);
   let result = value;
 
   if (typeof result === 'function') {
-    this.log('evaluate function', result);
-    result = result(...(options.functionParameters || []));
-    return this.evaluate(result, options);
+    context.webmiddle.log('evaluate function', result);
+    result = result(...(context.options.functionParameters || []));
+    return evaluate(context, result);
   }
 
   const promiseResult = await Promise.resolve(result);
   if (promiseResult !== result && (!isRealNaN(promiseResult) || !isRealNaN(result))) {
-    this.log('evaluate promise result', promiseResult, result);
-    return this.evaluate(promiseResult, options);
+    context.webmiddle.log('evaluate promise result', promiseResult, result);
+    return evaluate(context, promiseResult);
   }
 
   if (isVirtual(result)) {
-    this.log('evaluate virtual', result);
+    context.webmiddle.log('evaluate virtual', result);
     const topVirtual = result;
 
     const {
       result: virtualResult,
-      webmiddle,
+      context: virtualContext,
       linkedWebmiddle,
-      options: virtualOptions,
-    } = await this.callVirtual(result, options);
+    } = await callVirtual(context, result);
     try {
+      context = virtualContext;
+
       if (virtualResult !== result) {
-        result = await webmiddle.evaluate(virtualResult, virtualOptions);
+        result = await evaluate(context, virtualResult);
         if (isResource(result)) {
           // resource overrides by top virtual
           ['name', 'contentType'].forEach(p => {
@@ -54,7 +56,7 @@ export default async function evaluate(value, options = {}) {
     }
   }
 
-  if (!isResource(result) && options.expectResource) {
+  if (!isResource(result) && context.options.expectResource) {
     throw new Error(`Expected a resource from ${JSON.stringify(value)}, got ${JSON.stringify(result)}`);
   }
 

@@ -1,8 +1,8 @@
-import WebMiddle, { PropTypes } from 'webmiddle';
+import WebMiddle, { PropTypes, evaluate, createContext, isVirtual } from 'webmiddle';
 import JSONSelect from 'JSONSelect';
 
 // Note: virtual.type must be a string
-async function processVirtual(virtual, sourceEl, source, webmiddle) {
+async function processVirtual(virtual, sourceEl, source, context) {
   let el = virtual.attributes.el;
   if (!el) {
     el = sourceEl;
@@ -21,16 +21,16 @@ async function processVirtual(virtual, sourceEl, source, webmiddle) {
   return {
     type: virtual.type,
     attributes: {},
-    children: await processArray(virtual.children, el, source, webmiddle),
+    children: await processArray(virtual.children, el, source, context),
   };
 }
 
 
-async function processArray(array, sourceEl, source, webmiddle) {
+async function processArray(array, sourceEl, source, context) {
   const result = [];
 
   for (const item of array) {
-    const resultItem = await process(item, sourceEl, source, webmiddle);
+    const resultItem = await process(item, sourceEl, source, context);
     result.push(resultItem);
   }
 
@@ -38,11 +38,11 @@ async function processArray(array, sourceEl, source, webmiddle) {
 }
 
 // converted into an array of virtuals
-async function processObject(obj, sourceEl, source, webmiddle) {
+async function processObject(obj, sourceEl, source, context) {
   const result = [];
 
   for (const prop of Object.keys(obj)) {
-    const resultItem = await process(obj[prop], sourceEl, source, webmiddle);
+    const resultItem = await process(obj[prop], sourceEl, source, context);
     result.push({
       type: prop,
       attributes: {},
@@ -54,25 +54,25 @@ async function processObject(obj, sourceEl, source, webmiddle) {
 }
 
 // @return raw xml conversion of value
-async function process(value, sourceEl, source, webmiddle) {
+async function process(value, sourceEl, source, context) {
   let result;
   try {
-    result = await webmiddle.evaluate(value, {
+    result = await evaluate(createContext(context, {
       functionParameters: [sourceEl, source],
-    });
+    }), value);
   } catch (err) {
     console.error(err instanceof Error ? err.stack : err);
     result = null;
   }
 
-  if (webmiddle.isVirtual(result)) {
+  if (isVirtual(result)) {
     // virtual type is not a function,
     // otherwise it would have been evaluated
-    result = await processVirtual(result, sourceEl, source, webmiddle);
+    result = await processVirtual(result, sourceEl, source, context);
   } else if (Array.isArray(result)) {
-    result = await processArray(result, sourceEl, source, webmiddle);
+    result = await processArray(result, sourceEl, source, context);
   } else if (typeof result === 'object' && result !== null) {
-    result = await processObject(result, sourceEl, source, webmiddle);
+    result = await processObject(result, sourceEl, source, context);
   } else if (typeof result === 'undefined') {
     result = null;
   }
@@ -81,8 +81,8 @@ async function process(value, sourceEl, source, webmiddle) {
 }
 
 async function JSONSelectToVirtual({
-  name, from, fullConversion, children, webmiddle,
-}) {
+  name, from, fullConversion, children,
+}, context) {
   const source = from.content;
 
   let targetChildren;
@@ -90,9 +90,9 @@ async function JSONSelectToVirtual({
     if (children.length !== 0) {
       console.warn('children are ignored when fullConversion is true');
     }
-    targetChildren = [await process(source, [source], source, webmiddle)];
+    targetChildren = [await process(source, [source], source, context)];
   } else {
-    targetChildren = await processArray(children, [source], source, webmiddle);
+    targetChildren = await processArray(children, [source], source, context);
   }
 
   const target = {

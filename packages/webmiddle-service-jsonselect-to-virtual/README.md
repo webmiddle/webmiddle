@@ -11,7 +11,7 @@ npm install --save webmiddle-service-jsonselect-to-virtual
 ## Usage
 
 ```jsx
-import WebMiddle, { PropTypes } from 'webmiddle';
+import WebMiddle, { PropTypes, evaluate, createContext } from 'webmiddle';
 import Pipe from 'webmiddle-service-pipe';
 import HttpRequest from 'webmiddle-service-http-request';
 import JSONSelectToVirtual, { helpers } from 'webmiddle-service-jsonselect-to-virtual';
@@ -62,7 +62,7 @@ const MyService = ({ apiKey, query, pageNumber }) => (
 );
 
 const webmiddle = new WebMiddle();
-webmiddle.evaluate(
+evaluate(createContext(webmiddle),
   <MyService
     apiKey="MY API KEY HERE"
     query="javascript"
@@ -79,7 +79,7 @@ webmiddle.evaluate(
 The following values can be specified as child in the virtual schema, as
 they will be **processed** in the same way of CheerioToVirtual:
 
--   Any element that can be **evaluated** by means of the webmiddle.evaluate
+-   Any element that can be **evaluated** by means of the evaluate
     function.
 
 -   **virtual**

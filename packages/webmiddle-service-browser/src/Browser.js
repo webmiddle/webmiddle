@@ -1,4 +1,4 @@
-import WebMiddle, { PropTypes } from 'webmiddle';
+import WebMiddle, { PropTypes, pickDefaults } from 'webmiddle';
 import HttpError from 'webmiddle/dist/utils/HttpError';
 import phantom from 'phantom';
 
@@ -26,8 +26,8 @@ function waitForFn(config) {
   });
 }
 
-function setCookies(page, webmiddle) {
-  const allCookies = webmiddle.cookieManager.jar.toJSON().cookies;
+function setCookies(page, context) {
+  const allCookies = context.webmiddle.cookieManager.jar.toJSON().cookies;
   return Promise.all(allCookies.map(cookie =>
     page.addCookie({
       name: cookie.key,
@@ -43,8 +43,8 @@ function setCookies(page, webmiddle) {
 
 // TODO: cookies
 async function Browser({
-  name, contentType, url, method = 'GET', body = {}, httpHeaders = {}, waitFor, webmiddle,
-}) {
+  name, contentType, url, method = 'GET', body = {}, httpHeaders = {}, waitFor,
+}, context) {
   console.log('Browser', url);
 
   let sitepage = null;
@@ -86,10 +86,10 @@ async function Browser({
         if (header.name.toLowerCase() === 'set-cookie') {
           const values = header.value.split('\n');
           values.forEach(value => {
-            const cookie = webmiddle.cookieManager.Cookie.parse(value, {
+            const cookie = context.webmiddle.cookieManager.Cookie.parse(value, {
               loose: true,
             });
-            webmiddle.cookieManager.jar.setCookieSync(cookie, response.url, {});
+            context.webmiddle.cookieManager.jar.setCookieSync(cookie, response.url, {});
           });
         }
       });
@@ -109,7 +109,7 @@ async function Browser({
     // those not relevant to the page url are discarded
     // (even though at this moment the page doesn't even have an url)
     // Also check in case of redirects or XHR.
-    await setCookies(page, webmiddle);
+    await setCookies(page, context);
 
     return page.open(url, settings);
   })
@@ -149,9 +149,9 @@ async function Browser({
   });
 }
 
-Browser.options = ({ webmiddle }) => ({
-  retries: webmiddle.setting('network.retries'),
-});
+Browser.options = (props, context) => pickDefaults({
+  retries: context.webmiddle.setting('network.retries'),
+}, context.options);
 
 Browser.propTypes = {
   name: PropTypes.string.isRequired,
@@ -164,7 +164,6 @@ Browser.propTypes = {
   ]),
   httpHeaders: PropTypes.object,
   waitFor: PropTypes.string,
-  webmiddle: PropTypes.object.isRequired,
 };
 
 export default Browser;

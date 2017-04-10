@@ -11,7 +11,7 @@ npm install --save webmiddle-service-parallel
 ## Usage
 
 ```jsx
-import WebMiddle, { PropTypes } from 'webmiddle';
+import WebMiddle, { PropTypes, evaluate, createContext } from 'webmiddle';
 import Parallel from 'webmiddle-service-parallel';
 
 const MyService = () => (
@@ -33,7 +33,7 @@ const MyService = () => (
 );
 
 const webmiddle = new WebMiddle();
-webmiddle.evaluate(<MyService />)
+evaluate(createContext(webmiddle), <MyService />)
 .then(resource => {
   console.log(resource.name); // "myResources" 
   console.log(resource.contentType); // "application/json"

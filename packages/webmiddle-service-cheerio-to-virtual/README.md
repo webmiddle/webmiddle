@@ -13,7 +13,7 @@ npm install --save webmiddle-service-cheerio-to-virtual
 ## Usage
 
 ```jsx
-import WebMiddle, { PropTypes } from 'webmiddle';
+import WebMiddle, { PropTypes, evaluate, createContext } from 'webmiddle';
 import Pipe from 'webmiddle-service-pipe';
 import HttpRequest from 'webmiddle-service-http-request';
 import CheerioToVirtual, { helpers } from 'webmiddle-service-cheerio-to-virtual';
@@ -48,7 +48,7 @@ const MyService = ({ query }) => (
 );
 
 const webmiddle = new WebMiddle();
-webmiddle.evaluate(<MyService query="javascript" />)
+evaluate(createContext(webmiddle), <MyService query="javascript" />)
 .then(resource => {
   console.log(resource.contentType); // "application/x-webmiddle-virtual"
   console.log(resource.content); // { type, attributes, children }
@@ -220,12 +220,12 @@ following steps::
 
 ```javascript
 // converted into an array of virtuals
-async function processObject(obj, sourceEl, source, webmiddle) {
+async function processObject(obj, sourceEl, source, context) {
   const result = [];
 
   for (const prop of Object.keys(obj)) {
     const resultItem = await process(
-      obj[prop], sourceEl, source, webmiddle
+      obj[prop], sourceEl, source, context
     );
     result.push({
       type: prop,

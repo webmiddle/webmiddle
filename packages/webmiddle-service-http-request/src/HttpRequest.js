@@ -1,11 +1,11 @@
-import WebMiddle, { PropTypes } from 'webmiddle';
+import WebMiddle, { PropTypes, pickDefaults } from 'webmiddle';
 import HttpError from 'webmiddle/dist/utils/HttpError';
 import request from 'request';
 
 // TODO: cookies
 function HttpRequest({
-  name, contentType, url, method = 'GET', body = {}, httpHeaders = {}, webmiddle,
-}) {
+  name, contentType, url, method = 'GET', body = {}, httpHeaders = {},
+}, context) {
   return new Promise((resolve, reject) => {
     try {
       console.log('HttpRequest', url);
@@ -17,7 +17,7 @@ function HttpRequest({
       // thus we just use the webmiddle cookie jar directly.
       // Things might go wrong in case of incompatible versions!
       const jar = request.jar();
-      jar._jar = webmiddle.cookieManager.jar;
+      jar._jar = context.webmiddle.cookieManager.jar;
 
       if (typeof body === 'object' && body !== null) {
         // body as string
@@ -61,10 +61,9 @@ function HttpRequest({
   });
 }
 
-
-HttpRequest.options = ({ webmiddle }) => ({
-  retries: webmiddle.setting('network.retries'),
-});
+HttpRequest.options = (props, context) => pickDefaults({
+  retries: context.webmiddle.setting('network.retries'),
+}, context.options);
 
 HttpRequest.propTypes = {
   name: PropTypes.string.isRequired,
@@ -76,7 +75,6 @@ HttpRequest.propTypes = {
     PropTypes.string,
   ]),
   httpHeaders: PropTypes.object,
-  webmiddle: PropTypes.object.isRequired,
 };
 
 export default HttpRequest;

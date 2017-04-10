@@ -1,6 +1,6 @@
 import test from 'ava';
 import Parallel from '../src/index.js';
-import WebMiddle from 'webmiddle';
+import WebMiddle, { evaluate, createContext } from 'webmiddle';
 
 function range(num) {
   return [...Array(num).keys()];
@@ -39,7 +39,7 @@ test('main', async t => {
     }, 100);
   });
 
-  const output = await t.context.webmiddle.evaluate(
+  const output = await evaluate(createContext(t.context.webmiddle),
     <Parallel name="resources">
       <FirstService />
       <SecondService />
@@ -68,8 +68,8 @@ test('expect resource', async t => {
   const Service = () => 10; // a service that doesn't return a resource
 
   try {
-    await t.context.webmiddle.evaluate(
-      <Parallel>
+    await evaluate(createContext(t.context.webmiddle),
+      <Parallel name="whatever">
         <Service />
       </Parallel>
     );
@@ -105,7 +105,7 @@ test('limit', async t => {
 
   current = 0;
   overLimit = false;
-  await t.context.webmiddle.evaluate(
+  await evaluate(createContext(t.context.webmiddle),
     <Parallel name="resources" limit={limit}>
       {range(100).map(i => (
         <Service name={i} />
@@ -117,7 +117,7 @@ test('limit', async t => {
 
   current = 0;
   overLimit = false;
-  await t.context.webmiddle.evaluate(
+  await evaluate(createContext(t.context.webmiddle),
     <Parallel name="resources" limit={0}>
       {range(100).map(i => (
         <Service name={i} />

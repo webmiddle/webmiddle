@@ -91,13 +91,12 @@ This means that anyone can contribute by adding new services for doing the more 
 ```jsx
 const webmiddle = new WebMiddle();
 
-webmiddle.evaluate(
+evaluate(createContext(webmiddle, { expectResource: true }), (
   <FetchPageLinks
     url="https://news.ycombinator.com/"
     query="javascript"
   />,
-{ expectResource: true })
-.then(outputResource => {
+)).then(outputResource => {
   console.log(
     JSON.stringify(outputResource.content, null, 2)
   );

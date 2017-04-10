@@ -1,6 +1,6 @@
 import test from 'ava';
 import HttpRequest from '../src/index.js';
-import WebMiddle from 'webmiddle';
+import WebMiddle, { evaluate, createContext } from 'webmiddle';
 
 test.beforeEach(t => {
   t.context.webmiddle = new WebMiddle();
@@ -13,7 +13,7 @@ function getJSON(content) {
 test('GET https page', async t => {
   const number = Math.round(Math.random() * 100);
 
-  const output = await t.context.webmiddle.evaluate(
+  const output = await evaluate(createContext(t.context.webmiddle),
     <HttpRequest
       name="virtual"
       contentType="application/json"
@@ -32,7 +32,7 @@ test('GET https page', async t => {
 test('POST https page: form data as string', async t => {
   const number = Math.round(Math.random() * 100);
 
-  const output = await t.context.webmiddle.evaluate(
+  const output = await evaluate(createContext(t.context.webmiddle),
     <HttpRequest
       name="virtual"
       contentType="application/json"
@@ -52,7 +52,7 @@ test('POST https page: form data as string', async t => {
 test('POST https page: form data as object', async t => {
   const number = Math.round(Math.random() * 100);
 
-  const output = await t.context.webmiddle.evaluate(
+  const output = await evaluate(createContext(t.context.webmiddle),
     <HttpRequest
       name="virtual"
       contentType="application/json"
@@ -75,7 +75,7 @@ test('POST https page: form data as object', async t => {
 test('POST https page: json data as object', async t => {
   const number = Math.round(Math.random() * 100);
 
-  const output = await t.context.webmiddle.evaluate(
+  const output = await evaluate(createContext(t.context.webmiddle),
     <HttpRequest
       name="virtual"
       contentType="application/json"
@@ -99,7 +99,7 @@ test('POST https page: json data as object', async t => {
 });
 
 test('httpHeaders', async t => {
-  const output = await t.context.webmiddle.evaluate(
+  const output = await evaluate(createContext(t.context.webmiddle),
     <HttpRequest
       name="virtual"
       contentType="application/json"
@@ -124,7 +124,7 @@ test('cookies', async t => {
   let v2 = Math.floor(Math.random() * 100) + 1;
   let v1 = Math.floor(Math.random() * 100) + 1;
 
-  await t.context.webmiddle.evaluate(
+  await evaluate(createContext(t.context.webmiddle),
     <HttpRequest
       name="virtual"
       contentType="application/json"
@@ -148,7 +148,7 @@ test('cookies', async t => {
   cookies[0].value = String(v2);
   cookies[1].value = String(v1);
 
-  const output = await t.context.webmiddle.evaluate(
+  const output = await evaluate(createContext(t.context.webmiddle),
     <HttpRequest
       name="virtual"
       contentType="application/json"

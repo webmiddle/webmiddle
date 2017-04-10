@@ -3,7 +3,7 @@ import CheerioToVirtual from '../src/index.js';
 import {
   elAttr, elJoin, elMap, elPipe, elText,
 } from '../src/helpers';
-import WebMiddle from 'webmiddle';
+import WebMiddle, { evaluate, createContext } from 'webmiddle';
 
 const xmlResource = {
   name: 'xmlResource',
@@ -31,7 +31,7 @@ test.beforeEach(t => {
 });
 
 test('must return virtual resource', async t => {
-  const output = await t.context.webmiddle.evaluate(
+  const output = await evaluate(createContext(t.context.webmiddle),
     <CheerioToVirtual
       name="virtual"
       from={xmlResource}
@@ -43,7 +43,7 @@ test('must return virtual resource', async t => {
 });
 
 test('condition', async t => {
-  const output = await t.context.webmiddle.evaluate(
+  const output = await evaluate(createContext(t.context.webmiddle),
     <CheerioToVirtual
       name="virtual"
       from={xmlResource}
@@ -79,7 +79,7 @@ test('condition', async t => {
 });
 
 test('helpers: elMap + elAttr', async t => {
-  const output = await t.context.webmiddle.evaluate(
+  const output = await evaluate(createContext(t.context.webmiddle),
     <CheerioToVirtual
       name="virtual"
       from={xmlResource}
@@ -123,7 +123,7 @@ test('helpers: elMap + elAttr', async t => {
 });
 
 test('helpers: elPipe + elMap + elText + elJoin', async t => {
-  const output = await t.context.webmiddle.evaluate(
+  const output = await evaluate(createContext(t.context.webmiddle),
     <CheerioToVirtual
       name="virtual"
       from={xmlResource}
@@ -172,7 +172,7 @@ test('helpers: elPipe + elMap + elText + elJoin', async t => {
 });
 
 test('fullconversion', async t => {
-  const output = await t.context.webmiddle.evaluate(
+  const output = await evaluate(createContext(t.context.webmiddle),
     <CheerioToVirtual
       name="virtual"
       from={xmlResource}

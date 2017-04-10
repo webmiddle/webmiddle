@@ -1,6 +1,6 @@
 import test from 'ava';
 import Pipe from '../src/index.js';
-import WebMiddle from 'webmiddle';
+import WebMiddle, { evaluate, createContext } from 'webmiddle';
 
 test.beforeEach(t => {
   t.context.webmiddle = new WebMiddle();
@@ -18,7 +18,7 @@ test('main', async t => {
     content: (num * 10).toString(),
   });
 
-  const output = await t.context.webmiddle.evaluate(
+  const output = await evaluate(createContext(t.context.webmiddle),
     <Pipe>
       <FirstService />
 
@@ -39,7 +39,7 @@ test('expect resource', async t => {
   const Service = () => 10; // a service that doesn't return a resource
 
   try {
-    await t.context.webmiddle.evaluate(
+    await evaluate(createContext(t.context.webmiddle),
       <Pipe>
         <Service />
       </Pipe>
