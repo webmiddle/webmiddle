@@ -29,7 +29,10 @@ async function createServices(serverUrl) {
   const servicePaths = await requestServicePaths(serverUrl);
   const services = {};
   servicePaths.forEach(path => {
-    const serviceUrl = serverUrl + (serverUrl.endsWith('/') ? '' : '/') + 'services/' + path;
+    const serviceUrl = serverUrl +
+      (serverUrl.endsWith('/') ? '' : '/') + 'services/' +
+      path.replace(/\\./g, '/');
+
     const service = (props, context) => requestServer(serviceUrl, {
       props,
       options: context.options,
