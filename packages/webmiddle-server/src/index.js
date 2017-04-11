@@ -46,6 +46,7 @@ export default class Server {
         try {
           let path = req.url.split('?')[0].slice(('/' + type).length);
           if (path.startsWith('/')) path = path.slice(1);
+          path = path.replace(/\//g, '.');
 
           let props;
           let options;
