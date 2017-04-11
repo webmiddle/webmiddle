@@ -2,12 +2,7 @@
 
 > Node.js JSX framework for modular web scraping and data integration 
 
-Because JSX can be more than just React!
-
-**Note:** this project is still in its early stages of development, any feedback or contribution is highly appreciated.
-<hr />
-
-WebMiddle is a [JSX](https://facebook.github.io/react/docs/introducing-jsx.html)-driven [Node.js](https://nodejs.org/) framework for extracting, transforming and processing web data from multiple heterogeneous sources, using a multi-layer approach, where each web middleware, or **webmiddle**, abstracts one or more sources of data, so to produce a structured output with the format of your choice, that can be then consumed by the higher-level middleware.
+WebMiddle is a [JSX](https://facebook.github.io/react/docs/introducing-jsx.html)-driven [Node.js](https://nodejs.org/) framework for extracting, transforming and processing web data from multiple heterogeneous sources, using a multi-layer approach, where each web middleware, or **webmiddle**, abstracts one or more sources of data, to produce a structured output with the format of your choice, that can be then consumed by the higher-level middleware.
 
 Each web middleware is implemented via JSX services, leading to a highly composable, extensible and declarative approach.
 
@@ -136,6 +131,62 @@ This separation of concerns might seem cumbersome, but it makes possible to reus
 
 -> [Learn more](https://webmiddle.github.io/docs/multiple_layers.html)
 
+## Microservices
+
+WebMiddle instances can be easily turned into REST APIs thanks to the `webmiddle-server` package, allowing remote access via HTTP.
+
+Suppose you have the following webmiddle:
+
+```javascript
+import WebMiddle from 'webmiddle';
+
+const textResource = (content, name = 'result') => ({
+  name,
+  contentType: 'text/plain',
+  content: (typeof content !== 'undefined' && content !== null) ? String(content) : content,
+});
+
+const webmiddle = new WebMiddle({
+  services: {
+    divide: ({ a, b }) => textResource(a / b),
+    multiply: ({ a, b }) => textResource(a * b),
+  },
+});
+```
+
+Turn it into a server listening on port 3000:
+
+```javascript
+import Server from 'webmiddle-server';
+
+const server = new Server(webmiddle);
+server.start({ port: 3000 });
+```
+
+In another machine, you can then use the `webmiddle-client` package to create a replica of the webmiddle run by the server, and execute its services remotely, the nice thing is that almost nothing will change in term of usage, it will be just like using a normal local webmiddle:
+
+```javascript
+import webmiddleClient from 'webmiddle-client';
+import WebMiddle, { evaluate, createContext } from 'webmiddle';
+
+webmiddleClient('http://localhost:3000/') // "localhost" since we are using the same machine in this example
+.then(webmiddleRemote => {
+  const Multiply = webmiddleRemote.service('multiply');
+
+  evaluate(createContext(webmiddleRemote, { retries: 2 }),
+    <Multiply
+      a={10}
+      b={20}
+    />
+  ).then(result => {
+    console.log(result); // { name: 'result', contentType: 'text/plain', content: '200' }
+  });
+})
+.catch(err => {
+  console.log(err && err.stack || err);
+});
+```
+
 ## Core features
 
 Features currently provided via the core services and the WebMiddle class:
@@ -156,12 +207,11 @@ Create your own services and webmiddles and share them with the community as nod
 
 One of the main philosophies of the framework is **reuse**, by creating an ecosystem where webmiddles for websites, services, converters and so on can be published as separate npm modules, so that they can be used in other projects.
 
-**NOTE**: If you think a service / feature is so common and general that it should be in the core, please [open an issue](https://github.com/webmiddle/webmiddle/issues/new) or just do a pull request!
+**NOTE**: If you think a service / feature is so common and general that it should be in the core, [open an issue](https://github.com/webmiddle/webmiddle/issues/new) or just do a pull request!
 
 ## Future improvements
 
 Here is a list of important features that are still missing and that should be in the core in the future:
-- Web service layer (to expose the services via a REST API)
 - Proxy support
 - HTTP/OAuth Authentication
 - Redirects management
