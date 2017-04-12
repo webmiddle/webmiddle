@@ -1,6 +1,7 @@
 import virtualElement from 'virtual-element';
 import PropTypes from 'proptypes';
 import get from 'lodash.get';
+import set from 'lodash.set';
 import cloneDeepWith from 'lodash.clonedeepwith';
 import isPlainObject from 'lodash.isplainobject';
 import merge from 'lodash.merge';
@@ -16,6 +17,51 @@ export callVirtual from './utils/callVirtual';
 export pickDefaults from './utils/pickDefaults';
 export WithOptions from './utils/WithOptions';
 
+function mapObjectDeep(obj, onLeaf) {
+  if (typeof obj !== 'object' || obj === null) onLeaf(obj);
+
+  const newObj = {};
+  for (const prop of Object.keys(obj)) {
+    newObj[prop] = mapObjectDeep(obj[prop], onLeaf);
+  }
+  return newObj;
+}
+
+function wrapService(Service, webmiddle) {
+  if (typeof Service !== 'function') {
+    throw new Error('Invalid service: is not a function', Service);
+  }
+
+  const HigherService = ({ children, ...rest }) => (
+    <Service
+      {...rest}
+    >
+      {children}
+    </Service>
+  );
+  HigherService.propTypes = Service.propTypes;
+  HigherService.webmiddle = webmiddle;
+  return HigherService;
+}
+
+function mergeAndGet(obj, prop, path, fnProp) {
+  const result = get(obj[prop], path);
+  const parentResult = obj.parent ? (obj.parent[fnProp])(path) : undefined;
+
+  let finalResult = result;
+  if (isPlainObject(result) && isPlainObject(parentResult)) {
+    finalResult = merge({}, parentResult, result);
+  } else if (typeof result === 'undefined' && typeof parentResult !== 'undefined') {
+    finalResult = parentResult;
+  }
+
+  return cloneDeepWith(finalResult, value => {
+    // don't try to clone functions (since they are converted to an empty object)
+    if (typeof value === 'function') return value;
+    return undefined; // default behaviour
+  });
+}
+
 export default class WebMiddle {
   static h(...args) {
     return virtualElement(...args);
@@ -23,17 +69,12 @@ export default class WebMiddle {
 
   constructor(options = {}) {
     this.name = options.name;
-
     this.parent = options.parent;
-
-    this.services = {}; // <path, Service>
-
-    const userServices = options.services || {};
-    for (const path of Object.keys(userServices)) {
-      this.registerService(path, userServices[path]);
-    }
-
     this.settings = options.settings || {};
+
+    this.services = mapObjectDeep(options.services || {}, (val) =>
+      wrapService(val, this)
+    );
 
     global.webmiddle = global.webmiddle || {
       cookieManager: new CookieManager(),
@@ -42,42 +83,16 @@ export default class WebMiddle {
   }
 
   registerService(path, Service) {
-    const HigherService = ({ children, ...rest }) => (
-      <Service
-        {...rest}
-      >
-        {children}
-      </Service>
-    );
-    HigherService.propTypes = Service.propTypes;
-    HigherService.webmiddle = this;
-
-    this.services[path] = HigherService;
+    const HigherService = wrapService(Service, this);
+    set(this.services, path, HigherService);
   }
 
   service(path) {
-    const Service = this.services[path];
-    if (Service) return Service;
-    if (this.parent) return this.parent.service(path);
-    return undefined;
+    return mergeAndGet(this, 'services', path, 'service');
   }
 
   setting(path) {
-    const setting = get(this.settings, path);
-    const parentSetting = this.parent ? this.parent.setting(path) : undefined;
-
-    let finalSetting = setting;
-    if (isPlainObject(setting) && isPlainObject(parentSetting)) {
-      finalSetting = merge({}, parentSetting, setting);
-    } else if (typeof setting === 'undefined' && typeof parentSetting !== 'undefined') {
-      finalSetting = parentSetting;
-    }
-
-    return cloneDeepWith(finalSetting, value => {
-      // don't try to clone functions (since they are converted to an empty object)
-      if (typeof value === 'function') return value;
-      return undefined; // default behaviour
-    });
+    return mergeAndGet(this, 'settings', path, 'setting');
   }
 
   log(...args) {

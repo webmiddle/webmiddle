@@ -82,19 +82,23 @@ test('callVirtual: resource overrides', async t => {
 
 test('registerService', t => {
   const Service = () => {};
-  t.context.webmiddle.registerService('foo', <Service />);
-  t.truthy(t.context.webmiddle.services['foo']);
-  t.falsy(t.context.webmiddle.services['bar']);
-});
-
-test('service', t => {
-  const Service = () => {};
-  t.context.webmiddle.registerService('foo', <Service />);
+  t.context.webmiddle.registerService('foo', Service);
   t.truthy(t.context.webmiddle.service('foo'));
   t.falsy(t.context.webmiddle.service('bar'));
 });
 
-test('service: with parent and constructor options', t => {
+test('registerService: must only accept functions', t => {
+  t.throws(() => {
+    t.context.webmiddle.registerService('foo', { foo: 'bar' });
+  });
+});
+
+test('registerService: must support deep paths', t => {
+  t.context.webmiddle.registerService('some.foo', () => {});
+  t.truthy(t.context.webmiddle.service('some').foo);
+});
+
+test('services: with parent and constructor options', t => {
   const Service = () => {};
   const webmiddle = new WebMiddle({
     parent: new WebMiddle({
@@ -106,6 +110,44 @@ test('service: with parent and constructor options', t => {
 
   t.truthy(webmiddle.service('foo'));
   t.falsy(webmiddle.service('bar'));
+});
+
+test('services: deep object', t => {
+  const webmiddle = new WebMiddle({
+    services: {
+      math: {
+        divide: ({ a, b }) => a / b,
+      },
+    },
+  });
+
+  t.truthy(webmiddle.service('math.divide'));
+});
+
+test('services: must only accept functions as leafs', t => {
+  t.throws(() => {
+    new WebMiddle({
+      services: {
+        math: {
+          divide: 'FAKE',
+        },
+      },
+    });
+  });
+});
+
+test('services: must return an object of services when path is broad', t => {
+  const webmiddle = new WebMiddle({
+    services: {
+      math: {
+        divide: ({ a, b }) => a / b,
+        multiply: ({ a, b }) => a * b,
+      },
+    },
+  });
+
+  const services = webmiddle.service('math');
+  t.truthy(Object.keys(services).length === 2 && services.divide && services.multiply);
 });
 
 test('evaluate: NaN', async t => {
