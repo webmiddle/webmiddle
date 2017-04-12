@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/webmiddle/webmiddle.svg?branch=master)](https://travis-ci.org/webmiddle/webmiddle)
+
 # WebMiddle
 
 > Node.js JSX framework for modular web scraping and data integration 
