@@ -6,3 +6,5 @@ node_js:
   - '7'
   - '6'
   - '4'
+
+script: lerna bootstrap && lerna run test
