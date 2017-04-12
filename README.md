@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/webmiddle/webmiddle.svg?branch=master)](https://travis-ci.org/webmiddle/webmiddle)
+[![Dependency Status](https://gemnasium.com/badges/github.com/webmiddle/webmiddle.svg)](https://gemnasium.com/github.com/webmiddle/webmiddle)
 
 # WebMiddle
 
