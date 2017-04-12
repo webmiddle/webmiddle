@@ -81,7 +81,7 @@ This means that anyone can contribute by adding new services for doing the more 
 
 -> [Learn more](https://webmiddle.github.io/docs/jsx_services.html)
 
-## WebMiddle instances
+## WebMiddle objects
 
 ```jsx
 const webmiddle = new WebMiddle();
@@ -123,17 +123,9 @@ This will give us an output like the following:
 
 -> [Learn more](https://webmiddle.github.io/docs/technical_documentation/webmiddle.html)
 
-## Multiple layers
+## Remote execution
 
-![Multi layer](https://webmiddle.github.io/assets/img/documentation/webmiddle_multi-layer.png "Multi layer")
-
-This separation of concerns might seem cumbersome, but it makes possible to reuse the same site webmiddle in all sorts of projects, by writing handlers that are often small and that in any case are wrapping content which is already semantic and supposedly well documented (differently than HTML pages).
-
--> [Learn more](https://webmiddle.github.io/docs/multiple_layers.html)
-
-## Microservices
-
-WebMiddle instances can be easily turned into REST APIs thanks to the `webmiddle-server` package, allowing remote access via HTTP.
+WebMiddle objects can be easily turned into REST APIs thanks to the `webmiddle-server` package, allowing remote access via HTTP.
 
 Suppose you have the following webmiddle:
 
@@ -187,6 +179,14 @@ webmiddleClient('http://localhost:3000/') // "localhost" since we are using the 
 });
 ```
 
+## Multiple layers
+
+![Multi layer](https://webmiddle.github.io/assets/img/documentation/webmiddle_multi-layer.png "Multi layer")
+
+This separation of concerns might seem cumbersome, but it makes possible to reuse the same site webmiddle in all sorts of projects, by writing handlers that are often small and that in any case are wrapping content which is already semantic and supposedly well documented (differently than HTML pages).
+
+-> [Learn more](https://webmiddle.github.io/docs/multiple_layers.html)
+
 ## Core features
 
 Features currently provided via the core services and the WebMiddle class:
@@ -194,7 +194,7 @@ Features currently provided via the core services and the WebMiddle class:
 - **Concurrency**, for executing multiple asynchronous services at the same time.
 - **HTTP** requests.
 - **PhantomJS** requests, for SPAs and pages using client-side generated content.
-- **Cookie JAR**, for sharing cookies among different services and webmiddle instances.
+- **Cookie JAR**, for sharing cookies among different services and webmiddle objects.
 - **Caching**, for resuming work in case of crash.
 - **Error handling**, via customizable retries and catch options.
 - **Data conversion** from/to multiple formats.
