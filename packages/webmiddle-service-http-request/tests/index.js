@@ -135,18 +135,18 @@ test('cookies', async t => {
 
   const cookies = t.context.webmiddle.cookieManager.jar.getCookiesSync('https://httpbin.org');
 
-  t.is(cookies[0].key, 'k2');
-  t.is(cookies[0].value, String(v2));
+  t.is(cookies[0].key, 'k1');
+  t.is(cookies[0].value, String(v1));
 
-  t.is(cookies[1].key, 'k1');
-  t.is(cookies[1].value, String(v1));
+  t.is(cookies[1].key, 'k2');
+  t.is(cookies[1].value, String(v2));
 
   // read from jar
 
   v2 = Math.floor(Math.random() * 100) + 1;
   v1 = Math.floor(Math.random() * 100) + 1;
-  cookies[0].value = String(v2);
-  cookies[1].value = String(v1);
+  cookies[0].value = String(v1);
+  cookies[1].value = String(v2);
 
   const output = await evaluate(createContext(t.context.webmiddle),
     <HttpRequest
