@@ -1,5 +1,5 @@
 import test from 'ava';
-import server from '../src';
+import Server from '../src';
 import WebMiddle from 'webmiddle';
 
 test.beforeEach(t => {
@@ -26,7 +26,8 @@ test('main', async t => {
     },
   });
 
-  server.start(webmiddle);
+  const server = new Server(webmiddle);
+  server.start();
 
   t.pass();
 });

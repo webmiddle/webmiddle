@@ -151,8 +151,8 @@ Turn it into a server listening on port 3000:
 ```javascript
 import Server from 'webmiddle-server';
 
-const server = new Server(webmiddle);
-server.start({ port: 3000 });
+const server = new Server(webmiddle, { port: 3000 });
+server.start();
 ```
 
 In another machine, you can then use the `webmiddle-client` package to create a replica of the webmiddle run by the server, and execute its services remotely, the nice thing is that almost nothing will change in term of usage, it will be just like using a normal local webmiddle:

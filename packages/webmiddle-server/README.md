@@ -15,8 +15,8 @@ Given a `webmiddle` instance, turn it into a server listening on port 3000:
 ```jsx
 import Server from 'webmiddle-server';
 
-const server = new Server(webmiddle);
-server.start({ port: 3000 });
+const server = new Server(webmiddle, { port: 3000 });
+server.start();
 ```
 
 ## How it works
