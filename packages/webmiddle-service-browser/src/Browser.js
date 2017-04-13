@@ -134,7 +134,7 @@ async function Browser({
   })
   .then(() => sitepage.property('content'))
   .then(content => {
-    sitepage.close();
+    //sitepage.close();
     phInstance.exit();
 
     return {

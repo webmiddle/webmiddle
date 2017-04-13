@@ -47,7 +47,7 @@
   "repository": "webmiddle/webmiddle",
   "license": "MIT",
   "dependencies": {
-    "phantom": "^2.1.1",
+    "phantom": "^4.0.2",
     "webmiddle": "^0.1.1"
   },
   "devDependencies": {
