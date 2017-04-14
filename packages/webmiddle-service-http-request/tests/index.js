@@ -3,7 +3,13 @@ import HttpRequest from '../src/index.js';
 import WebMiddle, { evaluate, createContext } from 'webmiddle';
 
 test.beforeEach(t => {
-  t.context.webmiddle = new WebMiddle();
+  t.context.webmiddle = new WebMiddle({
+    settings: {
+      network: {
+        retries: 3,
+      },
+    },
+  });
 });
 
 function getJSON(content) {
