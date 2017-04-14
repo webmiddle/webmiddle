@@ -9,7 +9,7 @@
   "scripts": {
     "test": "ava",
     "test:watch": "npm run test -- --watch",
-    "clean": "rimraf dist",
+    "clean": "node ../../scripts/rimraf dist",
     "babel": "babel src --out-dir dist --source-maps inline",
     "build": "npm run clean && npm run babel",
     "build:watch": "npm run clean && npm run babel -- --watch",
@@ -57,7 +57,6 @@
   },
   "devDependencies": {
     "ava": "^0.19.1",
-    "babel-cli": "^6.24.1",
-    "rimraf": "^2.6.1"
+    "babel-cli": "^6.24.1"
   }
 }
