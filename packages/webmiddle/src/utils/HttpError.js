@@ -1,12 +1,8 @@
-class HttpError {
+export default class HttpError extends Error {
   constructor(message, statusCode) {
+    super(message);
     this.name = 'HttpError';
-    this.stack = new Error().stack;
 
-    this.message = message;
     this.statusCode = statusCode;
   }
 }
-HttpError.prototype = Object.create(Error.prototype);
-
-export default HttpError;

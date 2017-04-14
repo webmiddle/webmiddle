@@ -6,6 +6,9 @@
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": ">=6"
+  },
   "scripts": {
     "test": "ava",
     "test:watch": "npm run test -- --watch",
