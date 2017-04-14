@@ -2,10 +2,6 @@
   "private": true,
   "author": "Manuel Dell'Elce",
   "license": "MIT",
-  "scripts": {
-    "ava": "ava",
-    "babel": "babel"
-  },
   "devDependencies": {
     "babel-core": "^6.24.1",
     "babel-eslint": "^7.2.2",
