@@ -1,5 +1,8 @@
-[![Build Status](https://travis-ci.org/webmiddle/webmiddle.svg?branch=master)](https://travis-ci.org/webmiddle/webmiddle)
-[![Dependency Status](https://gemnasium.com/badges/github.com/webmiddle/webmiddle.svg)](https://gemnasium.com/github.com/webmiddle/webmiddle)
+<p align="center">
+  <a href="https://travis-ci.org/webmiddle/webmiddle"><img alt="Build Status" src="https://travis-ci.org/webmiddle/webmiddle.svg?branch=master"></a>
+  <a href="https://gemnasium.com/github.com/webmiddle/webmiddle"><img alt="Dependency Status" src="https://gemnasium.com/badges/github.com/webmiddle/webmiddle.svg"></a>
+  <a href="https://codecov.io/gh/webmiddle/webmiddle"><img alt="Coverage Status" src="https://img.shields.io/codecov/c/github/webmiddle/webmiddle/master.svg?maxAge=43200"></a>
+</p>
 
 # WebMiddle
 
