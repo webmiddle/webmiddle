@@ -123,11 +123,11 @@ async function Browser({
     if (waitFor) {
       return waitForFn({
         debug: true,  // optional
-        interval: 0,  // optional
+        interval: 500,  // optional
         timeout: 10000,  // optional
-        check: () => sitepage.evaluate((waitFor) =>
-          document.querySelector(waitFor) !== null
-        , waitFor),
+        check: () => sitepage.evaluateJavaScript( // we don't use "evaluate" since it fails under nyc
+          `function() { return document.querySelector(${JSON.stringify(waitFor)}) !== null; }`
+        ),
       });
     }
     return Promise.resolve();
@@ -135,17 +135,18 @@ async function Browser({
   .then(() => sitepage.property('content'))
   .then(content => {
     //sitepage.close();
-    phInstance.exit();
-
-    return {
-      name,
-      contentType,
-      content: (contentType === 'application/json') ? JSON.parse(content) : content,
-    };
+    return phInstance.exit().then(() => {
+      return {
+        name,
+        contentType,
+        content: (contentType === 'application/json') ? JSON.parse(content) : content,
+      };
+    });
   })
   .catch(error => {
-    phInstance.exit();
-    throw error;
+    return phInstance.exit().then(() => {
+      throw error;
+    });
   });
 }
 

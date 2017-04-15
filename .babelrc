@@ -7,5 +7,10 @@
   "plugins": [
     ["transform-react-jsx", { "pragma": "WebMiddle.h" }],
     ["transform-runtime", { "polyfill": false, "regenerator": true }]
-  ]
+  ],
+  "env": {
+    "test": {
+      "plugins": ["istanbul"]
+    }
+  }
 }

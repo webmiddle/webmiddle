@@ -6,3 +6,4 @@ dist
 .project
 /.settings/
 Thumbs.db
+.nyc_output

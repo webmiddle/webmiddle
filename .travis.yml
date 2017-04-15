@@ -6,4 +6,5 @@ node_js:
   - '7'
   - '6'
 
-script: lerna bootstrap && lerna run test
+script: lerna bootstrap && npm run test
+after_success: npm run report-coverage
