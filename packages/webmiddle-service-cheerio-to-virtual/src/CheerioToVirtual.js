@@ -116,6 +116,10 @@ async function CheerioToVirtual({
     xmlMode: from.contentType === 'text/xml',
   });
 
+  if (typeof fullConversion === 'undefined' && children.length === 0) {
+    throw new Error('Either "fullConversion" or "children" must be specified.');
+  }
+
   let targetChildren;
   if (fullConversion) {
     if (children.length !== 0) {

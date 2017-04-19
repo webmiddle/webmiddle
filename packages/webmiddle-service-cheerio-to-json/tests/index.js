@@ -1,11 +1,70 @@
 import test from 'ava';
-import CheerioToJson from '../src/index.js';
-import WebMiddle from 'webmiddle';
+import CheerioToJson, { helpers } from '../src/index.js';
+import WebMiddle, { evaluate, createContext } from 'webmiddle';
+
+const { elMap, elText } = helpers;
+
+const xmlResource = {
+  name: 'xmlResource',
+  contentType: 'text/xml',
+  content: `
+    <bookstore>
+      <book category="COOKING">
+        <title lang="en">Everyday Italian</title>
+        <author>Giada De Laurentiis</author>
+        <year>2005</year>
+        <price>30.00</price>
+      </book>
+      <book category="CHILDREN">
+        <title lang="en">Harry Potter</title>
+        <author>J K. Rowling</author>
+        <year>2005</year>
+        <price>29.99</price>
+      </book>
+    </bookstore>
+  `,
+};
 
 test.beforeEach(t => {
   t.context.webmiddle = new WebMiddle();
 });
 
-test('stub', t => {
-  t.pass();
+test('must throw if no children is specified', async t => {
+  await t.throws(evaluate(createContext(t.context.webmiddle),
+    <CheerioToJson
+      name="virtual"
+      from={xmlResource}
+    />
+  ));
+});
+
+test('must return a json resource', async t => {
+  const output = await evaluate(createContext(t.context.webmiddle),
+    <CheerioToJson
+      name="virtual"
+      from={xmlResource}
+    >
+      <titles el="title">
+        {elMap(el =>
+          <title el={el}>{elText()}</title>
+        )}
+      </titles>
+    </CheerioToJson>
+  );
+
+  t.is(output.name, 'virtual', 'name');
+  t.is(output.contentType, 'application/json', 'contentType');
+
+  t.deepEqual(output.content, {
+    root: {
+      titles: [
+        {
+          title: 'Everyday Italian'
+        },
+        {
+          title: 'Harry Potter'
+        }
+      ]
+    }
+  })
 });

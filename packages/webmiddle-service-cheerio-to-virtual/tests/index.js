@@ -30,11 +30,22 @@ test.beforeEach(t => {
   t.context.webmiddle = new WebMiddle();
 });
 
+
+test('must throw if neither fullConversion and children are specified', async t => {
+  await t.throws(evaluate(createContext(t.context.webmiddle),
+    <CheerioToVirtual
+      name="virtual"
+      from={xmlResource}
+    />
+  ));
+});
+
 test('must return virtual resource', async t => {
   const output = await evaluate(createContext(t.context.webmiddle),
     <CheerioToVirtual
       name="virtual"
       from={xmlResource}
+      fullConversion
     />
   );
 
