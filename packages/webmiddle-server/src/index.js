@@ -59,8 +59,17 @@ export default class Server {
           }
 
           const output = await this.handlersByType[type].call(this, path, props, options);
-          if (isResource(output)) res.json(output);
-          else res.send(output);
+          if (isResource(output)) {
+            res.json(output);
+          } else {
+            // wrap the output into a resource anyway, since we always want to send json
+            // (to handle things like numeric content and to simplify the client job)
+            res.json({
+              name: 'wrappedContent',
+              contentType: 'x-webmiddle-any',
+              content: output,
+            });
+          }
         } catch (err) {
           console.error(err instanceof Error ? err.stack : err);
           res.sendStatus(500).send(err instanceof Error ? err.stack : err);
