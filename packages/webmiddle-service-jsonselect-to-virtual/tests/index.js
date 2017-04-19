@@ -41,11 +41,21 @@ test.beforeEach(t => {
   t.context.webmiddle = new WebMiddle();
 });
 
+test('must throw if neither fullConversion and children are specified', async t => {
+  await t.throws(evaluate(createContext(t.context.webmiddle),
+    <JSONSelectToVirtual
+      name="virtual"
+      from={jsonResource}
+    />
+  ));
+});
+
 test('must return virtual resource', async t => {
   const output = await evaluate(createContext(t.context.webmiddle),
     <JSONSelectToVirtual
       name="virtual"
       from={jsonResource}
+      fullConversion
     />
   );
 

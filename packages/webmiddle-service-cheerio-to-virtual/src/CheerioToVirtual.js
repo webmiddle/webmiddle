@@ -79,6 +79,7 @@ async function process(value, sourceEl, source, context) {
   let result;
   try {
     result = await evaluate(createContext(context, {
+      expectResource: false,
       functionParameters: [sourceEl, source],
     }), value);
   } catch (err) {

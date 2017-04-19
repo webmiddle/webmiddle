@@ -58,6 +58,7 @@ async function process(value, sourceEl, source, context) {
   let result;
   try {
     result = await evaluate(createContext(context, {
+      expectResource: false,
       functionParameters: [sourceEl, source],
     }), value);
   } catch (err) {
@@ -84,6 +85,10 @@ async function JSONSelectToVirtual({
   name, from, fullConversion, children,
 }, context) {
   const source = from.content;
+
+  if (typeof fullConversion === 'undefined' && children.length === 0) {
+    throw new Error('Either "fullConversion" or "children" must be specified.');
+  }
 
   let targetChildren;
   if (fullConversion) {
