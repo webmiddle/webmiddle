@@ -83,8 +83,8 @@ test('callVirtual: resource overrides', async t => {
 test('registerService', t => {
   const Service = () => {};
   t.context.webmiddle.registerService('foo', Service);
-  t.truthy(t.context.webmiddle.service('foo'));
-  t.falsy(t.context.webmiddle.service('bar'));
+  t.is(typeof t.context.webmiddle.service('foo'), 'function');
+  t.is(typeof t.context.webmiddle.service('bar'), 'undefined');
 });
 
 test('registerService: must only accept functions', t => {
@@ -95,7 +95,7 @@ test('registerService: must only accept functions', t => {
 
 test('registerService: must support deep paths', t => {
   t.context.webmiddle.registerService('some.foo', () => {});
-  t.truthy(t.context.webmiddle.service('some').foo);
+  t.is(typeof t.context.webmiddle.service('some').foo, 'function');
 });
 
 test('services: with parent and constructor options', t => {
@@ -103,13 +103,13 @@ test('services: with parent and constructor options', t => {
   const webmiddle = new WebMiddle({
     parent: new WebMiddle({
       services: {
-        foo: <Service />,
+        foo: () => <Service />,
       },
     }),
   });
 
-  t.truthy(webmiddle.service('foo'));
-  t.falsy(webmiddle.service('bar'));
+  t.is(typeof webmiddle.service('foo'), 'function');
+  t.is(typeof webmiddle.service('bar'), 'undefined');
 });
 
 test('services: deep object', t => {
@@ -121,7 +121,7 @@ test('services: deep object', t => {
     },
   });
 
-  t.truthy(webmiddle.service('math.divide'));
+  t.is(typeof webmiddle.service('math.divide'), 'function');
 });
 
 test('services: must only accept functions as leafs', t => {
@@ -148,6 +148,29 @@ test('services: must return an object of services when path is broad', t => {
 
   const services = webmiddle.service('math');
   t.truthy(Object.keys(services).length === 2 && services.divide && services.multiply);
+});
+
+test('services: must return undefined when requesting one that does not exist', t => {
+  const webmiddle = new WebMiddle({
+    services: {
+      math: {
+        divide: ({ a, b }) => a / b,
+        multiply: ({ a, b }) => a * b,
+      },
+    },
+  });
+
+  const service = webmiddle.service('math.random');
+  t.is(typeof service, 'undefined');
+});
+
+test('services: must throw when passing a virtual instead of a function (common error)', t => {
+  const Service = () => {};
+  t.throws(() => new WebMiddle({
+    services: {
+      foo: <Service />,
+    },
+  }));
 });
 
 test('evaluate: NaN', async t => {

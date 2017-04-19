@@ -6,11 +6,12 @@ import cloneDeepWith from 'lodash.clonedeepwith';
 import isPlainObject from 'lodash.isplainobject';
 import merge from 'lodash.merge';
 import CookieManager from 'webmiddle-manager-cookie';
+import isVirtual from './utils/isVirtual';
 
 export { PropTypes };
 
 export isResource from './utils/isResource';
-export isVirtual from './utils/isVirtual';
+export { isVirtual };
 export createContext from './utils/createContext';
 export evaluate from './utils/evaluate';
 export callVirtual from './utils/callVirtual';
@@ -18,7 +19,7 @@ export pickDefaults from './utils/pickDefaults';
 export WithOptions from './utils/WithOptions';
 
 function mapObjectDeep(obj, onLeaf) {
-  if (typeof obj !== 'object' || obj === null) onLeaf(obj);
+  if (typeof obj !== 'object' || obj === null || isVirtual(obj)) return onLeaf(obj);
 
   const newObj = {};
   for (const prop of Object.keys(obj)) {
