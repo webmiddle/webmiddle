@@ -1,5 +1,6 @@
 import WebMiddle, { evaluate, createContext, isResource } from 'webmiddle';
 import superagent from 'superagent';
+import _ from 'lodash';
 
 async function requestServer(url, data = {}) {
   return new Promise((resolve, reject) => {
@@ -37,7 +38,7 @@ async function createServices(serverUrl) {
       props,
       options: context.options,
     });
-    services[path] = service;
+    _.set(services, path, service);
   });
   return services;
 }
