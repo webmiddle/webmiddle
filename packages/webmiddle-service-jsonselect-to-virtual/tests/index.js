@@ -37,6 +37,165 @@ const jsonResource = {
   ,
 };
 
+const virtualResource = {
+  "type": "root",
+  "attributes": {},
+  "children": [
+    [
+      [
+        {
+          "type": "id",
+          "attributes": {},
+          "children": [
+            "978-0641723445"
+          ]
+        },
+        {
+          "type": "cat",
+          "attributes": {},
+          "children": [
+            [
+              "book",
+              "hardcover"
+            ]
+          ]
+        },
+        {
+          "type": "name",
+          "attributes": {},
+          "children": [
+            "The Lightning Thief"
+          ]
+        },
+        {
+          "type": "author",
+          "attributes": {},
+          "children": [
+            "Rick Riordan"
+          ]
+        },
+        {
+          "type": "series_t",
+          "attributes": {},
+          "children": [
+            "Percy Jackson and the Olympians"
+          ]
+        },
+        {
+          "type": "sequence_i",
+          "attributes": {},
+          "children": [
+            1
+          ]
+        },
+        {
+          "type": "genre_s",
+          "attributes": {},
+          "children": [
+            "fantasy"
+          ]
+        },
+        {
+          "type": "inStock",
+          "attributes": {},
+          "children": [
+            true
+          ]
+        },
+        {
+          "type": "price",
+          "attributes": {},
+          "children": [
+            12.5
+          ]
+        },
+        {
+          "type": "pages_i",
+          "attributes": {},
+          "children": [
+            384
+          ]
+        }
+      ],
+      [
+        {
+          "type": "id",
+          "attributes": {},
+          "children": [
+            "978-1423103349"
+          ]
+        },
+        {
+          "type": "cat",
+          "attributes": {},
+          "children": [
+            [
+              "book",
+              "paperback"
+            ]
+          ]
+        },
+        {
+          "type": "name",
+          "attributes": {},
+          "children": [
+            "The Sea of Monsters"
+          ]
+        },
+        {
+          "type": "author",
+          "attributes": {},
+          "children": [
+            "Rick Riordan"
+          ]
+        },
+        {
+          "type": "series_t",
+          "attributes": {},
+          "children": [
+            "Percy Jackson and the Olympians"
+          ]
+        },
+        {
+          "type": "sequence_i",
+          "attributes": {},
+          "children": [
+            2
+          ]
+        },
+        {
+          "type": "genre_s",
+          "attributes": {},
+          "children": [
+            "fantasy"
+          ]
+        },
+        {
+          "type": "inStock",
+          "attributes": {},
+          "children": [
+            true
+          ]
+        },
+        {
+          "type": "price",
+          "attributes": {},
+          "children": [
+            6.49
+          ]
+        },
+        {
+          "type": "pages_i",
+          "attributes": {},
+          "children": [
+            304
+          ]
+        }
+      ]
+    ]
+  ]
+};
+
 test.beforeEach(t => {
   t.context.webmiddle = new WebMiddle();
 });
@@ -48,6 +207,58 @@ test('must throw if neither fullConversion and children are specified', async t 
       from={jsonResource}
     />
   ));
+});
+
+test('must default to null in case of evaluation exception', async t => {
+  const output = await evaluate(createContext(t.context.webmiddle),
+    <JSONSelectToVirtual
+      name="virtual"
+      from={jsonResource}
+    >
+      <name el=".name">
+        {el => el[3].toUpperCase()}
+      </name>
+    </JSONSelectToVirtual>
+  );
+
+  t.deepEqual(output.content, {
+    type: "root",
+    attributes: {},
+    children: [
+      {
+        type: "name",
+        attributes: {},
+        children: [
+          null,
+        ],
+      },
+    ],
+  });
+});
+
+test('undefined should be converted to null', async t => {
+  const output = await evaluate(createContext(t.context.webmiddle),
+    <JSONSelectToVirtual
+      name="virtual"
+      from={jsonResource}
+    >
+      <name el=".name">{el => el['not existing']}</name>
+    </JSONSelectToVirtual>
+  );
+
+  t.deepEqual(output.content, {
+    type: "root",
+    attributes: {},
+    children: [
+      {
+        type: "name",
+        attributes: {},
+        children: [
+          null,
+        ],
+      },
+    ],
+  });
 });
 
 test('must return a virtual resource', async t => {
@@ -72,164 +283,59 @@ test('fullconversion', async t => {
     />
   );
 
-  t.deepEqual(output.content, {
-    "type": "root",
-    "attributes": {},
-    "children": [
-      [
-        [
-          {
-            "type": "id",
-            "attributes": {},
-            "children": [
-              "978-0641723445"
-            ]
-          },
-          {
-            "type": "cat",
-            "attributes": {},
-            "children": [
-              [
-                "book",
-                "hardcover"
-              ]
-            ]
-          },
-          {
-            "type": "name",
-            "attributes": {},
-            "children": [
-              "The Lightning Thief"
-            ]
-          },
-          {
-            "type": "author",
-            "attributes": {},
-            "children": [
-              "Rick Riordan"
-            ]
-          },
-          {
-            "type": "series_t",
-            "attributes": {},
-            "children": [
-              "Percy Jackson and the Olympians"
-            ]
-          },
-          {
-            "type": "sequence_i",
-            "attributes": {},
-            "children": [
-              1
-            ]
-          },
-          {
-            "type": "genre_s",
-            "attributes": {},
-            "children": [
-              "fantasy"
-            ]
-          },
-          {
-            "type": "inStock",
-            "attributes": {},
-            "children": [
-              true
-            ]
-          },
-          {
-            "type": "price",
-            "attributes": {},
-            "children": [
-              12.5
-            ]
-          },
-          {
-            "type": "pages_i",
-            "attributes": {},
-            "children": [
-              384
-            ]
-          }
+  t.deepEqual(output.content, virtualResource);
+});
+
+test('fullConversion: children must be ignored', async t => {
+  const output = await evaluate(createContext(t.context.webmiddle),
+    <JSONSelectToVirtual
+      name="virtual"
+      from={jsonResource}
+      fullConversion
+    >
+      <name el=".name">{el => el[0]}</name>
+    </JSONSelectToVirtual>
+  );
+
+  t.deepEqual(output.content, virtualResource);
+});
+
+test('condition', async t => {
+  const resource = await evaluate(createContext(t.context.webmiddle),
+    <JSONSelectToVirtual
+      name="virtual"
+      from={jsonResource}
+    >
+      <name el=".name" condition={el => el.indexOf('Sea') !== -1}>
+        {el => el[0]}
+      </name>
+    </JSONSelectToVirtual>
+  );
+
+  t.deepEqual(resource.content, {
+    type: "root",
+    attributes: {},
+    children: [
+      {
+        type: "name",
+        attributes: {},
+        children: [
+          "The Sea of Monsters",
         ],
-        [
-          {
-            "type": "id",
-            "attributes": {},
-            "children": [
-              "978-1423103349"
-            ]
-          },
-          {
-            "type": "cat",
-            "attributes": {},
-            "children": [
-              [
-                "book",
-                "paperback"
-              ]
-            ]
-          },
-          {
-            "type": "name",
-            "attributes": {},
-            "children": [
-              "The Sea of Monsters"
-            ]
-          },
-          {
-            "type": "author",
-            "attributes": {},
-            "children": [
-              "Rick Riordan"
-            ]
-          },
-          {
-            "type": "series_t",
-            "attributes": {},
-            "children": [
-              "Percy Jackson and the Olympians"
-            ]
-          },
-          {
-            "type": "sequence_i",
-            "attributes": {},
-            "children": [
-              2
-            ]
-          },
-          {
-            "type": "genre_s",
-            "attributes": {},
-            "children": [
-              "fantasy"
-            ]
-          },
-          {
-            "type": "inStock",
-            "attributes": {},
-            "children": [
-              true
-            ]
-          },
-          {
-            "type": "price",
-            "attributes": {},
-            "children": [
-              6.49
-            ]
-          },
-          {
-            "type": "pages_i",
-            "attributes": {},
-            "children": [
-              304
-            ]
-          }
-        ]
-      ]
-    ]
+      },
+    ],
   });
+});
+
+test('condition: must throw if is not a function', async t => {
+  await t.throws(evaluate(createContext(t.context.webmiddle),
+    <JSONSelectToVirtual
+      name="virtual"
+      from={jsonResource}
+    >
+      <name el=".name" condition="true"></name>
+    </JSONSelectToVirtual>
+  ));
 });
 
 test('elGet', async t => {
