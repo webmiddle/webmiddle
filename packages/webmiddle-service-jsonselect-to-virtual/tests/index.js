@@ -1,8 +1,8 @@
 import test from 'ava';
-import JSONSelectToVirtual from '../src/index.js';
+import JSONSelectToVirtual, { helpers } from '../src/index.js';
 import WebMiddle, { evaluate, createContext } from 'webmiddle';
 
-// TODO: helpers
+const { elGet, elJoin, elMap, elPipe } = helpers;
 
 const jsonResource = {
   name: 'jsonResource',
@@ -50,7 +50,7 @@ test('must throw if neither fullConversion and children are specified', async t 
   ));
 });
 
-test('must return virtual resource', async t => {
+test('must return a virtual resource', async t => {
   const output = await evaluate(createContext(t.context.webmiddle),
     <JSONSelectToVirtual
       name="virtual"
@@ -229,5 +229,161 @@ test('fullconversion', async t => {
         ]
       ]
     ]
+  });
+});
+
+test('elGet', async t => {
+  const resource = await evaluate(createContext(t.context.webmiddle),
+    <JSONSelectToVirtual
+      name="virtual"
+      from={jsonResource}
+    >
+      <firstName el=".name">{elGet()}</firstName>
+    </JSONSelectToVirtual>
+  );
+
+  t.deepEqual(resource.content, {
+    type: "root",
+    attributes: {},
+    children: [
+      {
+        type: "firstName",
+        attributes: {},
+        children: [
+          "The Lightning Thief",
+        ],
+      },
+    ],
+  });
+});
+
+
+test('elGet: selector', async t => {
+  const resource = await evaluate(createContext(t.context.webmiddle),
+    <JSONSelectToVirtual
+      name="virtual"
+      from={jsonResource}
+    >
+      <firstName>{elGet('.name')}</firstName>
+    </JSONSelectToVirtual>
+  );
+
+  t.deepEqual(resource.content, {
+    type: "root",
+    attributes: {},
+    children: [
+      {
+        type: "firstName",
+        attributes: {},
+        children: [
+          "The Lightning Thief",
+        ],
+      },
+    ],
+  });
+});
+
+/*
+test('elGet: values', async t => {
+  // TODO
+});*/
+
+test('elJoin', async t => {
+  const resource = await evaluate(createContext(t.context.webmiddle),
+    <JSONSelectToVirtual
+      name="virtual"
+      from={jsonResource}
+    >
+      <names el=".name">{elJoin(', ')}</names>
+    </JSONSelectToVirtual>
+  );
+
+  t.deepEqual(resource.content, {
+    type: "root",
+    attributes: {},
+    children: [
+      {
+        type: "names",
+        attributes: {},
+        children: [
+          "The Lightning Thief, The Sea of Monsters",
+        ],
+      },
+    ],
+  });
+});
+
+
+test('elMap', async t => {
+  const resource = await evaluate(createContext(t.context.webmiddle),
+    <JSONSelectToVirtual
+      name="virtual"
+      from={jsonResource}
+    >
+      <names el=".name">
+        {elMap(el =>
+          <name>{el}</name>
+        )}
+      </names>
+    </JSONSelectToVirtual>
+  );
+
+  t.deepEqual(resource.content, {
+    type: "root",
+    attributes: {},
+    children: [
+      {
+        type: "names",
+        attributes: {},
+        children: [
+          [
+            {
+              type: "name",
+              attributes: {},
+              children: [
+                "The Lightning Thief"
+              ]
+            },
+            {
+              type: "name",
+              attributes: {},
+              children: [
+                "The Sea of Monsters"
+              ]
+            }
+          ]
+        ],
+      }
+    ],
+  });
+});
+
+test('elPipe', async t => {
+  const resource = await evaluate(createContext(t.context.webmiddle),
+    <JSONSelectToVirtual
+      name="virtual"
+      from={jsonResource}
+    >
+      <names el=".name">
+        {elPipe([
+          elJoin(', '),
+          text => text.toUpperCase(),
+        ])}
+      </names>
+    </JSONSelectToVirtual>
+  );
+
+  t.deepEqual(resource.content, {
+    type: "root",
+    attributes: {},
+    children: [
+      {
+        type: "names",
+        attributes: {},
+        children: [
+          "THE LIGHTNING THIEF, THE SEA OF MONSTERS",
+        ],
+      },
+    ],
   });
 });
