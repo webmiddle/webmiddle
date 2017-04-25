@@ -14,12 +14,12 @@ WebMiddle applications are written in a declarative, functional and modular way,
 
 Each service executes one particular task (or controls the execution of other tasks), by composing together other services in a tree-like structure of service calls.
 
-Multiple services targeting a particular website, web API, or collection of web resources, can be grouped together into so called **webmiddle objects**, to be reusable in different applications.  
+Multiple services targeting websites, web APIs or collection of web resources can be grouped together into so called **webmiddle objects**, to be reusable in different applications.  
 Each webmiddle object exposes settings accessible by all of its services and can be easily turned into a REST API for remote access.
 
 A typical webmiddle application is thus composed of **multiple layers** of webmiddle objects, each abstracting one or more sources of data, to produce a structured output with the **format of your choice**, that can be then consumed by the higher level. 
 
-These applications can range from simple web scrapers to complex web integration tools targeting both APIs, raw HTML pages, XML resources and so on.
+These applications can range from simple web scrapers to complex web integration tools targeting APIs, raw HTML pages, XML resources and so on.
 
 Read the [Documentation](https://webmiddle.github.io/docs/) for a detailed description.
 
@@ -109,7 +109,7 @@ evaluate(createContext(webmiddle, { expectResource: true }), (
 });
 ```
 
-This will give us an output like the following:
+This will give you an output like the following:
 
 ```json
 {
@@ -192,13 +192,15 @@ webmiddleClient('http://localhost:3000/') // "localhost" since we are using the 
 
 ## Multiple layers
 
+A typical webmiddle application is composed of multiple layers, each made of one or more webmiddle objects:
+
 ![Multi layer](https://webmiddle.github.io/assets/img/documentation/webmiddle_multi-layer.png "Multi layer")
 
 -> [Learn more](https://webmiddle.github.io/docs/multiple_layers.html)
 
 ## Core features
 
-Features currently provided via the core services and the WebMiddle class:
+Features currently provided via the core packages:
 
 - **Concurrency**, for executing multiple asynchronous services at the same time.
 - **HTTP** requests.
@@ -216,7 +218,7 @@ Create your own services and webmiddles and share them with the community as nod
 
 One of the main philosophies of the framework is **reuse**, by creating an ecosystem where webmiddles for websites, services, converters and so on can be published as separate npm modules, so that they can be used in other projects.
 
-**NOTE**: If you think a service / feature is so common and general that it should be in the core, [open an issue](https://github.com/webmiddle/webmiddle/issues/new) or just do a pull request!
+**NOTE**: If you think that a service / feature is so common and general that it should be in the core, [open an issue](https://github.com/webmiddle/webmiddle/issues/new) or just do a pull request!
 
 ## Future improvements
 
