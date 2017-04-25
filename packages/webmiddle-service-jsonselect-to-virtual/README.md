@@ -118,3 +118,4 @@ Name                       | Description
 name                       | The name of the returned resource.
 from                       | The JSON resource to convert.
 fullConversion (optional)  | Set this to true to do a 1:1 conversion, without having to specify a schema.
+children (optional)        | The conversion schema.
