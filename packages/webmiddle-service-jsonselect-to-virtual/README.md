@@ -93,6 +93,7 @@ they will be **processed** in the same way of CheerioToVirtual:
 -   **(default): any other value is kept as is.**
 
 <br />
+
 **Helper functions:**
 
 -   **elGet(selector, values):** if selector is set, then it starts by
