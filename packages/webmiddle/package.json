@@ -60,7 +60,7 @@
     "lodash.merge": "^4.6.0",
     "lodash.set": "^4.3.2",
     "lodash.sortby": "^4.7.0",
-    "proptypes": "^0.14.3",
+    "proptypes": "^1.0.0",
     "virtual-element": "^1.2.0",
     "webmiddle-manager-cookie": "^0.1.1"
   },
