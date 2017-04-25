@@ -8,13 +8,18 @@
 
 > Node.js JSX framework for modular web scraping and data integration 
 
-WebMiddle is a [JSX](https://facebook.github.io/react/docs/introducing-jsx.html)-driven [Node.js](https://nodejs.org/) framework for extracting, transforming and processing web data from multiple heterogeneous sources, using a multi-layer approach, where each web middleware, or **webmiddle**, abstracts one or more sources of data, to produce a structured output with the format of your choice, that can be then consumed by the higher-level middleware.
+WebMiddle is a [Node.js](https://nodejs.org/) framework for extracting, transforming and combining web data from multiple websites, web APIs and web resources.
 
-Each web middleware is implemented via JSX services, leading to a highly composable, extensible and declarative approach.
+WebMiddle applications are written in a declarative, functional and modular way, by using its most evident aspect: **[JSX](https://facebook.github.io/react/docs/introducing-jsx.html) services**.
 
-You can create complex wrappers and applications by registering multiple services to a webmiddle instance, specify settings and evaluate options, composing webmiddles and much more!
+Each service executes one particular task (or controls the execution of other tasks), by composing together other services in a tree-like structure of service calls.
 
-These applications can range from simple web scrapers to web integration tools targeting both APIs, raw HTML pages, XML resources and so on.
+Multiple services targeting a particular website, web API, or collection of web resources, can be grouped together into so called **webmiddle objects**, to be reusable in different applications.  
+Each webmiddle object exposes settings accessible by all of its services and can be easily turned into a REST API for remote access.
+
+A typical webmiddle application is thus composed of **multiple layers** of webmiddle objects, each abstracting one or more sources of data, to produce a structured output with the **format of your choice**, that can be then consumed by the higher level. 
+
+These applications can range from simple web scrapers to complex web integration tools targeting both APIs, raw HTML pages, XML resources and so on.
 
 Read the [Documentation](https://webmiddle.github.io/docs/) for a detailed description.
 
@@ -131,7 +136,7 @@ This will give us an output like the following:
 
 ## Remote execution
 
-WebMiddle objects can be easily turned into REST APIs thanks to the `webmiddle-server` package, allowing remote access via HTTP.
+WebMiddle objects can be easily turned into REST APIs by using the `webmiddle-server` package, allowing remote access via HTTP.
 
 Suppose you have the following webmiddle:
 
@@ -188,8 +193,6 @@ webmiddleClient('http://localhost:3000/') // "localhost" since we are using the 
 ## Multiple layers
 
 ![Multi layer](https://webmiddle.github.io/assets/img/documentation/webmiddle_multi-layer.png "Multi layer")
-
-This separation of concerns might seem cumbersome, but it makes possible to reuse the same site webmiddle in all sorts of projects, by writing handlers that are often small and that in any case are wrapping content which is already semantic and supposedly well documented (differently than HTML pages).
 
 -> [Learn more](https://webmiddle.github.io/docs/multiple_layers.html)
 
