@@ -29,15 +29,6 @@ test.beforeEach(t => {
   t.context.webmiddle = new WebMiddle();
 });
 
-test('must throw if no children is specified', async t => {
-  await t.throws(evaluate(createContext(t.context.webmiddle),
-    <CheerioToJson
-      name="virtual"
-      from={xmlResource}
-    />
-  ));
-});
-
 test('must return a json resource', async t => {
   const output = await evaluate(createContext(t.context.webmiddle),
     <CheerioToJson
