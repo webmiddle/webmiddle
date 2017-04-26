@@ -94,6 +94,10 @@ This means that anyone can contribute by adding new services for doing the more 
 
 ## WebMiddle objects
 
+A webmiddle can be seen as a container of related services plus settings to support them, for example you may have a webmiddle for a site, a webmiddle for a project and so on.
+
+A webmiddle application will always have at least one webmiddle object, i.e. a root object, which might even have no services associated to it. The reasoning is that the system provides a way of evaluating services that aren’t associated to any webmiddle; in such a case, the root webmiddle takes ownership of the service for all the time required to evaluate it.
+
 ```jsx
 const webmiddle = new WebMiddle();
 
