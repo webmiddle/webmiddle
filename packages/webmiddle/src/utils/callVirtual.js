@@ -105,7 +105,7 @@ export default async function callVirtual(context, virtual) {
   };
   // calculate new options:
   // 1) context options
-  // 3) service options
+  // 2) service options
   // the final options are obtained by merging.
   const serviceOptions = (service && service.options) ? service.options : {};
   [serviceOptions].forEach(moreOptions => {
