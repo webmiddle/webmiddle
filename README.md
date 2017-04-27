@@ -136,7 +136,7 @@ This will give you an output like the following:
 }
 ```
 
--> [Learn more](https://webmiddle.github.io/docs/technical_documentation/webmiddle.html)
+-> [Learn more](https://webmiddle.github.io/docs/webmiddle_objects.html)
 
 ## Remote execution
 
