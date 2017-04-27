@@ -1,6 +1,6 @@
 {
   "name": "webmiddle-service-virtual-to-json",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -53,7 +53,7 @@
   "license": "MIT",
   "dependencies": {
     "lodash.values": "^4.1.0",
-    "webmiddle": "^0.1.1"
+    "webmiddle": "^0.2.0"
   },
   "devDependencies": {
     "ava": "^0.19.1",

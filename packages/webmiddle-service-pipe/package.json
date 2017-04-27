@@ -1,6 +1,6 @@
 {
   "name": "webmiddle-service-pipe",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -52,7 +52,7 @@
   "repository": "webmiddle/webmiddle",
   "license": "MIT",
   "dependencies": {
-    "webmiddle": "^0.1.1"
+    "webmiddle": "^0.2.0"
   },
   "devDependencies": {
     "ava": "^0.19.1",

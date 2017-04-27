@@ -1,6 +1,6 @@
 {
   "name": "webmiddle",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -62,7 +62,7 @@
     "lodash.sortby": "^4.7.0",
     "proptypes": "^1.0.0",
     "virtual-element": "^1.2.0",
-    "webmiddle-manager-cookie": "^0.1.1"
+    "webmiddle-manager-cookie": "^0.2.0"
   },
   "devDependencies": {
     "ava": "^0.19.1",
