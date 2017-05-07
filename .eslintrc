@@ -6,6 +6,12 @@
     "dot-notation": 0,
     "no-param-reassign": 0,
     "no-shadow": 1,
-    "no-use-before-define": 1
+    "no-use-before-define": 1,
+
+    "class-methods-use-this": 1,
+    "arrow-parens": 1,
+    "no-underscore-dangle": 1,
+    "react/jsx-filename-extension": 0,
+    "arrow-body-style": 1
   }
 }

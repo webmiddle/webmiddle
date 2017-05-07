@@ -56,7 +56,9 @@
     "cors": "^2.8.1",
     "express": "^4.14.1",
     "lodash": "^4.17.4",
-    "webmiddle": "^0.2.0"
+    "uuid": "^3.0.1",
+    "webmiddle": "^0.2.0",
+    "ws": "^2.3.1"
   },
   "devDependencies": {
     "ava": "^0.19.1",
