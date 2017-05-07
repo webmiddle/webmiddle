@@ -76,7 +76,7 @@ export default class Server {
             }
           } catch (err) {
             console.error(err instanceof Error ? err.stack : err);
-            res.sendStatus(500).send(err instanceof Error ? err.stack : err);
+            res.status(500).send(err instanceof Error ? err.stack : err);
           }
         });
       });

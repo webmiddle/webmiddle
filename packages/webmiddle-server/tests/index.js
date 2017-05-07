@@ -133,6 +133,18 @@ test('Execute service via WEBSOCKET', async t => {
   });
 });
 
+test('Must throw when executing a non existing service via GET', async t => {
+  await t.throws(requestExpress('GET', '/services/wrongUndefinedService?a=5&b=10'));
+});
+
+test('Must throw when executing a non existing service via POST', async t => {
+  await t.throws(requestExpress('POST', '/services/wrongUndefinedService'));
+});
+
+test('Must throw when executing a non existing service via WEBSOCKET', async t => {
+  await t.throws(requestWebsocket('/services/wrongUndefinedService'));
+});
+
 test('Pass context options to service via POST', async t => {
   const resource = await requestExpress('POST', '/services/returnOption', {
     props: {
