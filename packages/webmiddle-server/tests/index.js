@@ -13,7 +13,7 @@ function requestExpress(method, path, data = {}) {
       .send(data)
       .end((err, res) => {
         if (err) reject(err);
-        resolve(res.body);
+        else resolve(res.body);
       });
   });
 }
