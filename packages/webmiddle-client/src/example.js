@@ -1,7 +1,11 @@
 import webmiddleClient from './index';
 import WebMiddle, { evaluate, createContext } from 'webmiddle';
 
-webmiddleClient('http://localhost:3000/')
+webmiddleClient({
+  protocol: 'http',
+  hostname: 'localhost',
+  port: '3000',
+})
 .then(webmiddleRemote => {
   const Multiply = webmiddleRemote.service('multiply');
 
