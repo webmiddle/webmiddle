@@ -16,7 +16,12 @@ Given a [webmiddle-server](https://github.com/webmiddle/webmiddle/tree/master/pa
 import webmiddleClient from 'webmiddle-client';
 import WebMiddle, { evaluate, createContext } from 'webmiddle';
 
-webmiddleClient('http://localhost:3000/') // "localhost" since we are using the same machine in this example
+// "localhost" since the server is in the same machine in this example
+webmiddleClient({
+  protocol: 'http',
+  hostname: 'localhost',
+  port: '3000',
+})
 .then(webmiddleRemote => {
   // you can now use webmiddleRemote just like a normal webmiddle
   // e.g. if the remote webmiddle has a Multiply service registered at path "math.multiply"
@@ -39,7 +44,14 @@ webmiddleClient('http://localhost:3000/') // "localhost" since we are using the 
 
 ## How it works
 
-Under the hood, it uses the `web-server` REST API to fetch the list of service paths.
+Under the hood, it uses the `web-server` REST API (HTTP or WebSocket) to fetch the list of service paths.
 
-For each path, it then creates a local version of the remote service, that, when evaluated, executes an HTTP request to the web-server,
+For each path, it then creates a local version of the remote service, that, when evaluated, executes an HTTP or WebSocket request to the web-server,
 asking it to execute the remote service at that path. The response is used as the service output.
+
+### Constructor parameters
+
+The constructor takes a single options object with the following properties:
+- **protocol**: can be either "http" or "ws". Defaults to "ws".
+- **hostname**: defaults to "localhost".
+- **port**: defaults to 3000.
