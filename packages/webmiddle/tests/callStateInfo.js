@@ -186,3 +186,52 @@ test('service returning virtual (virtual -> service -> virtual -> service)', asy
     }
   ]);
 });
+
+test('must emit "add" events with correct paths', async t => {
+  const Service = () => 'yes';
+  const virtual = <Service a={10} b={20} />;
+
+  const context = createContext(t.context.webmiddle);
+
+  const addData = [];
+  context._rootEmitter.on('callStateInfo:add', (data) => addData.push(data));
+
+  const output = await evaluate(context, virtual);
+
+  t.deepEqual(addData, [
+    {
+      path: '0',
+      info: {
+        type: 'virtual',
+        value: virtual,
+        options: {},
+        children: [
+          {
+            type: 'service',
+            value: Service,
+            options: {
+              props: { a: 10, b: 20, children: [] },
+              tries: 1,
+            },
+            children: [],
+            result: output,
+          }
+        ],
+        result: output,
+      }
+    },
+    {
+      path: '0.0',
+      info: {
+        type: 'service',
+        value: Service,
+        options: {
+          props: { a: 10, b: 20, children: [] },
+          tries: 1,
+        },
+        children: [],
+        result: output,
+      }
+    }
+  ]);
+});

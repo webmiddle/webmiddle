@@ -1,3 +1,5 @@
+import EventEmitter from 'events';
+
 export default function createContext(webmiddleOrContext, options = {}) {
   if (webmiddleOrContext._isContext) {
     return {
@@ -13,7 +15,9 @@ export default function createContext(webmiddleOrContext, options = {}) {
   return {
     _isContext: true,
     _callState: callState,
+    _callStateParentPath: '',
     _callStateRoot: callState,
+    _rootEmitter: new EventEmitter(),
 
     webmiddle: webmiddleOrContext,
     options,
