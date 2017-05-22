@@ -77,6 +77,7 @@ async function callService(service, props, context, tries = 1) {
     if (tries === retries + 1) {
       // last resort
       let catchExpr = context.options.catch;
+      if (typeof catchExpr === 'undefined') throw err;
       try {
         return await call(() => {
           if (typeof catchExpr === 'function') catchExpr = catchExpr(err);

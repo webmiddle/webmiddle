@@ -378,3 +378,11 @@ test('catch (createContext from context)', async t => {
 
   t.is(output, 10, 'exception handler is passed down the service call chain');
 });
+
+test('must throw when there is no catch', async t => {
+  const Service = () => {
+    throw new Error('expected throw');
+  };
+
+  await t.throws(evaluate(createContext(t.context.webmiddle), <Service />));
+});
