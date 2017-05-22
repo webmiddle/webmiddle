@@ -1,4 +1,4 @@
-import createContext from './createContext';
+import call from './call';
 
 // extracted from https://github.com/developit/propTypes README
 function validateProps(props, propTypes, service) {
@@ -58,9 +58,18 @@ function getLinkedWebmiddle(webmiddle, newWebmiddle) {
 // TODO: use evaluate for retries and catch?
 async function callService(service, props, context, tries = 1) {
   try {
-    const result = await service(props, context);
-    return result;
+    // "await" needed to throw here in case of error
+    return await call((newContext) => {
+      return service(props, newContext);
+    }, context, {
+      type: 'service',
+      value: service,
+      options: { props, tries },
+    });
   } catch (err) {
+    // Note: still use the old context in case of error
+    // since the tries should show as a list in the callState
+
     let retries = context.options.retries;
     if (typeof retries === 'function') retries = retries(err);
     retries = (await retries) || 0;
@@ -68,11 +77,18 @@ async function callService(service, props, context, tries = 1) {
     if (tries === retries + 1) {
       // last resort
       let catchExpr = context.options.catch;
-      if (typeof catchExpr === 'function') catchExpr = catchExpr(err);
-      catchExpr = await catchExpr;
-      if (typeof catchExpr !== 'undefined') return catchExpr;
-
-      throw err;
+      try {
+        return await call(() => {
+          if (typeof catchExpr === 'function') catchExpr = catchExpr(err);
+          return catchExpr;
+        }, context, {
+          type: 'catch',
+          value: catchExpr,
+          options: { service, props },
+        });
+      } catch (err) {
+        throw err;
+      }
     }
     const retriesLeft = retries - (tries - 1);
     console.error((err instanceof Error) ? err.stack : err);
@@ -120,7 +136,14 @@ export default async function callVirtual(context, virtual) {
     validateProps(props, service.propTypes, service);
   }
 
-  const result = service ? await callService(service, props, context) : virtual;
+  let result;
+  if (service) {
+    const callServiceReturn = await callService(service, props, context);
+    result = callServiceReturn.result;
+    context = callServiceReturn.context;
+  } else {
+    result = virtual;
+  }
 
   return { result, context, linkedWebmiddle };
 };
