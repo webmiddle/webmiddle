@@ -194,7 +194,9 @@ test('must emit "add" events with correct paths', async t => {
   const context = createContext(t.context.webmiddle);
 
   const addData = [];
-  context._rootEmitter.on('callStateInfo:add', (data) => addData.push(data));
+  context.rootEmitter.on('message', (message) => {
+    if (message.topic === 'callStateInfo:add') addData.push(message.data);
+  });
 
   const output = await evaluate(context, virtual);
 

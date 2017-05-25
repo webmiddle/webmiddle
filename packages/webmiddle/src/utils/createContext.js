@@ -17,7 +17,7 @@ export default function createContext(webmiddleOrContext, options = {}) {
     _callState: callState,
     _callStateParentPath: '',
     _callStateRoot: callState,
-    _rootEmitter: new EventEmitter(),
+    rootEmitter: new EventEmitter(),
 
     webmiddle: webmiddleOrContext,
     options,

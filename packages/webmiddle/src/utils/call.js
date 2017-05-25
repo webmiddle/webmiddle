@@ -18,9 +18,12 @@ export default async function call(fn, context, info) {
 
   const callStateInfoPath = makeCallStateInfoPath(context);
 
-  context._rootEmitter.emit('callStateInfo:add', {
-    path: callStateInfoPath,
-    info: callStateInfo,
+  context.rootEmitter.emit('message', {
+    topic: 'callStateInfo:add',
+    data: {
+      path: callStateInfoPath,
+      info: callStateInfo,
+    },
   });
 
   const newContext = {
