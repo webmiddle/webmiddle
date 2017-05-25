@@ -1,10 +1,11 @@
-import WebMiddle, { evaluate, createContext, isResource } from 'webmiddle'; // needed for JSX
+import WebMiddle, { evaluate, createContext, isResource } from 'webmiddle';
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import _ from 'lodash';
 import WebSocket from 'ws';
 import uuid from 'uuid';
+import { transformCallStateInfo } from './utils/transform';
 
 function httpToServicePath(path) {
   if (path.startsWith('/')) path = path.slice(1);
@@ -107,7 +108,18 @@ export default class Server {
           const props = message.body.props || {};
           const options = message.body.options || {};
 
-          const output = await this.handlersByType[type].call(this, path, props, options);
+          const output = await this.handlersByType[type].call(this, path, props, options, (message) => {
+            ws.send(JSON.stringify({
+              type: 'progress',
+              status: message.topic,
+              requestId,
+              body: {
+                ...message.data,
+                info: transformCallStateInfo(message.data && message.data.info),
+              }
+            }));
+          });
+
           let jsonOutput;
           if (isResource(output)) {
             jsonOutput = output;
@@ -146,7 +158,7 @@ export default class Server {
     };
   }
 
-  async _handleService(path, props, options) {
+  async _handleService(path, props, options, onMessage) {
     if (!path) {
       return {
         name: 'services',
@@ -157,7 +169,11 @@ export default class Server {
 
     const Service = this.webmiddle.service(path);
     if (!Service) throw new Error('Service not found');
-    return evaluate(createContext(this.webmiddle, options), <Service {...props} />);
+
+    const context = createContext(this.webmiddle, options);
+    if (onMessage) context.rootEmitter.on('message', onMessage);
+
+    return evaluate(context, <Service {...props} />);
   }
 
   async _handleSetting(path) {

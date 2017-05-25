@@ -34,7 +34,7 @@ function getWebsocketConnection() {
   return wsPromise;
 }
 
-function requestWebsocket(path, body = {}) {
+function requestWebsocket(path, body = {}, onProgress) {
   return getWebsocketConnection().then(ws => {
     return new Promise((resolve, reject) => {
       try {
@@ -43,12 +43,18 @@ function requestWebsocket(path, body = {}) {
         ws.on('message', (rawMessage) => {
           //console.log('received from server: %s', rawMessage);
           const message = JSON.parse(rawMessage);
-          if (message.type !== 'response' || message.requestId !== requestId) return;
+          if (message.requestId !== requestId) return;
 
-          if (message.status === 'success') {
-            resolve(message.body);
-          } else if (message.status === 'error') {
-            reject(message.body);
+          if (message.type === 'progress') {
+            if (onProgress) onProgress(message);
+          }
+
+          if (message.type === 'response') {
+            if (message.status === 'success') {
+              resolve(message.body);
+            } else if (message.status === 'error') {
+              reject(message.body);
+            }
           }
         });
 
@@ -169,6 +175,23 @@ test('Pass context options to service via WEBSOCKET', async t => {
   });
   t.is(resource.contentType, 'x-webmiddle-any');
   t.is(resource.content, 5);
+});
+
+test('Get progress when executing a service via WEBSOCKET', async t => {
+  const progressData = [];
+  function handleProgress(message) {
+    progressData.push(message.body);
+  }
+
+  await requestWebsocket('/services/math/multiply', {
+    props: {
+      a: 20,
+      b: 5,
+    }
+  }, handleProgress);
+
+  t.is(progressData[0].path, '0');
+  t.true(typeof progressData[0].info === 'object' && progressData[0].info !== null);
 });
 
 test('Read setting via GET', async t => {
