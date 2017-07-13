@@ -4,14 +4,13 @@ import { isResource, isVirtual } from 'webmiddle';
 const DEFAULT_RECURSION = 1;
 
 function transformVirtual(virtual, recursion = DEFAULT_RECURSION) {
-  // always include the minimal info regardless of recursion
-  // (full info can be loaded lazily)
-  const transformedValue = mapValues(virtual, (v, k) => {
-    return transformValue(v,
-      k === 'children' ? 0 : // always omit children
-      k === 'attributes' ? Math.max(1, recursion - 1) : // always include attributes
-      Math.max(0, recursion - 1));
-  });
+  const transformedValue = {
+    type: transformValue(virtual.type, Math.max(0, recursion - 1)),
+    attributes: mapValues(virtual.attributes, (attrValue) => // always include attributes
+      transformValue(attrValue, Math.max(0, recursion - 1))
+    ),
+    children: transformValue(virtual.children, 0), // always omit children
+  };
 
   return {
     type: 'virtual',
@@ -20,11 +19,11 @@ function transformVirtual(virtual, recursion = DEFAULT_RECURSION) {
 }
 
 function transformResource(resource, recursion = DEFAULT_RECURSION) {
-  // always include the minimal info regardless of recursion
-  // (full info can be loaded lazily)
-  const transformedValue = mapValues(resource, (v, k) => {
-    return transformValue(v, k === 'content' ? 0 : Math.max(0, recursion - 1));
-  });
+  const transformedValue = {
+    name: resource.name,
+    contentType: resource.contentType,
+    content: transformValue(resource.content, 0), // always omit content
+  };
 
   return {
     type: 'resource',
@@ -81,5 +80,37 @@ export function transformValue(value, recursion = DEFAULT_RECURSION) {
 
 export function transformCallStateInfo(info) {
   if (!info) return undefined;
-  return mapValues(info, (v) => transformValue(v));
+
+  function transformInfoValue(type, value) {
+    if (type === 'virtual') {
+      // value is the virtual
+      return transformValue(value).value;
+    }
+
+    return transformValue(value);
+  }
+
+  function transformInfoOptions(type, options) {
+    if (type === 'service') {
+      // props, tries
+      return {
+        props: mapValues(options.props, propValue =>
+          transformValue(propValue, 0),
+        ),
+        tries: options.tries,
+      };
+    }
+
+    return mapValues(options, optionValue =>
+      transformValue(optionValue),
+    );
+  }
+
+  // type, value, options, children
+  return {
+    type: info.type,
+    value: transformInfoValue(info.type, info.value),
+    options: transformInfoOptions(info.type, info.options),
+    children: info.children.map(child => transformValue(child, 0)),
+  };
 }

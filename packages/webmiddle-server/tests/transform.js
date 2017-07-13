@@ -202,11 +202,8 @@ test('virtual (recursion = 0, depth = 1)', async (t) => {
         value: 'div',
       },
       attributes: {
-        type: 'object',
-        value: {
-          a: { type: 'number', value: 0 },
-          b: { type: 'number', value : 1 },
-        },
+        a: { type: 'number', value: 0 },
+        b: { type: 'number', value : 1 },
       },
       children: {
         type: 'array',
@@ -227,11 +224,8 @@ test('virtual (recursion = 1, depth = 1)', async (t) => {
         value: 'div',
       },
       attributes: {
-        type: 'object',
-        value: {
-          a: { type: 'number', value: 0 },
-          b: { type: 'number', value: 1 },
-        },
+        a: { type: 'number', value: 0 },
+        b: { type: 'number', value: 1 },
       },
       children: {
         type: 'array',
@@ -251,13 +245,10 @@ test('virtual (recursion = 1, depth = 2)', async (t) => {
         value: 'div',
       },
       attributes: {
-        type: 'object',
-        value: {
-          a: { type: 'number', value: 0 },
-          b: {
-            type: 'object',
-            value: undefined
-          },
+        a: { type: 'number', value: 0 },
+        b: {
+          type: 'object',
+          value: undefined,
         },
       },
       children: {
@@ -279,13 +270,10 @@ test('virtual (recursion = 2, depth = 2)', async (t) => {
         value: 'div',
       },
       attributes: {
-        type: 'object',
-        value: {
-          a: { type: 'number', value: 0 },
-          b: {
-            type: 'object',
-            value: undefined,
-          },
+        a: { type: 'number', value: 0 },
+        b: {
+          type: 'object',
+          value: undefined,
         },
       },
       children: {
@@ -305,14 +293,8 @@ test('resource (recursion = 0, depth = 1)', async (t) => {
   }, 0), {
     type: 'resource',
     value: {
-      name: {
-        type: 'string',
-        value: 'result'
-      },
-      contentType: {
-        type: 'string',
-        value: 'application/json'
-      },
+      name: 'result',
+      contentType: 'application/json',
       content: {
         type: 'object',
         value: undefined,
@@ -330,14 +312,8 @@ test('resource (recursion = 1, depth = 1)', async (t) => {
   }, 1), {
     type: 'resource',
     value: {
-      name: {
-        type: 'string',
-        value: 'result'
-      },
-      contentType: {
-        type: 'string',
-        value: 'application/json'
-      },
+      name: 'result',
+      contentType: 'application/json',
       content: {
         type: 'object',
         value: undefined,
@@ -355,14 +331,8 @@ test('resource (recursion = 1, depth = 2)', async (t) => {
   }, 1), {
     type: 'resource',
     value: {
-      name: {
-        type: 'string',
-        value: 'result'
-      },
-      contentType: {
-        type: 'string',
-        value: 'application/json'
-      },
+      name: 'result',
+      contentType: 'application/json',
       content: {
         type: 'object',
         value: undefined,
@@ -380,14 +350,8 @@ test('resource (recursion = 2, depth = 2)', async (t) => {
   }, 1), {
     type: 'resource',
     value: {
-      name: {
-        type: 'string',
-        value: 'result'
-      },
-      contentType: {
-        type: 'string',
-        value: 'application/json'
-      },
+      name: 'result',
+      contentType: 'application/json',
       content: {
         type: 'object',
         value: undefined,
@@ -396,7 +360,7 @@ test('resource (recursion = 2, depth = 2)', async (t) => {
   });
 });
 
-test('callStateInfo', async (t) => {
+test('callStateInfo: service', async (t) => {
   t.deepEqual(transformCallStateInfo({
     type: 'service',
     value: function fn() {},
@@ -406,32 +370,62 @@ test('callStateInfo', async (t) => {
     },
     children: [],
   }), {
-    type: {
-      type: 'string',
-      value: 'service',
-    },
+    type: 'service',
     value: {
       type: 'function',
       name: 'fn',
       value: undefined,
     },
     options: {
-      type: 'object',
-      value: {
-        props: {
+      props: {
+        a: { type: 'number', value: 0 },
+        b: {
           type: 'object',
           value: undefined,
-        },
-        tries: {
+        }
+      },
+      tries: 1,
+    },
+    children: [],
+  });
+});
+
+test('callStateInfo: virtual', async (t) => {
+  const Service = () => {};
+
+  console.log(JSON.stringify(transformCallStateInfo({
+    type: 'virtual',
+    value: <Service a={1} />,
+    options: {},
+    children: [],
+  })));
+
+  t.deepEqual(transformCallStateInfo({
+    type: 'virtual',
+    value: <Service a={1} />,
+    options: {},
+    children: [],
+  }), {
+    type: 'virtual',
+    value: {
+      type: {
+        type: 'function',
+        name: 'Service',
+        value: undefined,
+      },
+      attributes: {
+        a: {
           type: 'number',
           value: 1,
-        },
-      }
+        }
+      },
+      children: {
+        type: 'array',
+        length: 0,
+        value: undefined,
+      },
     },
-    children: {
-      type: 'array',
-      length: 0,
-      value: [],
-    }
+    options: {},
+    children: [],
   });
 });
