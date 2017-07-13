@@ -1,7 +1,12 @@
 {
   "parser": "babel-eslint",
-  "extends": "airbnb",
+  "extends": ["airbnb", "prettier"],
+  "plugins": [
+    "prettier"
+  ],
   "rules": {
+    "prettier/prettier": "error",
+
     "react/react-in-jsx-scope": 0,
     "dot-notation": 0,
     "no-param-reassign": 0,

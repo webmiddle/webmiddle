@@ -1,38 +1,40 @@
 // Note: this should be called AFTER the info has been pushed
 function makeCallStateInfoPath(context) {
-  const pathPrefix = context._callStateParentPath ? '.' : '';
-  return context._callStateParentPath + pathPrefix + (context._callState.length - 1);
+  const pathPrefix = context._callStateParentPath ? "." : "";
+  return (
+    context._callStateParentPath + pathPrefix + (context._callState.length - 1)
+  );
 }
 
 export default async function call(fn, context, info) {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === "production") {
     return { result: await fn(context), context };
   }
 
   const callStateInfo = {
     options: {},
     children: [],
-    ...info,
+    ...info
   };
   context._callState.push(callStateInfo);
 
   const callStateInfoPath = makeCallStateInfoPath(context);
 
-  context.rootEmitter.emit('message', {
-    topic: 'callStateInfo:add',
+  context.rootEmitter.emit("message", {
+    topic: "callStateInfo:add",
     data: {
       path: callStateInfoPath,
-      info: callStateInfo,
-    },
+      info: callStateInfo
+    }
   });
 
   const newContext = {
     ...context,
     _callState: callStateInfo.children,
-    _callStateParentPath: callStateInfoPath,
+    _callStateParentPath: callStateInfoPath
   };
 
-  const result = callStateInfo.result = await fn(newContext);
+  const result = (callStateInfo.result = await fn(newContext));
 
   return { result, context: newContext };
 }

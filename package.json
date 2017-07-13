@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "test": "cross-env NODE_ENV=test nyc lerna run test"
+    "test": "cross-env NODE_ENV=test nyc lerna run test",
+    "precommit": "lint-staged"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
@@ -21,18 +22,24 @@
     "cross-env": "^4.0.0",
     "eslint": "^3.19.0",
     "eslint-config-airbnb": "^14.1.0",
+    "eslint-config-prettier": "^2.3.0",
     "eslint-plugin-import": "^2.2.0",
     "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-prettier": "^2.1.2",
     "eslint-plugin-react": "^6.10.3",
+    "husky": "^0.14.3",
     "lerna": "2.0.0-rc.1",
+    "lint-staged": "^4.0.1",
     "nyc": "^10.2.0",
+    "prettier": "^1.5.2",
     "rimraf": "^2.6.1"
   },
   "nyc": {
-    "include": [
-      "packages/*/src/**"
-    ],
+    "include": ["packages/*/src/**"],
     "sourceMap": false,
     "instrument": false
+  },
+  "lint-staged": {
+    "*.js": ["prettier --write", "git add"]
   }
 }
