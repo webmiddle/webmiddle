@@ -192,6 +192,9 @@ test("Get progress when executing a service via WEBSOCKET", async t => {
       props: {
         a: 20,
         b: 5
+      },
+      options: {
+        debug: true
       }
     },
     handleProgress
