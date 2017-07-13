@@ -1,3 +1,3 @@
-import VirtualToJson from './VirtualToJson';
+import VirtualToJson from "./VirtualToJson";
 
 export default VirtualToJson;

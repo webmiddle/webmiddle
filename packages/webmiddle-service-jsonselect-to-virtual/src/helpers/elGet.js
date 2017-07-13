@@ -1,4 +1,4 @@
-import JSONSelect from 'JSONSelect';
+import JSONSelect from "JSONSelect";
 
 // selector and values are optional
 export function elGet(selector, values) {

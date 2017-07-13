@@ -1,3 +1,3 @@
-import Pipe from './Pipe';
+import Pipe from "./Pipe";
 
 export default Pipe;

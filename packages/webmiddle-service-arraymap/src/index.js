@@ -1,3 +1,3 @@
-import ArrayMap from './ArrayMap';
+import ArrayMap from "./ArrayMap";
 
 export default ArrayMap;

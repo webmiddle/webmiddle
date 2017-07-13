@@ -1,21 +1,25 @@
-import WebMiddle, { evaluate, createContext, isResource } from 'webmiddle';
-import superagent from 'superagent';
-import _ from 'lodash';
-import WebSocket from 'ws';
-import uuid from 'uuid';
+import WebMiddle, { evaluate, createContext, isResource } from "webmiddle";
+import superagent from "superagent";
+import _ from "lodash";
+import WebSocket from "ws";
+import uuid from "uuid";
 
 function appendPathToUrl(url, path) {
-  return (url.endsWith('/') ? url.slice(0, -1) : url) +
-    (path.startsWith('/') ? path : '/' + path);
+  return (
+    (url.endsWith("/") ? url.slice(0, -1) : url) +
+    (path.startsWith("/") ? path : "/" + path)
+  );
 }
 
 export default async function webmiddleClient(options = {}) {
-  const protocol = options.protocol || 'ws';
-  const hostname = options.hostname || 'locahost';
+  const protocol = options.protocol || "ws";
+  const hostname = options.hostname || "locahost";
   const port = options.port || 3000;
 
   const serverUrl = `${protocol}://${hostname}:${port}`;
-  const requestServer = (protocol.startsWith('ws')) ? requestWebsocket : requestExpress;
+  const requestServer = protocol.startsWith("ws")
+    ? requestWebsocket
+    : requestExpress;
 
   async function requestExpress(path, body = {}) {
     return new Promise((resolve, reject) => {
@@ -35,8 +39,8 @@ export default async function webmiddleClient(options = {}) {
       wsPromise = new Promise((resolve, reject) => {
         try {
           const ws = new WebSocket(serverUrl);
-          ws.on('open', () => resolve(ws));
-          ws.on('error', reject);
+          ws.on("open", () => resolve(ws));
+          ws.on("error", reject);
         } catch (err) {
           reject(err);
         }
@@ -51,19 +55,20 @@ export default async function webmiddleClient(options = {}) {
         try {
           const requestId = uuid.v4();
 
-          ws.on('message', (rawMessage) => {
+          ws.on("message", rawMessage => {
             //console.log('received from server: %s', rawMessage);
             const message = JSON.parse(rawMessage);
-            if (message.type !== 'response' || message.requestId !== requestId) return;
+            if (message.type !== "response" || message.requestId !== requestId)
+              return;
 
-            if (message.status === 'success') {
+            if (message.status === "success") {
               resolve(message.body);
-            } else if (message.status === 'error') {
+            } else if (message.status === "error") {
               reject(message.body);
             }
           });
 
-          ws.send(JSON.stringify({ type: 'request', requestId, path, body }));
+          ws.send(JSON.stringify({ type: "request", requestId, path, body }));
         } catch (err) {
           console.error(err instanceof Error ? err.stack : err);
           reject(err instanceof Error ? err.stack : err);
@@ -73,12 +78,12 @@ export default async function webmiddleClient(options = {}) {
   }
 
   async function requestServicePaths() {
-    const jsonResource = await requestServer('/services/');
+    const jsonResource = await requestServer("/services/");
     return jsonResource.content;
   }
 
   async function requestSettingPaths() {
-    const jsonResource = await requestServer('/settings/');
+    const jsonResource = await requestServer("/settings/");
     return jsonResource.content;
   }
 
@@ -86,12 +91,13 @@ export default async function webmiddleClient(options = {}) {
     const servicePaths = await requestServicePaths();
     const services = {};
     servicePaths.forEach(path => {
-      const httpPath = path.replace(/\\./g, '/');
+      const httpPath = path.replace(/\\./g, "/");
 
-      const service = (props, context) => requestServer(`/services/${httpPath}`, {
-        props,
-        options: context.options,
-      });
+      const service = (props, context) =>
+        requestServer(`/services/${httpPath}`, {
+          props,
+          options: context.options
+        });
       _.set(services, path, service);
     });
     return services;
@@ -103,6 +109,6 @@ export default async function webmiddleClient(options = {}) {
 
   return new WebMiddle({
     services: await createServices(),
-    settings: await createSettings(),
+    settings: await createSettings()
   });
 }

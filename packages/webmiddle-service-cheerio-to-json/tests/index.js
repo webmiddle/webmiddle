@@ -1,12 +1,12 @@
-import test from 'ava';
-import CheerioToJson, { helpers } from '../src/index.js';
-import WebMiddle, { evaluate, createContext } from 'webmiddle';
+import test from "ava";
+import CheerioToJson, { helpers } from "../src/index.js";
+import WebMiddle, { evaluate, createContext } from "webmiddle";
 
 const { elMap, elText } = helpers;
 
 const xmlResource = {
-  name: 'xmlResource',
-  contentType: 'text/xml',
+  name: "xmlResource",
+  contentType: "text/xml",
   content: `
     <bookstore>
       <book category="COOKING">
@@ -22,40 +22,40 @@ const xmlResource = {
         <price>29.99</price>
       </book>
     </bookstore>
-  `,
+  `
 };
 
 test.beforeEach(t => {
   t.context.webmiddle = new WebMiddle();
 });
 
-test('must return a json resource', async t => {
-  const output = await evaluate(createContext(t.context.webmiddle),
-    <CheerioToJson
-      name="virtual"
-      from={xmlResource}
-    >
+test("must return a json resource", async t => {
+  const output = await evaluate(
+    createContext(t.context.webmiddle),
+    <CheerioToJson name="virtual" from={xmlResource}>
       <titles el="title">
         {elMap(el =>
-          <title el={el}>{elText()}</title>
+          <title el={el}>
+            {elText()}
+          </title>
         )}
       </titles>
     </CheerioToJson>
   );
 
-  t.is(output.name, 'virtual', 'name');
-  t.is(output.contentType, 'application/json', 'contentType');
+  t.is(output.name, "virtual", "name");
+  t.is(output.contentType, "application/json", "contentType");
 
   t.deepEqual(output.content, {
     root: {
       titles: [
         {
-          title: 'Everyday Italian'
+          title: "Everyday Italian"
         },
         {
-          title: 'Harry Potter'
+          title: "Harry Potter"
         }
       ]
     }
-  })
+  });
 });

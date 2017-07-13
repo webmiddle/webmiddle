@@ -1,3 +1,3 @@
-import Resume from './Resume';
+import Resume from "./Resume";
 
 export default Resume;

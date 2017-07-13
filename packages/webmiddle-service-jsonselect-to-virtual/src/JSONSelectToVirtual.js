@@ -1,19 +1,26 @@
-import WebMiddle, { PropTypes, evaluate, createContext, isVirtual } from 'webmiddle';
-import JSONSelect from 'JSONSelect';
+import WebMiddle, {
+  PropTypes,
+  evaluate,
+  createContext,
+  isVirtual
+} from "webmiddle";
+import JSONSelect from "JSONSelect";
 
 // Note: virtual.type must be a string
 async function processVirtual(virtual, sourceEl, source, context) {
   let el = virtual.attributes.el;
   if (!el) {
     el = sourceEl;
-  } else if (typeof el === 'string') {
+  } else if (typeof el === "string") {
     el = JSONSelect.match(el, undefined, sourceEl);
   }
 
   const condition = virtual.attributes.condition;
   if (condition) {
-    if (typeof condition !== 'function') {
-      throw new Error(`condition must be a function: ${JSON.stringify(condition)}`);
+    if (typeof condition !== "function") {
+      throw new Error(
+        `condition must be a function: ${JSON.stringify(condition)}`
+      );
     }
     el = el.filter(condition);
   }
@@ -21,10 +28,9 @@ async function processVirtual(virtual, sourceEl, source, context) {
   return {
     type: virtual.type,
     attributes: {},
-    children: await processArray(virtual.children, el, source, context),
+    children: await processArray(virtual.children, el, source, context)
   };
 }
-
 
 async function processArray(array, sourceEl, source, context) {
   const result = [];
@@ -46,7 +52,7 @@ async function processObject(obj, sourceEl, source, context) {
     result.push({
       type: prop,
       attributes: {},
-      children: [resultItem],
+      children: [resultItem]
     });
   }
 
@@ -57,10 +63,13 @@ async function processObject(obj, sourceEl, source, context) {
 async function process(value, sourceEl, source, context) {
   let result;
   try {
-    result = await evaluate(createContext(context, {
-      expectResource: false,
-      functionParameters: [sourceEl, source],
-    }), value);
+    result = await evaluate(
+      createContext(context, {
+        expectResource: false,
+        functionParameters: [sourceEl, source]
+      }),
+      value
+    );
   } catch (err) {
     console.error(err instanceof Error ? err.stack : err);
     result = null;
@@ -72,28 +81,29 @@ async function process(value, sourceEl, source, context) {
     result = await processVirtual(result, sourceEl, source, context);
   } else if (Array.isArray(result)) {
     result = await processArray(result, sourceEl, source, context);
-  } else if (typeof result === 'object' && result !== null) {
+  } else if (typeof result === "object" && result !== null) {
     result = await processObject(result, sourceEl, source, context);
-  } else if (typeof result === 'undefined') {
+  } else if (typeof result === "undefined") {
     result = null;
   }
 
   return result;
 }
 
-async function JSONSelectToVirtual({
-  name, from, fullConversion, children,
-}, context) {
+async function JSONSelectToVirtual(
+  { name, from, fullConversion, children },
+  context
+) {
   const source = from.content;
 
-  if (typeof fullConversion === 'undefined' && children.length === 0) {
+  if (typeof fullConversion === "undefined" && children.length === 0) {
     throw new Error('Either "fullConversion" or "children" must be specified.');
   }
 
   let targetChildren;
   if (fullConversion) {
     if (children.length !== 0) {
-      console.warn('children are ignored when fullConversion is true');
+      console.warn("children are ignored when fullConversion is true");
     }
     targetChildren = [await process(source, [source], source, context)];
   } else {
@@ -101,15 +111,15 @@ async function JSONSelectToVirtual({
   }
 
   const target = {
-    type: 'root',
+    type: "root",
     attributes: {},
-    children: targetChildren,
+    children: targetChildren
   };
 
   return {
     name,
-    contentType: 'application/x-webmiddle-virtual',
-    content: target,
+    contentType: "application/x-webmiddle-virtual",
+    content: target
   };
 }
 
@@ -117,7 +127,7 @@ JSONSelectToVirtual.propTypes = {
   name: PropTypes.string.isRequired,
   from: PropTypes.object.isRequired, // resource
   fullConversion: PropTypes.bool,
-  children: PropTypes.array,
+  children: PropTypes.array
 };
 
 export default JSONSelectToVirtual;

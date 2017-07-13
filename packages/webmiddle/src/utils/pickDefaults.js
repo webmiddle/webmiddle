@@ -4,7 +4,7 @@ export default function pickDefaults(a, b) {
 
   const result = {};
   for (const prop of Object.keys(a)) {
-    if (typeof b[prop] === 'undefined') {
+    if (typeof b[prop] === "undefined") {
       result[prop] = a[prop];
     }
   }

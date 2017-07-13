@@ -1,3 +1,3 @@
-import test from './helpers';
+import test from "./helpers";
 
-test('ws');
+test("ws");

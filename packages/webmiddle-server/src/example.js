@@ -1,47 +1,50 @@
-import Server from './index';
-import WebMiddle from 'webmiddle';
+import Server from "./index";
+import WebMiddle from "webmiddle";
 
-const textResource = (content, name = 'result') => ({
+const textResource = (content, name = "result") => ({
   name,
-  contentType: 'text/plain',
-  content: (typeof content !== 'undefined' && content !== null) ? String(content) : content,
+  contentType: "text/plain",
+  content:
+    typeof content !== "undefined" && content !== null
+      ? String(content)
+      : content
 });
 
-const delay = (time) => new Promise(resolve => setTimeout(resolve, time));
+const delay = time => new Promise(resolve => setTimeout(resolve, time));
 
 const parentWebmiddle = new WebMiddle({
   services: {
-    divide: ({ a, b }) => delay(60000).then(() => textResource(a / b)),
+    divide: ({ a, b }) => delay(60000).then(() => textResource(a / b))
   },
   settings: {
-    some: 'other',
-    foo: 'original',
+    some: "other",
+    foo: "original",
     deeply: {
       very: {
         nested: {
-          property: 'let',
-        },
+          property: "let"
+        }
       },
       nested: {
-        property: 'const',
-      },
-    },
-  },
+        property: "const"
+      }
+    }
+  }
 });
 
 const webmiddle = new WebMiddle({
   parent: parentWebmiddle,
   services: {
-    multiply: ({ a, b }) => textResource(a * b),
+    multiply: ({ a, b }) => textResource(a * b)
   },
   settings: {
-    foo: 'bar',
+    foo: "bar",
     deeply: {
       nested: {
-        property: 'val',
-      },
-    },
-  },
+        property: "val"
+      }
+    }
+  }
 });
 
 const server = new Server(webmiddle);

@@ -1,3 +1,3 @@
-import Parallel from './Parallel';
+import Parallel from "./Parallel";
 
 export default Parallel;

@@ -1,18 +1,18 @@
-import path from 'path';
-import fs from 'fs';
-import mkdirp from 'mkdirp';
+import path from "path";
+import fs from "fs";
+import mkdirp from "mkdirp";
 
 export function fileExists(filename) {
   return new Promise((resolve, reject) => {
-    fs.stat(filename, (err) => {
+    fs.stat(filename, err => {
       if (!err) resolve(true);
-      else if (err.code === 'ENOENT') resolve(false);
+      else if (err.code === "ENOENT") resolve(false);
       else reject(err);
     });
   });
 }
 
-export function readFile(filename, encoding = 'utf8') {
+export function readFile(filename, encoding = "utf8") {
   return new Promise((resolve, reject) => {
     fs.readFile(filename, encoding, (err, data) => {
       if (err) reject(err);
@@ -35,7 +35,7 @@ export async function writeFile(filename, data) {
   await createDirectory(path.dirname(filename));
 
   return new Promise((resolve, reject) => {
-    fs.writeFile(filename, data, (err) => {
+    fs.writeFile(filename, data, err => {
       if (err) reject(err);
       else resolve();
     });

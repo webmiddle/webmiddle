@@ -1,195 +1,147 @@
-import test from 'ava';
-import JSONSelectToVirtual, { helpers } from '../src/index.js';
-import WebMiddle, { evaluate, createContext } from 'webmiddle';
+import test from "ava";
+import JSONSelectToVirtual, { helpers } from "../src/index.js";
+import WebMiddle, { evaluate, createContext } from "webmiddle";
 
 const { elGet, elJoin, elMap, elPipe } = helpers;
 
 const jsonResource = {
-  name: 'jsonResource',
-  contentType: 'application/json',
-  content:
-    [
-      {
-        "id" : "978-0641723445",
-        "cat" : ["book","hardcover"],
-        "name" : "The Lightning Thief",
-        "author" : "Rick Riordan",
-        "series_t" : "Percy Jackson and the Olympians",
-        "sequence_i" : 1,
-        "genre_s" : "fantasy",
-        "inStock" : true,
-        "price" : 12.50,
-        "pages_i" : 384
-      },
-      {
-        "id" : "978-1423103349",
-        "cat" : ["book","paperback"],
-        "name" : "The Sea of Monsters",
-        "author" : "Rick Riordan",
-        "series_t" : "Percy Jackson and the Olympians",
-        "sequence_i" : 2,
-        "genre_s" : "fantasy",
-        "inStock" : true,
-        "price" : 6.49,
-        "pages_i" : 304
-      }
-    ]
-  ,
+  name: "jsonResource",
+  contentType: "application/json",
+  content: [
+    {
+      id: "978-0641723445",
+      cat: ["book", "hardcover"],
+      name: "The Lightning Thief",
+      author: "Rick Riordan",
+      series_t: "Percy Jackson and the Olympians",
+      sequence_i: 1,
+      genre_s: "fantasy",
+      inStock: true,
+      price: 12.5,
+      pages_i: 384
+    },
+    {
+      id: "978-1423103349",
+      cat: ["book", "paperback"],
+      name: "The Sea of Monsters",
+      author: "Rick Riordan",
+      series_t: "Percy Jackson and the Olympians",
+      sequence_i: 2,
+      genre_s: "fantasy",
+      inStock: true,
+      price: 6.49,
+      pages_i: 304
+    }
+  ]
 };
 
 const virtualResource = {
-  "type": "root",
-  "attributes": {},
-  "children": [
+  type: "root",
+  attributes: {},
+  children: [
     [
       [
         {
-          "type": "id",
-          "attributes": {},
-          "children": [
-            "978-0641723445"
-          ]
+          type: "id",
+          attributes: {},
+          children: ["978-0641723445"]
         },
         {
-          "type": "cat",
-          "attributes": {},
-          "children": [
-            [
-              "book",
-              "hardcover"
-            ]
-          ]
+          type: "cat",
+          attributes: {},
+          children: [["book", "hardcover"]]
         },
         {
-          "type": "name",
-          "attributes": {},
-          "children": [
-            "The Lightning Thief"
-          ]
+          type: "name",
+          attributes: {},
+          children: ["The Lightning Thief"]
         },
         {
-          "type": "author",
-          "attributes": {},
-          "children": [
-            "Rick Riordan"
-          ]
+          type: "author",
+          attributes: {},
+          children: ["Rick Riordan"]
         },
         {
-          "type": "series_t",
-          "attributes": {},
-          "children": [
-            "Percy Jackson and the Olympians"
-          ]
+          type: "series_t",
+          attributes: {},
+          children: ["Percy Jackson and the Olympians"]
         },
         {
-          "type": "sequence_i",
-          "attributes": {},
-          "children": [
-            1
-          ]
+          type: "sequence_i",
+          attributes: {},
+          children: [1]
         },
         {
-          "type": "genre_s",
-          "attributes": {},
-          "children": [
-            "fantasy"
-          ]
+          type: "genre_s",
+          attributes: {},
+          children: ["fantasy"]
         },
         {
-          "type": "inStock",
-          "attributes": {},
-          "children": [
-            true
-          ]
+          type: "inStock",
+          attributes: {},
+          children: [true]
         },
         {
-          "type": "price",
-          "attributes": {},
-          "children": [
-            12.5
-          ]
+          type: "price",
+          attributes: {},
+          children: [12.5]
         },
         {
-          "type": "pages_i",
-          "attributes": {},
-          "children": [
-            384
-          ]
+          type: "pages_i",
+          attributes: {},
+          children: [384]
         }
       ],
       [
         {
-          "type": "id",
-          "attributes": {},
-          "children": [
-            "978-1423103349"
-          ]
+          type: "id",
+          attributes: {},
+          children: ["978-1423103349"]
         },
         {
-          "type": "cat",
-          "attributes": {},
-          "children": [
-            [
-              "book",
-              "paperback"
-            ]
-          ]
+          type: "cat",
+          attributes: {},
+          children: [["book", "paperback"]]
         },
         {
-          "type": "name",
-          "attributes": {},
-          "children": [
-            "The Sea of Monsters"
-          ]
+          type: "name",
+          attributes: {},
+          children: ["The Sea of Monsters"]
         },
         {
-          "type": "author",
-          "attributes": {},
-          "children": [
-            "Rick Riordan"
-          ]
+          type: "author",
+          attributes: {},
+          children: ["Rick Riordan"]
         },
         {
-          "type": "series_t",
-          "attributes": {},
-          "children": [
-            "Percy Jackson and the Olympians"
-          ]
+          type: "series_t",
+          attributes: {},
+          children: ["Percy Jackson and the Olympians"]
         },
         {
-          "type": "sequence_i",
-          "attributes": {},
-          "children": [
-            2
-          ]
+          type: "sequence_i",
+          attributes: {},
+          children: [2]
         },
         {
-          "type": "genre_s",
-          "attributes": {},
-          "children": [
-            "fantasy"
-          ]
+          type: "genre_s",
+          attributes: {},
+          children: ["fantasy"]
         },
         {
-          "type": "inStock",
-          "attributes": {},
-          "children": [
-            true
-          ]
+          type: "inStock",
+          attributes: {},
+          children: [true]
         },
         {
-          "type": "price",
-          "attributes": {},
-          "children": [
-            6.49
-          ]
+          type: "price",
+          attributes: {},
+          children: [6.49]
         },
         {
-          "type": "pages_i",
-          "attributes": {},
-          "children": [
-            304
-          ]
+          type: "pages_i",
+          attributes: {},
+          children: [304]
         }
       ]
     ]
@@ -200,21 +152,19 @@ test.beforeEach(t => {
   t.context.webmiddle = new WebMiddle();
 });
 
-test('must throw if neither fullConversion and children are specified', async t => {
-  await t.throws(evaluate(createContext(t.context.webmiddle),
-    <JSONSelectToVirtual
-      name="virtual"
-      from={jsonResource}
-    />
-  ));
+test("must throw if neither fullConversion and children are specified", async t => {
+  await t.throws(
+    evaluate(
+      createContext(t.context.webmiddle),
+      <JSONSelectToVirtual name="virtual" from={jsonResource} />
+    )
+  );
 });
 
-test('must default to null in case of evaluation exception', async t => {
-  const output = await evaluate(createContext(t.context.webmiddle),
-    <JSONSelectToVirtual
-      name="virtual"
-      from={jsonResource}
-    >
+test("must default to null in case of evaluation exception", async t => {
+  const output = await evaluate(
+    createContext(t.context.webmiddle),
+    <JSONSelectToVirtual name="virtual" from={jsonResource}>
       <name el=".name">
         {el => el[3].toUpperCase()}
       </name>
@@ -228,21 +178,19 @@ test('must default to null in case of evaluation exception', async t => {
       {
         type: "name",
         attributes: {},
-        children: [
-          null,
-        ],
-      },
-    ],
+        children: [null]
+      }
+    ]
   });
 });
 
-test('undefined should be converted to null', async t => {
-  const output = await evaluate(createContext(t.context.webmiddle),
-    <JSONSelectToVirtual
-      name="virtual"
-      from={jsonResource}
-    >
-      <name el=".name">{el => el['not existing']}</name>
+test("undefined should be converted to null", async t => {
+  const output = await evaluate(
+    createContext(t.context.webmiddle),
+    <JSONSelectToVirtual name="virtual" from={jsonResource}>
+      <name el=".name">
+        {el => el["not existing"]}
+      </name>
     </JSONSelectToVirtual>
   );
 
@@ -253,60 +201,49 @@ test('undefined should be converted to null', async t => {
       {
         type: "name",
         attributes: {},
-        children: [
-          null,
-        ],
-      },
-    ],
+        children: [null]
+      }
+    ]
   });
 });
 
-test('must return a virtual resource', async t => {
-  const output = await evaluate(createContext(t.context.webmiddle),
-    <JSONSelectToVirtual
-      name="virtual"
-      from={jsonResource}
-      fullConversion
-    />
+test("must return a virtual resource", async t => {
+  const output = await evaluate(
+    createContext(t.context.webmiddle),
+    <JSONSelectToVirtual name="virtual" from={jsonResource} fullConversion />
   );
 
-  t.is(output.name, 'virtual', 'name');
-  t.is(output.contentType, 'application/x-webmiddle-virtual', 'contentType');
+  t.is(output.name, "virtual", "name");
+  t.is(output.contentType, "application/x-webmiddle-virtual", "contentType");
 });
 
-test('fullconversion', async t => {
-  const output = await evaluate(createContext(t.context.webmiddle),
-    <JSONSelectToVirtual
-      name="virtual"
-      from={jsonResource}
-      fullConversion
-    />
+test("fullconversion", async t => {
+  const output = await evaluate(
+    createContext(t.context.webmiddle),
+    <JSONSelectToVirtual name="virtual" from={jsonResource} fullConversion />
   );
 
   t.deepEqual(output.content, virtualResource);
 });
 
-test('fullConversion: children must be ignored', async t => {
-  const output = await evaluate(createContext(t.context.webmiddle),
-    <JSONSelectToVirtual
-      name="virtual"
-      from={jsonResource}
-      fullConversion
-    >
-      <name el=".name">{el => el[0]}</name>
+test("fullConversion: children must be ignored", async t => {
+  const output = await evaluate(
+    createContext(t.context.webmiddle),
+    <JSONSelectToVirtual name="virtual" from={jsonResource} fullConversion>
+      <name el=".name">
+        {el => el[0]}
+      </name>
     </JSONSelectToVirtual>
   );
 
   t.deepEqual(output.content, virtualResource);
 });
 
-test('condition', async t => {
-  const resource = await evaluate(createContext(t.context.webmiddle),
-    <JSONSelectToVirtual
-      name="virtual"
-      from={jsonResource}
-    >
-      <name el=".name" condition={el => el.indexOf('Sea') !== -1}>
+test("condition", async t => {
+  const resource = await evaluate(
+    createContext(t.context.webmiddle),
+    <JSONSelectToVirtual name="virtual" from={jsonResource}>
+      <name el=".name" condition={el => el.indexOf("Sea") !== -1}>
         {el => el[0]}
       </name>
     </JSONSelectToVirtual>
@@ -319,32 +256,30 @@ test('condition', async t => {
       {
         type: "name",
         attributes: {},
-        children: [
-          "The Sea of Monsters",
-        ],
-      },
-    ],
+        children: ["The Sea of Monsters"]
+      }
+    ]
   });
 });
 
-test('condition: must throw if is not a function', async t => {
-  await t.throws(evaluate(createContext(t.context.webmiddle),
-    <JSONSelectToVirtual
-      name="virtual"
-      from={jsonResource}
-    >
-      <name el=".name" condition="true"></name>
-    </JSONSelectToVirtual>
-  ));
+test("condition: must throw if is not a function", async t => {
+  await t.throws(
+    evaluate(
+      createContext(t.context.webmiddle),
+      <JSONSelectToVirtual name="virtual" from={jsonResource}>
+        <name el=".name" condition="true" />
+      </JSONSelectToVirtual>
+    )
+  );
 });
 
-test('elGet', async t => {
-  const resource = await evaluate(createContext(t.context.webmiddle),
-    <JSONSelectToVirtual
-      name="virtual"
-      from={jsonResource}
-    >
-      <firstName el=".name">{elGet()}</firstName>
+test("elGet", async t => {
+  const resource = await evaluate(
+    createContext(t.context.webmiddle),
+    <JSONSelectToVirtual name="virtual" from={jsonResource}>
+      <firstName el=".name">
+        {elGet()}
+      </firstName>
     </JSONSelectToVirtual>
   );
 
@@ -355,22 +290,19 @@ test('elGet', async t => {
       {
         type: "firstName",
         attributes: {},
-        children: [
-          "The Lightning Thief",
-        ],
-      },
-    ],
+        children: ["The Lightning Thief"]
+      }
+    ]
   });
 });
 
-
-test('elGet: selector', async t => {
-  const resource = await evaluate(createContext(t.context.webmiddle),
-    <JSONSelectToVirtual
-      name="virtual"
-      from={jsonResource}
-    >
-      <firstName>{elGet('.name')}</firstName>
+test("elGet: selector", async t => {
+  const resource = await evaluate(
+    createContext(t.context.webmiddle),
+    <JSONSelectToVirtual name="virtual" from={jsonResource}>
+      <firstName>
+        {elGet(".name")}
+      </firstName>
     </JSONSelectToVirtual>
   );
 
@@ -381,11 +313,9 @@ test('elGet: selector', async t => {
       {
         type: "firstName",
         attributes: {},
-        children: [
-          "The Lightning Thief",
-        ],
-      },
-    ],
+        children: ["The Lightning Thief"]
+      }
+    ]
   });
 });
 
@@ -394,13 +324,13 @@ test('elGet: values', async t => {
   // TODO
 });*/
 
-test('elJoin', async t => {
-  const resource = await evaluate(createContext(t.context.webmiddle),
-    <JSONSelectToVirtual
-      name="virtual"
-      from={jsonResource}
-    >
-      <names el=".name">{elJoin(', ')}</names>
+test("elJoin", async t => {
+  const resource = await evaluate(
+    createContext(t.context.webmiddle),
+    <JSONSelectToVirtual name="virtual" from={jsonResource}>
+      <names el=".name">
+        {elJoin(", ")}
+      </names>
     </JSONSelectToVirtual>
   );
 
@@ -411,24 +341,21 @@ test('elJoin', async t => {
       {
         type: "names",
         attributes: {},
-        children: [
-          "The Lightning Thief, The Sea of Monsters",
-        ],
-      },
-    ],
+        children: ["The Lightning Thief, The Sea of Monsters"]
+      }
+    ]
   });
 });
 
-
-test('elMap', async t => {
-  const resource = await evaluate(createContext(t.context.webmiddle),
-    <JSONSelectToVirtual
-      name="virtual"
-      from={jsonResource}
-    >
+test("elMap", async t => {
+  const resource = await evaluate(
+    createContext(t.context.webmiddle),
+    <JSONSelectToVirtual name="virtual" from={jsonResource}>
       <names el=".name">
         {elMap(el =>
-          <name>{el}</name>
+          <name>
+            {el}
+          </name>
         )}
       </names>
     </JSONSelectToVirtual>
@@ -446,35 +373,26 @@ test('elMap', async t => {
             {
               type: "name",
               attributes: {},
-              children: [
-                "The Lightning Thief"
-              ]
+              children: ["The Lightning Thief"]
             },
             {
               type: "name",
               attributes: {},
-              children: [
-                "The Sea of Monsters"
-              ]
+              children: ["The Sea of Monsters"]
             }
           ]
-        ],
+        ]
       }
-    ],
+    ]
   });
 });
 
-test('elPipe', async t => {
-  const resource = await evaluate(createContext(t.context.webmiddle),
-    <JSONSelectToVirtual
-      name="virtual"
-      from={jsonResource}
-    >
+test("elPipe", async t => {
+  const resource = await evaluate(
+    createContext(t.context.webmiddle),
+    <JSONSelectToVirtual name="virtual" from={jsonResource}>
       <names el=".name">
-        {elPipe([
-          elJoin(', '),
-          text => text.toUpperCase(),
-        ])}
+        {elPipe([elJoin(", "), text => text.toUpperCase()])}
       </names>
     </JSONSelectToVirtual>
   );
@@ -486,10 +404,8 @@ test('elPipe', async t => {
       {
         type: "names",
         attributes: {},
-        children: [
-          "THE LIGHTNING THIEF, THE SEA OF MONSTERS",
-        ],
-      },
-    ],
+        children: ["THE LIGHTNING THIEF, THE SEA OF MONSTERS"]
+      }
+    ]
   });
 });

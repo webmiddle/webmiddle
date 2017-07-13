@@ -1,6 +1,6 @@
-import test from 'ava';
-import Parallel from '../src/index.js';
-import WebMiddle, { evaluate, createContext } from 'webmiddle';
+import test from "ava";
+import Parallel from "../src/index.js";
+import WebMiddle, { evaluate, createContext } from "webmiddle";
 
 function range(num) {
   return [...Array(num).keys()];
@@ -10,76 +10,87 @@ test.beforeEach(t => {
   t.context.webmiddle = new WebMiddle();
 });
 
-test('main', async t => {
+test("main", async t => {
   let firstStart;
   let secondStart;
   let firstEnd;
   let secondEnd;
 
-  const FirstService = () => new Promise(resolve => {
-    firstStart = Date.now();
-    setTimeout(() => {
-      firstEnd = Date.now();
-      resolve({
-        name: 'firstResource',
-        contentType: 'text/plain',
-        content: '1',
-      });
-    }, 100);
-  });
-  const SecondService = () => new Promise(resolve => {
-    secondStart = Date.now();
-    setTimeout(() => {
-      secondEnd = Date.now();
-      resolve({
-        name: 'secondResource',
-        contentType: 'text/plain',
-        content: '2',
-      });
-    }, 100);
-  });
+  const FirstService = () =>
+    new Promise(resolve => {
+      firstStart = Date.now();
+      setTimeout(() => {
+        firstEnd = Date.now();
+        resolve({
+          name: "firstResource",
+          contentType: "text/plain",
+          content: "1"
+        });
+      }, 100);
+    });
+  const SecondService = () =>
+    new Promise(resolve => {
+      secondStart = Date.now();
+      setTimeout(() => {
+        secondEnd = Date.now();
+        resolve({
+          name: "secondResource",
+          contentType: "text/plain",
+          content: "2"
+        });
+      }, 100);
+    });
 
-  const output = await evaluate(createContext(t.context.webmiddle),
+  const output = await evaluate(
+    createContext(t.context.webmiddle),
     <Parallel name="resources">
       <FirstService />
       <SecondService />
     </Parallel>
   );
 
-  t.is(output.name, 'resources', 'name');
-  t.is(output.contentType, 'application/json', 'contentType');
-  t.deepEqual(output.content, {
-    firstResource: {
-      name: 'firstResource',
-      contentType: 'text/plain',
-      content: '1',
+  t.is(output.name, "resources", "name");
+  t.is(output.contentType, "application/json", "contentType");
+  t.deepEqual(
+    output.content,
+    {
+      firstResource: {
+        name: "firstResource",
+        contentType: "text/plain",
+        content: "1"
+      },
+      secondResource: {
+        name: "secondResource",
+        contentType: "text/plain",
+        content: "2"
+      }
     },
-    secondResource: {
-      name: 'secondResource',
-      contentType: 'text/plain',
-      content: '2',
-    },
-  }, 'content');
+    "content"
+  );
 
-  t.true(firstStart < secondEnd && secondStart < firstEnd, 'services must run concurrently');
+  t.true(
+    firstStart < secondEnd && secondStart < firstEnd,
+    "services must run concurrently"
+  );
 });
 
-test('expect resource', async t => {
+test("expect resource", async t => {
   const Service = () => 10; // a service that doesn't return a resource
 
   try {
-    await evaluate(createContext(t.context.webmiddle),
+    await evaluate(
+      createContext(t.context.webmiddle),
       <Parallel name="whatever">
         <Service />
       </Parallel>
     );
-    t.fail('expected rejection');
+    t.fail("expected rejection");
   } catch (e) {
     t.pass();
   }
 });
 
-test('limit', async t => {
+test("limit", async t => {
   const limit = 10;
   let current = 0;
   let overLimit = false;
@@ -90,14 +101,14 @@ test('limit', async t => {
     if (current > limit) {
       overLimit = true;
     }
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       setTimeout(() => {
         current--;
         //console.log('done', current);
         resolve({
-          name: 'whatever',
-          contentType: 'text/plain',
-          content: 'whatever',
+          name: "whatever",
+          contentType: "text/plain",
+          content: "whatever"
         });
       }, 100);
     });
@@ -105,25 +116,23 @@ test('limit', async t => {
 
   current = 0;
   overLimit = false;
-  await evaluate(createContext(t.context.webmiddle),
+  await evaluate(
+    createContext(t.context.webmiddle),
     <Parallel name="resources" limit={limit}>
-      {range(100).map(i => (
-        <Service name={i} />
-      ))}
+      {range(100).map(i => <Service name={i} />)}
     </Parallel>
   );
 
-  t.is(overLimit, false, 'with limit');
+  t.is(overLimit, false, "with limit");
 
   current = 0;
   overLimit = false;
-  await evaluate(createContext(t.context.webmiddle),
+  await evaluate(
+    createContext(t.context.webmiddle),
     <Parallel name="resources" limit={0}>
-      {range(100).map(i => (
-        <Service name={i} />
-      ))}
+      {range(100).map(i => <Service name={i} />)}
     </Parallel>
   );
 
-  t.is(overLimit, true, 'without limit');
+  t.is(overLimit, true, "without limit");
 });

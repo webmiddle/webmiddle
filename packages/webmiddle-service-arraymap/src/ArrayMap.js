@@ -1,4 +1,4 @@
-import WebMiddle, { PropTypes, evaluate, createContext } from 'webmiddle';
+import WebMiddle, { PropTypes, evaluate, createContext } from "webmiddle";
 
 async function ArrayMap({ name, array, callback, limit }, context) {
   const resources = [];
@@ -10,11 +10,13 @@ async function ArrayMap({ name, array, callback, limit }, context) {
       await Promise.race(promises);
     }
 
-    const promise = evaluate(createContext(context, {
-      expectResource: true,
-      functionParameters: [array[i], i],
-    }), callback)
-    .then(result => {
+    const promise = evaluate(
+      createContext(context, {
+        expectResource: true,
+        functionParameters: [array[i], i]
+      }),
+      callback
+    ).then(result => {
       promises.splice(promises.indexOf(promise), 1);
       //console.log('fullfilled', promises.length);
       resources[i] = result;
@@ -24,14 +26,14 @@ async function ArrayMap({ name, array, callback, limit }, context) {
   }
 
   await Promise.all(promises);
-  return ({ name, contentType: 'application/json', content: resources });
+  return { name, contentType: "application/json", content: resources };
 }
 
 ArrayMap.propTypes = {
   name: PropTypes.string.isRequired,
   array: PropTypes.array.isRequired,
   callback: PropTypes.func.isRequired,
-  limit: PropTypes.number,
+  limit: PropTypes.number
 };
 
 export default ArrayMap;

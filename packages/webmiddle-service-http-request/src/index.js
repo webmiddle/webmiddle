@@ -1,3 +1,3 @@
-import HttpRequest from './HttpRequest';
+import HttpRequest from "./HttpRequest";
 
 export default HttpRequest;

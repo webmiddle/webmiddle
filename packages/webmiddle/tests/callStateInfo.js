@@ -1,14 +1,19 @@
-import test from 'ava';
+import test from "ava";
 import WebMiddle, {
-  isResource, isVirtual, callVirtual, evaluate, createContext, WithOptions,
-} from '../src/index.js';
+  isResource,
+  isVirtual,
+  callVirtual,
+  evaluate,
+  createContext,
+  WithOptions
+} from "../src/index.js";
 
 test.beforeEach(t => {
   t.context.webmiddle = new WebMiddle();
 });
 
-test('virtual -> service', async t => {
-  const Service = () => 'yes';
+test("virtual -> service", async t => {
+  const Service = () => "yes";
   const virtual = <Service a={10} b={20} />;
 
   const context = createContext(t.context.webmiddle);
@@ -16,35 +21,35 @@ test('virtual -> service', async t => {
 
   t.deepEqual(context._callStateRoot, [
     {
-      type: 'virtual',
+      type: "virtual",
       value: virtual,
       options: {},
       children: [
         {
-          type: 'service',
+          type: "service",
           value: Service,
           options: {
             props: { a: 10, b: 20, children: [] },
-            tries: 1,
+            tries: 1
           },
           children: [],
-          result: output,
+          result: output
         }
       ],
-      result: output,
+      result: output
     }
   ]);
 });
 
-test('virtual -> service with retries', async t => {
+test("virtual -> service with retries", async t => {
   let fails = 0;
   const Service = () => {
     if (fails === 0) {
       fails++;
-      throw new Error('expected fail');
+      throw new Error("expected fail");
     }
-    return 'yes';
-  }
+    return "yes";
+  };
   const virtual = <Service a={10} b={20} />;
 
   const context = createContext(t.context.webmiddle, { retries: 1 });
@@ -52,92 +57,92 @@ test('virtual -> service with retries', async t => {
 
   t.deepEqual(context._callStateRoot, [
     {
-      type: 'virtual',
+      type: "virtual",
       value: virtual,
       options: {},
       children: [
         {
-          type: 'service',
+          type: "service",
           value: Service,
           options: {
             props: { a: 10, b: 20, children: [] },
-            tries: 1,
+            tries: 1
           },
-          children: [],
+          children: []
         },
         {
-          type: 'service',
+          type: "service",
           value: Service,
           options: {
             props: { a: 10, b: 20, children: [] },
-            tries: 2,
+            tries: 2
           },
           children: [],
-          result: output,
+          result: output
         }
       ],
-      result: output,
+      result: output
     }
   ]);
 });
 
-test('virtual -> service with retries and final catch', async t => {
+test("virtual -> service with retries and final catch", async t => {
   let fails = 0;
   const Service = () => {
-    throw new Error('expected fail');
-  }
+    throw new Error("expected fail");
+  };
 
-  const catchExpr = () => 'failsafe';
+  const catchExpr = () => "failsafe";
   const virtual = <Service a={10} b={20} />;
 
   const context = createContext(t.context.webmiddle, {
     retries: 1,
-    catch: catchExpr,
+    catch: catchExpr
   });
   const output = await evaluate(context, virtual);
 
   t.deepEqual(context._callStateRoot, [
     {
-      type: 'virtual',
+      type: "virtual",
       value: virtual,
       options: {},
       children: [
         {
-          type: 'service',
+          type: "service",
           value: Service,
           options: {
             props: { a: 10, b: 20, children: [] },
-            tries: 1,
+            tries: 1
           },
-          children: [],
+          children: []
         },
         {
-          type: 'service',
+          type: "service",
           value: Service,
           options: {
             props: { a: 10, b: 20, children: [] },
-            tries: 2,
+            tries: 2
           },
-          children: [],
+          children: []
         },
         {
-          type: 'catch',
+          type: "catch",
           value: catchExpr,
           options: {
             service: Service,
-            props: { a: 10, b: 20, children: [] },
+            props: { a: 10, b: 20, children: [] }
           },
           children: [],
-          result: 'failsafe',
+          result: "failsafe"
         }
       ],
-      result: output,
+      result: output
     }
   ]);
 });
 
-test('service returning virtual (virtual -> service -> virtual -> service)', async t => {
-  const SubService = () => 'more yes!';
+test("service returning virtual (virtual -> service -> virtual -> service)", async t => {
+  const SubService = () => "more yes!";
   const subVirtual = <SubService c={30} />;
 
   const Service = () => subVirtual;
@@ -148,91 +153,91 @@ test('service returning virtual (virtual -> service -> virtual -> service)', asy
 
   t.deepEqual(context._callStateRoot, [
     {
-      type: 'virtual',
+      type: "virtual",
       value: virtual,
       options: {},
       children: [
         {
-          type: 'service',
+          type: "service",
           value: Service,
           options: {
             props: { a: 10, b: 20, children: [] },
-            tries: 1,
+            tries: 1
           },
           children: [
             {
-              type: 'virtual',
+              type: "virtual",
               value: subVirtual,
               options: {},
               children: [
                 {
-                  type: 'service',
+                  type: "service",
                   value: SubService,
                   options: {
                     props: { c: 30, children: [] },
-                    tries: 1,
+                    tries: 1
                   },
                   children: [],
-                  result: output,
+                  result: output
                 }
               ],
-              result: output,
+              result: output
             }
           ],
-          result: subVirtual,
+          result: subVirtual
         }
       ],
-      result: output,
+      result: output
     }
   ]);
 });
 
 test('must emit "add" events with correct paths', async t => {
-  const Service = () => 'yes';
+  const Service = () => "yes";
   const virtual = <Service a={10} b={20} />;
 
   const context = createContext(t.context.webmiddle);
 
   const addData = [];
-  context.rootEmitter.on('message', (message) => {
-    if (message.topic === 'callStateInfo:add') addData.push(message.data);
+  context.rootEmitter.on("message", message => {
+    if (message.topic === "callStateInfo:add") addData.push(message.data);
   });
 
   const output = await evaluate(context, virtual);
 
   t.deepEqual(addData, [
     {
-      path: '0',
+      path: "0",
       info: {
-        type: 'virtual',
+        type: "virtual",
         value: virtual,
         options: {},
         children: [
           {
-            type: 'service',
+            type: "service",
             value: Service,
             options: {
               props: { a: 10, b: 20, children: [] },
-              tries: 1,
+              tries: 1
             },
             children: [],
-            result: output,
+            result: output
           }
         ],
-        result: output,
+        result: output
       }
     },
     {
-      path: '0.0',
+      path: "0.0",
       info: {
-        type: 'service',
+        type: "service",
         value: Service,
         options: {
           props: { a: 10, b: 20, children: [] },
-          tries: 1,
+          tries: 1
         },
         children: [],
-        result: output,
+        result: output
       }
     }
   ]);
