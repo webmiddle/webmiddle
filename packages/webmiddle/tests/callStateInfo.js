@@ -1,12 +1,5 @@
 import test from "ava";
-import WebMiddle, {
-  isResource,
-  isVirtual,
-  callVirtual,
-  evaluate,
-  createContext,
-  WithOptions
-} from "../src/index.js";
+import WebMiddle, { evaluate, createContext } from "../src/index";
 
 test.beforeEach(t => {
   t.context.webmiddle = new WebMiddle();
@@ -16,7 +9,7 @@ test("virtual -> service", async t => {
   const Service = () => "yes";
   const virtual = <Service a={10} b={20} />;
 
-  const context = createContext(t.context.webmiddle);
+  const context = createContext(t.context.webmiddle, { debug: true });
   const output = await evaluate(context, virtual);
 
   t.deepEqual(context._callStateRoot, [
@@ -45,14 +38,17 @@ test("virtual -> service with retries", async t => {
   let fails = 0;
   const Service = () => {
     if (fails === 0) {
-      fails++;
+      fails += 1;
       throw new Error("expected fail");
     }
     return "yes";
   };
   const virtual = <Service a={10} b={20} />;
 
-  const context = createContext(t.context.webmiddle, { retries: 1 });
+  const context = createContext(t.context.webmiddle, {
+    debug: true,
+    retries: 1
+  });
   const output = await evaluate(context, virtual);
 
   t.deepEqual(context._callStateRoot, [
@@ -87,7 +83,6 @@ test("virtual -> service with retries", async t => {
 });
 
 test("virtual -> service with retries and final catch", async t => {
-  let fails = 0;
   const Service = () => {
     throw new Error("expected fail");
   };
@@ -96,6 +91,7 @@ test("virtual -> service with retries and final catch", async t => {
   const virtual = <Service a={10} b={20} />;
 
   const context = createContext(t.context.webmiddle, {
+    debug: true,
     retries: 1,
     catch: catchExpr
   });
@@ -148,7 +144,7 @@ test("service returning virtual (virtual -> service -> virtual -> service)", asy
   const Service = () => subVirtual;
   const virtual = <Service a={10} b={20} />;
 
-  const context = createContext(t.context.webmiddle);
+  const context = createContext(t.context.webmiddle, { debug: true });
   const output = await evaluate(context, virtual);
 
   t.deepEqual(context._callStateRoot, [
@@ -196,7 +192,7 @@ test('must emit "add" events with correct paths', async t => {
   const Service = () => "yes";
   const virtual = <Service a={10} b={20} />;
 
-  const context = createContext(t.context.webmiddle);
+  const context = createContext(t.context.webmiddle, { debug: true });
 
   const addData = [];
   context.rootEmitter.on("message", message => {

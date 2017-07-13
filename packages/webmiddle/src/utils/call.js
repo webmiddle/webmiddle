@@ -7,7 +7,7 @@ function makeCallStateInfoPath(context) {
 }
 
 export default async function call(fn, context, info) {
-  if (process.env.NODE_ENV === "production") {
+  if (!context.options.debug) {
     return { result: await fn(context), context };
   }
 

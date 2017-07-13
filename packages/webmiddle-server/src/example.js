@@ -1,5 +1,5 @@
-import Server from "./index";
 import WebMiddle from "webmiddle";
+import Server from "./index";
 
 const textResource = (content, name = "result") => ({
   name,
