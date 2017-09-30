@@ -65,7 +65,7 @@
     "webmiddle-manager-cookie": "^0.2.0"
   },
   "devDependencies": {
-    "ava": "^0.19.1",
+    "ava": "^0.22.0",
     "babel-cli": "^6.24.1"
   }
 }
