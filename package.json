@@ -19,7 +19,7 @@
     "babel-register": "^6.24.1",
     "babel-runtime": "^6.23.0",
     "codecov": "^2.1.0",
-    "cross-env": "^4.0.0",
+    "cross-env": "^5.0.5",
     "eslint": "^3.19.0",
     "eslint-config-airbnb": "^14.1.0",
     "eslint-config-prettier": "^2.3.0",
