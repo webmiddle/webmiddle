@@ -52,7 +52,7 @@
   "repository": "webmiddle/webmiddle",
   "license": "MIT",
   "dependencies": {
-    "cheerio": "^0.22.0",
+    "cheerio": "^1.0.0-rc.2",
     "lodash.every": "^4.4.0",
     "webmiddle": "^0.2.0"
   },
