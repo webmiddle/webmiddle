@@ -112,38 +112,16 @@ FetchPageLinks.propTypes = {
 
 **Yes, you got this right, JSX for defining application logic!**
 
-Services are the building blocks of the webmiddle framework, they can be defined and composed to perform all the web data integration tasks.
-
-[Pipe](/packages/webmiddle-service-pipe), [Browser](/packages/webmiddle-service-browser) and [HtmlToJson](/packages/webmiddle-service-cheerio-to-json) are all core services, however there is no actual difference between a core service and a service that you may want to develop yourself.  
-
-This means that anyone can contribute by adding new services for doing the more disparate things!
-
--> [Learn more](https://webmiddle.github.io/docs/jsx_services.html)
-
-## WebMiddle objects
-
-A webmiddle can be seen as a container of related services plus settings to support them, for example you may have a webmiddle for a site, a webmiddle for a project and so on.
-
-A webmiddle application will always have at least one webmiddle object, i.e. a root object, which might even have no services associated to it.
-
-The reasoning is that the webmiddle provides the **context** in which the service must be evaluated, in form of both settings and configuration.
+Calling the previous service with
 
 ```jsx
-const webmiddle = new WebMiddle();
-
-evaluate(createContext(webmiddle, { expectResource: true }), (
-  <FetchPageLinks
-    url="https://news.ycombinator.com/"
-    query="javascript"
-  />,
-)).then(outputResource => {
-  console.log(
-    JSON.stringify(outputResource.content, null, 2)
-  );
-});
+<FetchPageLinks
+  url="https://news.ycombinator.com/"
+  query="javascript"
+/>
 ```
 
-This will give you an output like the following:
+Will give an output like the following
 
 ```json
 {
@@ -166,7 +144,13 @@ This will give you an output like the following:
 }
 ```
 
--> [Learn more](https://webmiddle.github.io/docs/webmiddle_objects.html)
+Services are the building blocks of the webmiddle framework, they can be defined and composed to perform all the web data integration tasks.
+
+[Pipe](/packages/webmiddle-service-pipe), [Browser](/packages/webmiddle-service-browser) and [HtmlToJson](/packages/webmiddle-service-cheerio-to-json) are all core services, however there is no actual difference between a core service and a service that you may want to develop yourself.  
+
+This means that anyone can contribute by adding new services for doing the more disparate things!
+
+-> [Learn more](https://webmiddle.github.io/docs/jsx_services.html)
 
 ## Remote execution
 
