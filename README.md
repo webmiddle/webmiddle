@@ -208,14 +208,6 @@ webmiddleClient('http://localhost:3000/') // "localhost" since we are using the 
 });
 ```
 
-## Multiple layers
-
-A typical webmiddle application is composed of multiple layers, each made of one or more webmiddle objects:
-
-![Multi layer](https://webmiddle.github.io/assets/img/documentation/webmiddle_multi-layer.png "Multi layer")
-
--> [Learn more](https://webmiddle.github.io/docs/multiple_layers.html)
-
 ## Core features
 
 Features currently provided via the core packages:
