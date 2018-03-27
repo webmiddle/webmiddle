@@ -58,7 +58,7 @@
     "lodash": "^4.17.4",
     "uuid": "^3.0.1",
     "webmiddle": "^0.2.0",
-    "ws": "^3.2.0"
+    "ws": "^5.1.0"
   },
   "devDependencies": {
     "ava": "^0.22.0",
