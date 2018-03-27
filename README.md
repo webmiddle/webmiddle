@@ -256,7 +256,7 @@ npm install --global lerna
 Once this is done, install all the dependencies and link the packages together by running:
 
 ```bash
-lerna boostrap
+lerna bootstrap
 ```
 
 Each [package](https://github.com/webmiddle/webmiddle/tree/master/packages) uses the same build / test system.
