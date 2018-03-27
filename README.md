@@ -8,20 +8,48 @@
 
 > Node.js JSX framework for modular web scraping and data integration 
 
-WebMiddle is a [Node.js](https://nodejs.org/) framework for extracting, transforming and combining web data from multiple websites, web APIs and web resources.
+WebMiddle is a Node.js framework for extracting, transforming and combining data from multiple websites and web APIs.
 
-WebMiddle applications are written in a declarative, functional and modular way, by using its most evident aspect: **[JSX](https://facebook.github.io/react/docs/introducing-jsx.html) services**.
+WebMiddle applications can range from simple web scrapers to complex web integration tools targeting JSON APIs, raw HTML pages, XML resources and so on.
 
-Each service executes one particular task (or controls the execution of other tasks), by composing together other services in a tree-like structure of service calls.
+WebMiddle applications are written in a declarative, functional and modular way, by using their most evident aspect: **[JSX](https://facebook.github.io/jsx/) services**.
 
-Multiple services targeting websites, web APIs or collection of web resources can be grouped together into so called **webmiddle objects**, to be reusable in different applications.  
-Each webmiddle object exposes settings accessible by all of its services and can be easily turned into a REST API for remote access.
+Each service executes one task, or controls the execution of other tasks, by composing together other services in a tree-like fashion.
 
-A typical webmiddle application is thus composed of **multiple layers** of webmiddle objects, each abstracting one or more sources of data, to produce a structured output with the **format of your choice**, that can be then consumed by the higher level. 
+```jsx
+function Main(props) {
+  const { sites } = props;
+  return (
+    <Pipe>
+      <Parallel name="articlesBySite">
+        {sites.map(siteName => {
+          const siteWebMiddle = siteWebMiddles[siteName];
+          return (
+            <SiteMain
+              {...props}
+              site={siteWebMiddle}
+              name={siteName}
+            />
+          );
+        })}
+      </Parallel>
 
-These applications can range from simple web scrapers to complex web integration tools targeting APIs, raw HTML pages, XML resources and so on.
+      {({ articlesBySite }) =>
+        <MergeArticles
+          name="articles"
+          articlesBySite={articlesBySite}
+        />
+      }
+    </Pipe>
+  );
+}
+```
 
-Read the [Documentation](https://webmiddle.github.io/docs/) for a detailed description.
+Each service can be registered with a **webmiddle**, which is similar to a WEB API: a collection of services, each with its own endpoint, that can be called to execute the service at that endpoint with the given parameters.
+
+A webmiddle exposes settings accessible by all of its services and can be easily turned into an actual REST API for remote access.
+
+Services registered with remote webmiddles can be used locally as if they were regular services, allowing seamless development of distributed applications.
 
 ## Examples
 
@@ -82,7 +110,7 @@ FetchPageLinks.propTypes = {
 };
 ```
 
-**Yes, you got this right, JSX for defining application logic :)**
+**Yes, you got this right, JSX for defining application logic!**
 
 Services are the building blocks of the webmiddle framework, they can be defined and composed to perform all the web data integration tasks.
 
@@ -96,7 +124,9 @@ This means that anyone can contribute by adding new services for doing the more 
 
 A webmiddle can be seen as a container of related services plus settings to support them, for example you may have a webmiddle for a site, a webmiddle for a project and so on.
 
-A webmiddle application will always have at least one webmiddle object, i.e. a root object, which might even have no services associated to it. The reasoning is that the system provides a way of evaluating services that aren’t associated to any webmiddle; in such a case, the root webmiddle takes ownership of the service for all the time required to evaluate it.
+A webmiddle application will always have at least one webmiddle object, i.e. a root object, which might even have no services associated to it.
+
+The reasoning is that the webmiddle provides the **context** in which the service must be evaluated, in form of both settings and configuration.
 
 ```jsx
 const webmiddle = new WebMiddle();
