@@ -10,7 +10,7 @@
     "precommit": "lint-staged"
   },
   "engines": {
-    "node": "^6.2.2 || >=8.0.0",
+    "node": "^6.9.0 || >=8.0.0",
     "yarn": ">=1.0.0"
   },
   "devDependencies": {

@@ -7,7 +7,7 @@
     "dist"
   ],
   "engines": {
-    "node": "^6.2.2 || >=8.0.0"
+    "node": "^6.9.0 || >=8.0.0"
   },
   "scripts": {
     "test": "ava",
