@@ -273,7 +273,19 @@ Each [package](https://github.com/webmiddle/webmiddle/tree/master/packages) uses
 Once you are inside a package folder, you can build it by running `npm run build` or `npm run build:watch` (for rebuilding on every change).
 
 Tests use [AVA](https://github.com/avajs/ava), thus they can be written in modern JavaScript, moreover they will also run concurrently.
-You can run the tests via `npm run test` or `npm run test:watch`. The latter option is highly recommended while developing, as it also produces a much more detailed output.
+You can run the tests with
+
+```bash
+npm run test
+```
+
+To run the tests on every change you can use
+
+```bash
+npm run test:watch
+```
+
+The latter option is highly recommended while developing, as it also produces a much more detailed output.
 
 For running the same npm command in each package, use `lerna run`, example:
 
