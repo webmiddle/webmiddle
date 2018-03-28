@@ -52,7 +52,7 @@
   "repository": "webmiddle/webmiddle",
   "license": "MIT",
   "dependencies": {
-    "tough-cookie": "^2.3.1"
+    "tough-cookie": "^2.3.4"
   },
   "devDependencies": {
     "ava": "^0.22.0"
