@@ -244,11 +244,11 @@ Here is a list of important features that are still missing and that should be i
 ## Contributing
 
 This is a monorepo, i.e. all the core services and the main webmiddle package are all in this single repository.
-It is inspired by [Babel](https://github.com/babel/babel) and other projects, check out this [article](https://github.com/babel/babel/blob/master/doc/design/monorepo.md) to know why this isn't an horrible idea after all.
+It is inspired by [Babel](https://github.com/babel/babel) and other projects, check out this [article](https://github.com/babel/babel/blob/master/doc/design/monorepo.md) to see why this isn't an horrible idea after all.
 
 It uses [Lerna](https://github.com/lerna/lerna) for managing the monorepo, as you might have guessed from the lerna.json file.
 
-Start by installing the root packages with:
+Start by installing the root dependencies with:
 
 ```bash
 npm install
@@ -260,7 +260,7 @@ Then install lerna by running:
 npm install --global lerna
 ```
 
-Finally, install the packages dependencies and link the packages together by running:
+Finally, install all the packages dependencies and link the packages together by running:
 
 ```bash
 lerna bootstrap
