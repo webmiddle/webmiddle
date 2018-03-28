@@ -5,7 +5,7 @@ language: node_js
 node_js:
   - '7'
   - '6'
-before_install: npm -i -g npm@"$(jq -r '.engines.npm' package.json)"
+before_install: npm i -g npm@"$(jq -r '.engines.npm' package.json)"
 
 script: lerna bootstrap && npm run test
 after_success: npm run report-coverage
