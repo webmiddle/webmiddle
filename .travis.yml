@@ -5,6 +5,7 @@ language: node_js
 node_js:
   - '7'
   - '6'
+before_install: npm i -g npm@5.2.0
 
 script: lerna bootstrap && npm run test
 after_success: npm run report-coverage
