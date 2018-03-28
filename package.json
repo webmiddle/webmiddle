@@ -29,17 +29,22 @@
     "eslint-plugin-react": "^7.4.0",
     "husky": "^0.14.3",
     "lerna": "^2.2.0",
-    "lint-staged": "^4.0.1",
+    "lint-staged": "^7.0.0",
     "nyc": "^11.2.1",
     "prettier": "^1.5.2",
     "rimraf": "^2.6.1"
   },
   "nyc": {
-    "include": ["packages/*/src/**"],
+    "include": [
+      "packages/*/src/**"
+    ],
     "sourceMap": false,
     "instrument": false
   },
   "lint-staged": {
-    "*.js": ["prettier --write", "git add"]
+    "*.js": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }
