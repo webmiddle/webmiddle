@@ -2,6 +2,7 @@
   "private": true,
   "author": "Manuel Dell'Elce",
   "license": "MIT",
+  "workspaces": ["packages/*"],
   "scripts": {
     "lerna": "npm-run lerna",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
@@ -9,8 +10,8 @@
     "precommit": "lint-staged"
   },
   "engines": {
-    "node": ">=6",
-    "npm" : ">=5.2.0"
+    "node": "^6.2.2 || >=8.0.0",
+    "yarn": ">=1.0.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

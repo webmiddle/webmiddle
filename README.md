@@ -251,39 +251,39 @@ It uses [Lerna](https://github.com/lerna/lerna) for managing the monorepo, as yo
 Start by installing the root dependencies with:
 
 ```bash
-npm install
+yarn
 ```
 
 Then install all the packages dependencies and link the packages together by running:
 
 ```bash
-npm run lerna bootstrap
+yarn run lerna bootstrap
 ```
 
 > **NOTE**: If you are on Windows, you might need to run the install and bootstrap commands as administrator.
 
 Each [package](https://github.com/webmiddle/webmiddle/tree/master/packages) uses the same build / test system.
 
-Once you are inside a package folder, you can build it by running `npm run build` or `npm run build:watch` (for rebuilding on every change).
+Once you are inside a package folder, you can build it by running `yarn run build` or `yarn run build:watch` (for rebuilding on every change).
 
-Tests use [AVA](https://github.com/avajs/ava), thus they can be written in modern JavaScript, moreover they will also run concurrently. You can run the tests with `npm run test`. To run the tests on every change you can use `npm run test:watch`. The latter option is highly recommended while developing, as it also produces a much more detailed output.
+Tests use [AVA](https://github.com/avajs/ava), thus they can be written in modern JavaScript, moreover they will also run concurrently. You can run the tests with `yarn run test`. To run the tests on every change you can use `yarn run test:watch`. The latter option is highly recommended while developing, as it also produces a much more detailed output.
 
 To run the tests for all the packages at once and get coverage info, move to the root and execute:
 
 ```bash
-npm run test
+yarn run test
 ```
 
 For running the same npm command in each package, use `lerna run`, example:
 
 ```bash
-npm run lerna run build
+yarn run lerna run build
 ```
 
 For running arbitrary commands, use `lerna exec`, example:
 
 ```bash
-npm run lerna -- exec -- rm -rf ./node_modules
+yarn run lerna -- exec -- rm -rf ./node_modules
 ```
 
 See [Lerna commands](https://github.com/lerna/lerna#commands) for more info.

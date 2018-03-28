@@ -7,16 +7,16 @@
     "dist"
   ],
   "engines": {
-    "node": ">=6"
+    "node": "^6.2.2 || >=8.0.0"
   },
   "scripts": {
     "test": "ava",
-    "test:watch": "npm run test -- --watch",
+    "test:watch": "yarn run test -- --watch",
     "clean": "node ../../scripts/rimraf dist",
     "babel": "node ../../scripts/npmRun babel src --out-dir dist --source-maps inline",
-    "build": "npm run clean && npm run babel",
-    "build:watch": "npm run clean && npm run babel -- --watch",
-    "prepublish": "npm run build"
+    "build": "yarn run clean && yarn run babel",
+    "build:watch": "yarn run clean && yarn run babel -- --watch",
+    "prepublish": "yarn run build"
   },
   "ava": {
     "files": [
