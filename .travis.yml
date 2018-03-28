@@ -8,8 +8,6 @@ node_js:
 before_install:
   - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.5.1
   - export PATH=$HOME/.yarn/bin:$PATH
-cache:
-  yarn: true
 
 script: yarn run lerna bootstrap && yarn run test
 after_success: yarn run report-coverage
