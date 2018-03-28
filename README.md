@@ -247,13 +247,20 @@ This is a monorepo, i.e. all the core services and the main webmiddle package ar
 It is inspired by [Babel](https://github.com/babel/babel) and other projects, check out this [article](https://github.com/babel/babel/blob/master/doc/design/monorepo.md) to know why this isn't an horrible idea after all.
 
 It uses [Lerna](https://github.com/lerna/lerna) for managing the monorepo, as you might have guessed from the lerna.json file.
-You can install it by running:
+
+Start by installing the root packages with:
+
+```bash
+npm install
+```
+
+Then install lerna by running:
 
 ```bash
 npm install --global lerna
 ```
 
-Once this is done, install all the dependencies and link the packages together by running:
+Finally, install the packages dependencies and link the packages together by running:
 
 ```bash
 lerna bootstrap
