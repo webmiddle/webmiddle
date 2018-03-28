@@ -266,6 +266,8 @@ Finally, install the packages dependencies and link the packages together by run
 lerna bootstrap
 ```
 
+> **NOTE**: If you are on Windows, you might need to run the install and bootstrap commands as administrator.
+
 Each [package](https://github.com/webmiddle/webmiddle/tree/master/packages) uses the same build / test system.
 
 Once you are inside a package folder, you can build it by running `npm run build` or `npm run build:watch` (for rebuilding on every change).
