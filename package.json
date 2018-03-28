@@ -3,6 +3,7 @@
   "author": "Manuel Dell'Elce",
   "license": "MIT",
   "scripts": {
+    "lerna": "npm-run lerna",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "test": "cross-env NODE_ENV=test nyc lerna run test",
     "precommit": "lint-staged"
@@ -28,8 +29,9 @@
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "^7.7.0",
     "husky": "^0.14.3",
-    "lerna": "^2.2.0",
+    "lerna": "^3.0.0-beta.10",
     "lint-staged": "^7.0.0",
+    "npm-run": "^4.1.2",
     "nyc": "^11.6.0",
     "prettier": "^1.11.1",
     "rimraf": "^2.6.2"

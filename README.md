@@ -254,16 +254,10 @@ Start by installing the root dependencies with:
 npm install
 ```
 
-Then install lerna by running:
+Then install all the packages dependencies and link the packages together by running:
 
 ```bash
-npm install --global lerna
-```
-
-Finally, install all the packages dependencies and link the packages together by running:
-
-```bash
-lerna bootstrap
+npm run lerna bootstrap
 ```
 
 > **NOTE**: If you are on Windows, you might need to run the install and bootstrap commands as administrator.
@@ -272,31 +266,24 @@ Each [package](https://github.com/webmiddle/webmiddle/tree/master/packages) uses
 
 Once you are inside a package folder, you can build it by running `npm run build` or `npm run build:watch` (for rebuilding on every change).
 
-Tests use [AVA](https://github.com/avajs/ava), thus they can be written in modern JavaScript, moreover they will also run concurrently.
-You can run the tests with
+Tests use [AVA](https://github.com/avajs/ava), thus they can be written in modern JavaScript, moreover they will also run concurrently. You can run the tests with `npm run test`. To run the tests on every change you can use `npm run test:watch`. The latter option is highly recommended while developing, as it also produces a much more detailed output.
+
+To run the tests for all the packages at once and get coverage info, move to the root and execute:
 
 ```bash
 npm run test
 ```
 
-To run the tests on every change you can use
-
-```bash
-npm run test:watch
-```
-
-The latter option is highly recommended while developing, as it also produces a much more detailed output.
-
 For running the same npm command in each package, use `lerna run`, example:
 
 ```bash
-lerna run build
+npm run lerna run build
 ```
 
 For running arbitrary commands, use `lerna exec`, example:
 
 ```bash
-lerna exec -- rm -rf ./node_modules
+npm run lerna -- exec -- rm -rf ./node_modules
 ```
 
 See [Lerna commands](https://github.com/lerna/lerna#commands) for more info.
