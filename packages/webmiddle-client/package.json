@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "ava": "^0.22.0",
-    "babel-cli": "^6.24.1",
+    "babel-cli": "^6.26.0",
     "webmiddle-server": "^0.2.0"
   }
 }
