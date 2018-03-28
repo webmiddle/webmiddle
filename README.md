@@ -244,27 +244,48 @@ Here is a list of important features that are still missing and that should be i
 ## Contributing
 
 This is a monorepo, i.e. all the core services and the main webmiddle package are all in this single repository.
-It is inspired by [Babel](https://github.com/babel/babel) and other projects, check out this [article](https://github.com/babel/babel/blob/master/doc/design/monorepo.md) to know why this isn't an horrible idea after all.
+It is inspired by [Babel](https://github.com/babel/babel) and other projects, check out this [article](https://github.com/babel/babel/blob/master/doc/design/monorepo.md) to see why this isn't an horrible idea after all.
 
 It uses [Lerna](https://github.com/lerna/lerna) for managing the monorepo, as you might have guessed from the lerna.json file.
-You can install it by running:
+
+Start by installing the root dependencies with:
+
+```bash
+npm install
+```
+
+Then install lerna by running:
 
 ```bash
 npm install --global lerna
 ```
 
-Once this is done, install all the dependencies and link the packages together by running:
+Finally, install all the packages dependencies and link the packages together by running:
 
 ```bash
 lerna bootstrap
 ```
+
+> **NOTE**: If you are on Windows, you might need to run the install and bootstrap commands as administrator.
 
 Each [package](https://github.com/webmiddle/webmiddle/tree/master/packages) uses the same build / test system.
 
 Once you are inside a package folder, you can build it by running `npm run build` or `npm run build:watch` (for rebuilding on every change).
 
 Tests use [AVA](https://github.com/avajs/ava), thus they can be written in modern JavaScript, moreover they will also run concurrently.
-You can run the tests via `npm run test` or `npm run test:watch`. The latter option is highly recommended while developing, as it also produces a much more detailed output.
+You can run the tests with
+
+```bash
+npm run test
+```
+
+To run the tests on every change you can use
+
+```bash
+npm run test:watch
+```
+
+The latter option is highly recommended while developing, as it also produces a much more detailed output.
 
 For running the same npm command in each package, use `lerna run`, example:
 
