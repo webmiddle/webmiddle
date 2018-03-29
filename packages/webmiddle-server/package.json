@@ -52,7 +52,7 @@
   "repository": "webmiddle/webmiddle",
   "license": "MIT",
   "dependencies": {
-    "body-parser": "^1.16.0",
+    "body-parser": "^1.18.2",
     "cors": "^2.8.1",
     "express": "^4.14.1",
     "lodash": "^4.17.4",
