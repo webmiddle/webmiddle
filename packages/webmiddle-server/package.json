@@ -61,7 +61,7 @@
     "ws": "^5.1.0"
   },
   "devDependencies": {
-    "ava": "^0.22.0",
+    "ava": "^0.25.0",
     "superagent": "^3.5.2"
   }
 }
