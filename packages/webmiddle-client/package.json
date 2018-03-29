@@ -59,7 +59,6 @@
     "ws": "^5.1.0"
   },
   "devDependencies": {
-    "ava": "^0.25.0",
     "webmiddle-server": "^0.2.0"
   }
 }

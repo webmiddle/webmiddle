@@ -54,6 +54,5 @@
   "dependencies": {
     "phantom": "4.0.2",
     "webmiddle": "^0.2.0"
-  },
-  "devDependencies": {}
+  }
 }

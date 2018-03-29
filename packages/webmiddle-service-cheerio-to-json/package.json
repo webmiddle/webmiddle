@@ -56,8 +56,5 @@
     "webmiddle-service-pipe": "^0.2.0",
     "webmiddle-service-cheerio-to-virtual": "^0.2.0",
     "webmiddle-service-virtual-to-json": "^0.2.0"
-  },
-  "devDependencies": {
-    "ava": "^0.25.0"
   }
 }

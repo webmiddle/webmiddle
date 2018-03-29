@@ -53,6 +53,5 @@
   "license": "MIT",
   "dependencies": {
     "webmiddle": "^0.2.0"
-  },
-  "devDependencies": {}
+  }
 }

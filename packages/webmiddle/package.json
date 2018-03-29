@@ -63,6 +63,5 @@
     "proptypes": "^1.0.0",
     "virtual-element": "^1.2.0",
     "webmiddle-manager-cookie": "^0.2.0"
-  },
-  "devDependencies": {}
+  }
 }
