@@ -10,7 +10,7 @@
     "node": "^6.9.0 || >=8.0.0"
   },
   "scripts": {
-    "test": "ava",
+    "test": "node ../../scripts/npmRun ava",
     "test:watch": "yarn run test -- --watch",
     "clean": "node ../../scripts/rimraf dist",
     "babel": "node ../../scripts/npmRun babel src --out-dir dist --source-maps inline",
@@ -61,7 +61,6 @@
     "ws": "^5.1.0"
   },
   "devDependencies": {
-    "ava": "^0.25.0",
     "superagent": "^3.5.2"
   }
 }

@@ -6,7 +6,7 @@ if (!command) {
   throw new Error("No command specified");
 }
 // http://stackoverflow.com/a/17537559
-const cmdCommands = ["babel"];
+const cmdCommands = ["babel", "ava"];
 if (process.platform === "win32" && cmdCommands.indexOf(command) >= 0) {
   command += ".cmd";
 }
