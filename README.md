@@ -248,13 +248,19 @@ It is inspired by [Babel](https://github.com/babel/babel) and other projects, ch
 
 It uses [Yarn](https://yarnpkg.com) and [Lerna](https://github.com/lerna/lerna) for managing the monorepo, as you might have guessed from the lerna.json file.
 
-Start by installing all the dependencies and linking the packages together with:
+Start by installing the root dependencies with:
 
 ```bash
 yarn
 ```
 
-Then build all the packages by running:
+Then install all the packages dependencies and link the packages together by running:
+
+```bash
+yarn run lerna bootstrap
+```
+
+Build all the packages by running:
 
 ```bash
 yarn run build

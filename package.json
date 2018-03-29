@@ -10,8 +10,7 @@
     "build": "lerna run build",
     "test": "cross-env NODE_ENV=test nyc lerna run test",
     "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "precommit": "lint-staged",
-    "postinstall": "lerna bootstrap"
+    "precommit": "lint-staged"
   },
   "engines": {
     "node": "^6.9.0 || >=8.0.0",
