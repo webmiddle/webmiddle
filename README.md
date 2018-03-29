@@ -246,19 +246,27 @@ Here is a list of important features that are still missing and that should be i
 This is a monorepo, i.e. all the core services and the main webmiddle package are all in this single repository.
 It is inspired by [Babel](https://github.com/babel/babel) and other projects, check out this [article](https://github.com/babel/babel/blob/master/doc/design/monorepo.md) to see why this isn't an horrible idea after all.
 
-It uses [Lerna](https://github.com/lerna/lerna) for managing the monorepo, as you might have guessed from the lerna.json file.
+It uses [Yarn](https://yarnpkg.com) and [Lerna](https://github.com/lerna/lerna) for managing the monorepo, as you might have guessed from the lerna.json file.
 
-Start by installing the root dependencies with:
+Start by installing all the dependencies and linking the packages together with:
 
 ```bash
 yarn
 ```
 
-Then install all the packages dependencies and link the packages together by running:
+Then build all the packages by running:
 
 ```bash
-yarn run lerna bootstrap
+yarn run build
 ```
+
+To run the tests for all the packages at once and get coverage info, execute:
+
+```bash
+yarn run test
+```
+
+> **NOTE**: make sure to build before running the tests.
 
 > **NOTE**: If you are on Windows, you might need to run the install and bootstrap commands as administrator.
 
@@ -268,13 +276,7 @@ Once you are inside a package folder, you can build it by running `yarn run buil
 
 Tests use [AVA](https://github.com/avajs/ava), thus they can be written in modern JavaScript, moreover they will also run concurrently. You can run the tests with `yarn run test`. To run the tests on every change you can use `yarn run test:watch`. The latter option is highly recommended while developing, as it also produces a much more detailed output.
 
-To run the tests for all the packages at once and get coverage info, move to the root and execute:
-
-```bash
-yarn run test
-```
-
-For running the same npm command in each package, use `lerna run`, example:
+For running the same npm command in all the packages, use `lerna run`, example:
 
 ```bash
 yarn run lerna run build
