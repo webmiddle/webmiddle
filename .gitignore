@@ -7,3 +7,4 @@ dist
 /.settings/
 Thumbs.db
 .nyc_output
+yarn-error.log

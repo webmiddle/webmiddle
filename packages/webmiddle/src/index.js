@@ -8,15 +8,21 @@ import merge from "lodash.merge";
 import CookieManager from "webmiddle-manager-cookie";
 import isVirtual from "./utils/isVirtual";
 
-export { PropTypes };
+import isResource from "./utils/isResource";
+import createContext from "./utils/createContext";
+import evaluate from "./utils/evaluate";
+import callVirtual from "./utils/callVirtual";
+import pickDefaults from "./utils/pickDefaults";
+import WithOptions from "./utils/WithOptions";
 
-export isResource from "./utils/isResource";
+export { PropTypes };
 export { isVirtual };
-export createContext from "./utils/createContext";
-export evaluate from "./utils/evaluate";
-export callVirtual from "./utils/callVirtual";
-export pickDefaults from "./utils/pickDefaults";
-export WithOptions from "./utils/WithOptions";
+export { isResource };
+export { createContext };
+export { evaluate };
+export { callVirtual };
+export { pickDefaults };
+export { WithOptions };
 
 function mapObjectDeep(obj, onLeaf) {
   if (typeof obj !== "object" || obj === null || isVirtual(obj))
@@ -34,10 +40,9 @@ function wrapService(Service, webmiddle) {
     throw new Error("Invalid service: is not a function", Service);
   }
 
-  const HigherService = ({ children, ...rest }) =>
-    <Service {...rest}>
-      {children}
-    </Service>;
+  const HigherService = ({ children, ...rest }) => (
+    <Service {...rest}>{children}</Service>
+  );
   HigherService.propTypes = Service.propTypes;
   HigherService.webmiddle = webmiddle;
   return HigherService;
