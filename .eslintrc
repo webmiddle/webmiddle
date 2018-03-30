@@ -5,7 +5,7 @@
     "prettier"
   ],
   "rules": {
-    "prettier/prettier": "error",
+    "prettier/prettier": 0,
 
     "react/react-in-jsx-scope": 0,
     "dot-notation": 0,
@@ -14,7 +14,7 @@
     "no-use-before-define": 1,
 
     "class-methods-use-this": 1,
-    "arrow-parens": 1,
+    "arrow-parens": 0,
     "no-underscore-dangle": 1,
     "react/jsx-filename-extension": 0,
     "arrow-body-style": 1,
