@@ -24,4 +24,5 @@ childProcess.stderr.on("data", data => {
 });
 childProcess.on("exit", code => {
   //console.log(dir, 'child process exited with code ' + code.toString());
+  process.exit(code);
 });
