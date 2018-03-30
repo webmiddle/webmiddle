@@ -8,3 +8,4 @@ dist
 Thumbs.db
 .nyc_output
 yarn-error.log
+.vscode
