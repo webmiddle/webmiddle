@@ -52,7 +52,6 @@
   "repository": "webmiddle/webmiddle",
   "license": "MIT",
   "dependencies": {
-    "phantom": "4.0.2",
     "puppeteer": "^1.2.0",
     "webmiddle": "^0.2.0"
   },

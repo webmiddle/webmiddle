@@ -1,37 +1,8 @@
 import WebMiddle, { PropTypes, pickDefaults } from "webmiddle";
 import HttpError from "webmiddle/dist/utils/HttpError";
-import phantom from "phantom";
 import puppeteer from "puppeteer";
 
-/*
-// promise-based implementation of http://stackoverflow.com/a/19070446
-function waitForFn(config) {
-  config._start = config._start || new Date();
-
-  if (config.timeout && new Date() - config._start > config.timeout) {
-    const errorMessage =
-      "waitForFn timedout " + (new Date() - config._start) + "ms";
-    if (config.debug) console.log(errorMessage);
-    return Promise.reject(errorMessage);
-  }
-
-  return config.check().then(result => {
-    if (result) {
-      if (config.debug)
-        console.log("waitForFn success " + (new Date() - config._start) + "ms");
-      return result;
-    }
-
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        waitForFn(config).then(resolve, reject);
-      }, config.interval || 0);
-    });
-  });
-}
-*/
-
-function setCookies(page, context) {
+function pageSetCookies(page, context) {
   const allCookies = context.webmiddle.cookieManager.jar.toJSON().cookies;
   return Promise.all(
     allCookies.map(cookie =>
@@ -48,46 +19,99 @@ function setCookies(page, context) {
   );
 }
 
-/*function setCookies(page, context) {
-  const allCookies = context.webmiddle.cookieManager.jar.toJSON().cookies;
-  return Promise.all(
-    allCookies.map(cookie =>
-      page.addCookie({
-        name: cookie.key,
-        value: cookie.value,
-        domain: cookie.domain,
-        path: cookie.path,
-        httponly: cookie.httpOnly,
-        secure: cookie.secure,
-        expires: cookie.expires
-      })
-    )
-  );
-}*/
+function bodyToFormData(body) {
+  if (typeof body !== "string") return body;
+  const formData = {};
+  body.split("&").map(entry => {
+    const [name, value] = entry.split("=");
+    formData[decodeURIComponent(name)] = decodeURIComponent(value);
+  });
+  return formData;
+}
 
-async function pageGotoWithOverrides(page, url, overrides) {
-  const onRequest = request => {
-    // only override the initial request
-    let requestOverrides = {};
-    if (
-      request.frame() === page.mainFrame() &&
-      request.resourceType() === "document" &&
-      request.redirectChain().length === 0
-    ) {
-      requestOverrides = overrides;
-    }
-    request.continue(requestOverrides);
-  };
-  let pageResponse;
+async function pageGoto(page, url, options = {}) {
+  const { method, headers, body } = options;
+  let pageResponse = null;
+  let isFetch = false;
+  let onRequest = null;
   try {
-    await page.setRequestInterception(true);
+    // extra http requests only for the initial request
+    onRequest = request => {
+      if (
+        request.frame() === page.mainFrame() &&
+        (isFetch || request.resourceType() === "document") &&
+        request.redirectChain().length === 0
+      ) {
+        page.removeListener("request", onRequest);
+        page.setExtraHTTPHeaders({});
+      }
+    };
     page.on("request", onRequest);
-    pageResponse = await page.goto(url, {
-      waitUntil: "domcontentloaded"
-    });
+    await page.setExtraHTTPHeaders(headers);
+
+    if (method === "GET") {
+      await page.evaluate(`window.location.href = ${JSON.stringify(url)}`);
+      pageResponse = await page.waitForNavigation({
+        waitUntil: "domcontentloaded"
+      });
+    } else if (
+      headers["content-type"] === "application/x-www-form-urlencoded"
+    ) {
+      const formData = bodyToFormData(body);
+      await page.setContent(`
+        <form
+          method=${JSON.stringify(method)}
+          action=${JSON.stringify(url)}
+        >
+          ${Object.keys(formData).map(
+            name => `
+            <input
+              type="hidden"
+              name=${JSON.stringify(name)}
+              value=${JSON.stringify(formData[name])}
+            />
+          `
+          )}
+        </form>
+      `);
+      await page.evaluate("document.querySelector('form').submit()");
+      pageResponse = await page.waitForNavigation({
+        waitUntil: "domcontentloaded"
+      });
+    } else {
+      isFetch = true;
+      let lastResponse = null;
+      let onResponse = null;
+      try {
+        onResponse = response => {
+          lastResponse = response;
+        };
+        page.on("response", onResponse);
+
+        let bodyString = typeof body === "string" ? body : JSON.stringify(body); // assumes body is an object
+
+        await page.evaluate(`
+          fetch(${JSON.stringify(url)}, {
+            method: ${JSON.stringify(method)},
+            body: ${JSON.stringify(bodyString)},
+            credentials: 'include',
+            redirect: 'follow',
+          }).then(response => {
+            return response.text();
+          }).then(content => {
+            var pre = document.createElement('pre');
+            pre.textContent = content;
+            document.write(pre.outerHTML);
+          });
+        `);
+      } finally {
+        page.removeListener("response", onResponse);
+      }
+      pageResponse = lastResponse;
+    }
   } finally {
     page.removeListener("request", onRequest);
-    await page.setRequestInterception(false);
+    await page.setExtraHTTPHeaders({});
   }
   return pageResponse;
 }
@@ -98,6 +122,14 @@ function normalizeHttpHeaders(headers) {
     newHeaders[headerName.toLowerCase()] = headers[headerName];
   });
   return newHeaders;
+}
+
+let browser = null;
+async function getBrowser() {
+  if (!browser) {
+    browser = await puppeteer.launch();
+  }
+  return browser;
 }
 
 // TODO: cookies
@@ -115,34 +147,23 @@ async function Browser(
 ) {
   console.log("Browser", url);
 
+  method = method.toUpperCase();
   httpHeaders = normalizeHttpHeaders(httpHeaders);
 
-  if (typeof body === "object" && body !== null) {
-    // body as string
-    if (httpHeaders && httpHeaders["content-type"] === "application/json") {
-      body = JSON.stringify(body);
-    } else {
-      // default: convert to form data
-      body = Object.keys(body)
-        .reduce((list, prop) => {
-          const value = body[prop];
-          list.push(`${encodeURIComponent(prop)}=${encodeURIComponent(value)}`);
-          return list;
-        }, [])
-        .join("&");
-    }
-  }
   if (body && !httpHeaders["content-type"]) {
     // default content type
     httpHeaders["content-type"] = "application/x-www-form-urlencoded";
   }
 
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-
+  let browser = null;
+  let page = null;
+  let onResponse = null;
   try {
-    page.on("response", response => {
-      // save new cookies
+    browser = await getBrowser();
+    page = await browser.newPage();
+
+    // track new cookies and store them into the jar
+    onResponse = response => {
       const headers = response.headers();
       Object.keys(headers).forEach(headerName => {
         const headerValue = headers[headerName];
@@ -160,35 +181,39 @@ async function Browser(
           });
         }
       });
-    });
+    };
+    page.on("response", onResponse);
 
     // TODO: check if all cookies are added, it might be that
     // those not relevant to the page url are discarded
     // (even though at this moment the page doesn't even have an url)
     // Also check in case of redirects or XHR.
-    await setCookies(page, context);
+    await pageSetCookies(page, context);
 
-    let pageResponse;
-    let status;
+    let pageResponse = null;
+    let statusMessage;
     try {
-      pageResponse = await pageGotoWithOverrides(page, url, {
+      pageResponse = await pageGoto(page, url, {
         method,
         headers: httpHeaders,
-        postData: body
+        body
       });
-      status = "success";
+      statusMessage = "success";
     } catch (err) {
       console.error(err);
       pageResponse = null;
-      status = err instanceof Error ? err.message : String(err);
+      statusMessage = err instanceof Error ? err.message : String(err);
     }
 
     if (
-      status !== "success" ||
+      statusMessage !== "success" ||
       !pageResponse ||
       pageResponse.status() !== 200
     ) {
-      throw new HttpError(status, pageResponse ? pageResponse.status() : null);
+      throw new HttpError(
+        statusMessage,
+        pageResponse ? pageResponse.status() : null
+      );
     }
 
     if (waitFor) {
@@ -210,112 +235,11 @@ async function Browser(
         contentType === "application/json" ? JSON.parse(content) : content
     };
   } finally {
-    await page.close();
-    await browser.close();
+    if (page) {
+      page.removeListener("response", onResponse);
+      await page.close();
+    }
   }
-
-  /*
-  let sitepage = null;
-  let phInstance = null;
-  const pageResponses = {};
-  let finalUrl = url;
-
-  return phantom
-    .create()
-    .then(instance => {
-      phInstance = instance;
-      return instance.createPage();
-    })
-    .then(async page => {
-      sitepage = page;
-
-      //page.customHeaders = httpHeaders; // TODO: doesn't seem to work
-
-      page.on("onResourceReceived", response => {
-        // track final response (after redirects)
-        // https://github.com/ariya/phantomjs/issues/10185#issuecomment-38856203
-        pageResponses[response.url] = response;
-
-        // save new cookies
-        response.headers.forEach(header => {
-          if (header.name.toLowerCase() === "set-cookie") {
-            const values = header.value.split("\n");
-            values.forEach(value => {
-              const cookie = context.webmiddle.cookieManager.Cookie.parse(
-                value,
-                {
-                  loose: true
-                }
-              );
-              context.webmiddle.cookieManager.jar.setCookieSync(
-                cookie,
-                response.url,
-                {}
-              );
-            });
-          }
-        });
-      });
-      page.on("onUrlChanged", targetUrl => {
-        finalUrl = targetUrl;
-      });
-
-      // TODO: are httpHeaders still sent in case of redirect?
-      const settings = {
-        operation: method,
-        headers: httpHeaders,
-        data: body
-      };
-
-      // TODO: check if all cookies are added, it might be that
-      // those not relevant to the page url are discarded
-      // (even though at this moment the page doesn't even have an url)
-      // Also check in case of redirects or XHR.
-      await setCookies(page, context);
-
-      return page.open(url, settings);
-    })
-    .then(status => {
-      const pageResponse = pageResponses[finalUrl];
-
-      if (status !== "success" || pageResponse.status !== 200) {
-        throw new HttpError(status, pageResponse ? pageResponse.status : null);
-      }
-
-      if (waitFor) {
-        return waitForFn({
-          debug: true, // optional
-          interval: 500, // optional
-          timeout: 10000, // optional
-          check: () =>
-            sitepage.evaluateJavaScript(
-              // we don't use "evaluate" since it fails under nyc
-              `function() { return document.querySelector(${JSON.stringify(
-                waitFor
-              )}) !== null; }`
-            )
-        });
-      }
-      return Promise.resolve();
-    })
-    .then(() => sitepage.property("content"))
-    .then(content => {
-      //sitepage.close();
-      return phInstance.exit().then(() => {
-        return {
-          name,
-          contentType,
-          content:
-            contentType === "application/json" ? JSON.parse(content) : content
-        };
-      });
-    })
-    .catch(error => {
-      return phInstance.exit().then(() => {
-        throw error;
-      });
-    });
-    */
 }
 
 Browser.options = (props, context) =>

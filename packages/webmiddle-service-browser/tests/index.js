@@ -30,9 +30,9 @@ test("GET https page", async t => {
       name="virtual"
       contentType="text/html"
       method="GET"
-      url={`https://httpbin.org/get?number=${escape(number)}&static=${escape(
-        "test this number"
-      )}`}
+      url={`https://httpbin.org/get?number=${encodeURIComponent(
+        number
+      )}&static=${encodeURIComponent("test this number")}`}
     />
   );
 
