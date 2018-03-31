@@ -127,7 +127,12 @@ function normalizeHttpHeaders(headers) {
 let browser = null;
 async function getBrowser() {
   if (!browser) {
-    browser = await puppeteer.launch();
+    browser = await puppeteer.launch({
+      args:
+        process.env.TRAVIS || process.env.CHROME_NO_SANDBOX
+          ? ["--no-sandbox"] // https://docs.travis-ci.com/user/chrome#Sandboxing
+          : []
+    });
   }
   return browser;
 }
