@@ -128,6 +128,7 @@ let browser = null;
 async function getBrowser() {
   if (!browser) {
     browser = await puppeteer.launch({
+      timeout: 120000,
       args:
         process.env.TRAVIS || process.env.CHROME_NO_SANDBOX
           ? ["--no-sandbox"] // https://docs.travis-ci.com/user/chrome#Sandboxing
