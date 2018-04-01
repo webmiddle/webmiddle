@@ -213,7 +213,8 @@ async function Browser(
     if (
       statusMessage !== "success" ||
       !pageResponse ||
-      pageResponse.status() !== 200
+      pageResponse.status() < 200 ||
+      pageResponse.status() > 299
     ) {
       throw new HttpError(
         statusMessage,

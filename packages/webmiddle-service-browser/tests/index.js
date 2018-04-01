@@ -306,3 +306,46 @@ test("cookies", async t => {
     k1: String(v1)
   });
 });
+
+test("Should not throw when status code is between 200 and 299", async t => {
+  await t.notThrows(
+    evaluate(
+      createContext(t.context.webmiddle),
+      <Browser
+        name="virtual"
+        contentType="text/html"
+        method="GET"
+        url={`https://httpbin.org/status/201`}
+      />
+    )
+  );
+
+  await t.notThrows(
+    evaluate(
+      createContext(t.context.webmiddle),
+      <Browser
+        name="virtual"
+        contentType="text/html"
+        method="GET"
+        url={`https://httpbin.org/status/299`}
+      />
+    )
+  );
+});
+
+test("Should fail with correct status code", async t => {
+  try {
+    await evaluate(
+      createContext(t.context.webmiddle),
+      <Browser
+        name="virtual"
+        contentType="text/html"
+        method="GET"
+        url={`https://httpbin.org/status/499`}
+      />
+    );
+  } catch (err) {
+    t.is(err.statusCode, 499);
+    t.is(err.message, "success");
+  }
+});
