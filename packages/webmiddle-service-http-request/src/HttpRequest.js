@@ -2,6 +2,14 @@ import WebMiddle, { PropTypes, pickDefaults } from "webmiddle";
 import HttpError from "webmiddle/dist/utils/HttpError";
 import request from "request";
 
+function normalizeHttpHeaders(headers) {
+  const newHeaders = {};
+  Object.keys(headers).forEach(headerName => {
+    newHeaders[headerName.toLowerCase()] = headers[headerName];
+  });
+  return newHeaders;
+}
+
 // TODO: cookies
 function HttpRequest(
   { name, contentType, url, method = "GET", body = {}, httpHeaders = {} },
@@ -11,8 +19,16 @@ function HttpRequest(
     try {
       console.log("HttpRequest", url);
 
+      method = method.toUpperCase();
+      httpHeaders = normalizeHttpHeaders(httpHeaders);
+
+      if (method !== "GET" && !httpHeaders["content-type"]) {
+        // default content type
+        httpHeaders["content-type"] = "application/x-www-form-urlencoded";
+      }
+
       const isJsonBody =
-        httpHeaders && httpHeaders["Content-Type"] === "application/json";
+        httpHeaders && httpHeaders["content-type"] === "application/json";
 
       // remember cookies for future use
       // HACK: "request" and "cookieManager" both use "tough-cookie",
@@ -47,7 +63,7 @@ function HttpRequest(
           headers: {
             // default form content type needs to be explicitly set
             // (request doesn't do it automatically when using the body property)
-            "Content-Type": !isJsonBody
+            "content-type": !isJsonBody
               ? "application/x-www-form-urlencoded"
               : undefined,
             ...httpHeaders
@@ -60,6 +76,7 @@ function HttpRequest(
             response.statusCode >= 200 &&
             response.statusCode <= 299
           ) {
+            contentType = contentType || response.headers["content-type"];
             resolve({
               name,
               contentType,
