@@ -155,7 +155,7 @@ async function Browser(
   method = method.toUpperCase();
   httpHeaders = normalizeHttpHeaders(httpHeaders);
 
-  if (body && !httpHeaders["content-type"]) {
+  if (method !== "GET" && !httpHeaders["content-type"]) {
     // default content type
     httpHeaders["content-type"] = "application/x-www-form-urlencoded";
   }
