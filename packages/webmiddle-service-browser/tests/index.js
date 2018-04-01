@@ -43,7 +43,7 @@ test("GET https page", async t => {
   });
 });
 
-test("POST https page: form data as string", async t => {
+test("POST https page: form data as string (no content type)", async t => {
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
@@ -66,7 +66,30 @@ test("POST https page: form data as string", async t => {
   });
 });
 
-test("POST https page: form data as object", async t => {
+test("POST https page: form data as string (no content type, case insensitive method)", async t => {
+  const number = Math.round(Math.random() * 100);
+
+  const output = await evaluate(
+    createContext(t.context.webmiddle),
+    <Browser
+      name="virtual"
+      contentType="text/html"
+      method="pOsT"
+      url="https://httpbin.org/post"
+      body={`number=${encodeURIComponent(number)}&static=${encodeURIComponent(
+        "test this number"
+      )}`}
+    />
+  );
+
+  const json = getJSON(output.content);
+  t.deepEqual(json.form, {
+    number: number.toString(), // NOTE: type is lost with form data
+    static: "test this number"
+  });
+});
+
+test("POST https page: form data as object (no content type)", async t => {
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
@@ -86,6 +109,87 @@ test("POST https page: form data as object", async t => {
   const json = getJSON(output.content);
   t.deepEqual(json.form, {
     number: number.toString(), // NOTE: type is lost with form data
+    static: "test this number"
+  });
+});
+
+test("POST https page: form data as object (with content type)", async t => {
+  const number = Math.round(Math.random() * 100);
+
+  const output = await evaluate(
+    createContext(t.context.webmiddle),
+    <Browser
+      name="virtual"
+      contentType="text/html"
+      method="POST"
+      url="https://httpbin.org/post"
+      body={{
+        number,
+        static: "test this number"
+      }}
+      httpHeaders={{
+        "Content-Type": "application/x-www-form-urlencoded"
+      }}
+    />
+  );
+
+  const json = getJSON(output.content);
+  t.deepEqual(json.form, {
+    number: number.toString(), // NOTE: type is lost with form data
+    static: "test this number"
+  });
+});
+
+test("POST https page: json data as string", async t => {
+  const number = Math.round(Math.random() * 100);
+
+  const output = await evaluate(
+    createContext(t.context.webmiddle),
+    <Browser
+      name="virtual"
+      contentType="text/html"
+      method="POST"
+      url="https://httpbin.org/post"
+      body={JSON.stringify({
+        number,
+        static: "test this number"
+      })}
+      httpHeaders={{
+        "Content-Type": "application/json"
+      }}
+    />
+  );
+
+  const json = getJSON(output.content);
+  t.deepEqual(json.json, {
+    number,
+    static: "test this number"
+  });
+});
+
+test("POST https page: json data as string (case insensitive headers)", async t => {
+  const number = Math.round(Math.random() * 100);
+
+  const output = await evaluate(
+    createContext(t.context.webmiddle),
+    <Browser
+      name="virtual"
+      contentType="text/html"
+      method="POST"
+      url="https://httpbin.org/post"
+      body={JSON.stringify({
+        number,
+        static: "test this number"
+      })}
+      httpHeaders={{
+        "CoNTenT-TYpe": "application/json"
+      }}
+    />
+  );
+
+  const json = getJSON(output.content);
+  t.deepEqual(json.json, {
+    number,
     static: "test this number"
   });
 });
