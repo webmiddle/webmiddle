@@ -38,12 +38,13 @@ fetching SPAs (single page applications) or any other page with dynamic
 content created in the client-side.
 
 On the other end, the service has a bigger resource usage **footprint**,
-as it needs to spawn a separate PhantomJS process that communicates with
+as it needs to spawn separate Headless Chrome processes that communicate with
 the main Node process.
 
-The service is built on top of the [phantomjs-node](https://github.com/amir20/phantomjs-node) library.
+The service is built on top of the [puppeteer](https://github.com/GoogleChrome/puppeteer) library.
 
-It uses the [CookieManager](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-manager-cookie) as a jar, so that **cookies** obtained from
+It uses the [CookieManager](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-manager-cookie)
+as a jar, so that **cookies** obtained from
 Browser calls can be shared in the HttpRequest calls and vice versa.
 
 In terms of body conversion, http errors and retries works very
@@ -56,10 +57,12 @@ page.
 Such property can be used to wait for client-side parts of the page to
 be rendered before returning the resource.
 
-Note that we are effectively using a browser for fetching the specified
-url, this means that the response body will be always **wrapped into an
-html document**, even in case the url points to a JSON file (the JSON
-content will be wrapped into a “pre” HTML element).
+If the response content-type isn't relative to an html document,
+then the **waitFor** property is ignored and the response body
+is returned as is.
+
+The default response content-type can be overridden by using the **contentType**
+property.
 
 ## Properties
 
