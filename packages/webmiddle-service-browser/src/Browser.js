@@ -223,23 +223,36 @@ async function Browser(
       );
     }
 
-    if (waitFor) {
-      await page.waitForFunction(
-        `document.querySelector(${JSON.stringify(waitFor)})`,
-        {
-          polling: 500,
-          timeout: 10000
-        }
-      );
+    // read content
+    contentType =
+      contentType || pageResponse.headers()["content-type"] || "text/html";
+    const contentIsHtml = contentType.match(/html/i) !== null;
+    let content;
+    if (contentIsHtml) {
+      if (waitFor) {
+        await page.waitForFunction(
+          `document.querySelector(${JSON.stringify(waitFor)})`,
+          {
+            polling: 500,
+            timeout: 10000
+          }
+        );
+      }
+      content = await page.content();
+    } else {
+      if (waitFor) {
+        console.warn("wairFor ignored for non html resources:", contentType);
+      }
+      content = await pageResponse.text();
     }
-
-    const content = await page.content();
+    if (contentType === "application/json") {
+      content = JSON.parse(content);
+    }
 
     return {
       name,
       contentType,
-      content:
-        contentType === "application/json" ? JSON.parse(content) : content
+      content
     };
   } finally {
     if (page) {
