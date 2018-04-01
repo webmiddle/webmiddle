@@ -12,15 +12,6 @@ test.beforeEach(t => {
   });
 });
 
-// phantomjs wraps non-html content into a "pre" element
-function getJSON(content) {
-  const start = content.indexOf(">{") + 1;
-  const end = content.indexOf("}\n</pre>") + 1;
-  const jsonString = content.substring(start, end);
-  const json = JSON.parse(jsonString);
-  return json;
-}
-
 test("GET https page", async t => {
   const number = Math.round(Math.random() * 100);
 
@@ -28,7 +19,7 @@ test("GET https page", async t => {
     createContext(t.context.webmiddle),
     <Browser
       name="virtual"
-      contentType="text/html"
+      contentType="application/json"
       method="GET"
       url={`https://httpbin.org/get?number=${encodeURIComponent(
         number
@@ -36,21 +27,49 @@ test("GET https page", async t => {
     />
   );
 
-  const json = getJSON(output.content);
+  const json = output.content;
   t.deepEqual(json.args, {
     number: number.toString(), // NOTE: type is lost with query data
     static: "test this number"
   });
 });
 
-test("POST https page: form data as string (no content type)", async t => {
+test("GET xml document (infer resource contentType)", async t => {
+  const number = Math.round(Math.random() * 100);
+
+  const output = await evaluate(
+    createContext(t.context.webmiddle),
+    <Browser name="virtual" method="GET" url={`https://httpbin.org/xml`} />
+  );
+
+  t.is(output.contentType, "application/xml");
+});
+
+test("GET non-html document: should ignore waitFor", async t => {
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
     createContext(t.context.webmiddle),
     <Browser
       name="virtual"
-      contentType="text/html"
+      contentType="application/xml"
+      method="GET"
+      url={`https://httpbin.org/xml`}
+      waitFor=".foo"
+    />
+  );
+
+  t.is(output.contentType, "application/xml");
+});
+
+test("POST https page: form data as string (no content type header)", async t => {
+  const number = Math.round(Math.random() * 100);
+
+  const output = await evaluate(
+    createContext(t.context.webmiddle),
+    <Browser
+      name="virtual"
+      contentType="application/json"
       method="POST"
       url="https://httpbin.org/post"
       body={`number=${encodeURIComponent(number)}&static=${encodeURIComponent(
@@ -59,21 +78,21 @@ test("POST https page: form data as string (no content type)", async t => {
     />
   );
 
-  const json = getJSON(output.content);
+  const json = output.content;
   t.deepEqual(json.form, {
     number: number.toString(), // NOTE: type is lost with form data
     static: "test this number"
   });
 });
 
-test("POST https page: form data as string (no content type, case insensitive method)", async t => {
+test("POST https page: form data as string (no content type header, case insensitive method)", async t => {
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
     createContext(t.context.webmiddle),
     <Browser
       name="virtual"
-      contentType="text/html"
+      contentType="application/json"
       method="pOsT"
       url="https://httpbin.org/post"
       body={`number=${encodeURIComponent(number)}&static=${encodeURIComponent(
@@ -82,21 +101,21 @@ test("POST https page: form data as string (no content type, case insensitive me
     />
   );
 
-  const json = getJSON(output.content);
+  const json = output.content;
   t.deepEqual(json.form, {
     number: number.toString(), // NOTE: type is lost with form data
     static: "test this number"
   });
 });
 
-test("POST https page: form data as object (no content type)", async t => {
+test("POST https page: form data as object (no content type header)", async t => {
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
     createContext(t.context.webmiddle),
     <Browser
       name="virtual"
-      contentType="text/html"
+      contentType="application/json"
       method="POST"
       url="https://httpbin.org/post"
       body={{
@@ -106,21 +125,21 @@ test("POST https page: form data as object (no content type)", async t => {
     />
   );
 
-  const json = getJSON(output.content);
+  const json = output.content;
   t.deepEqual(json.form, {
     number: number.toString(), // NOTE: type is lost with form data
     static: "test this number"
   });
 });
 
-test("POST https page: form data as object (with content type)", async t => {
+test("POST https page: form data as object (with content type header)", async t => {
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
     createContext(t.context.webmiddle),
     <Browser
       name="virtual"
-      contentType="text/html"
+      contentType="application/json"
       method="POST"
       url="https://httpbin.org/post"
       body={{
@@ -133,7 +152,7 @@ test("POST https page: form data as object (with content type)", async t => {
     />
   );
 
-  const json = getJSON(output.content);
+  const json = output.content;
   t.deepEqual(json.form, {
     number: number.toString(), // NOTE: type is lost with form data
     static: "test this number"
@@ -147,7 +166,7 @@ test("POST https page: json data as string", async t => {
     createContext(t.context.webmiddle),
     <Browser
       name="virtual"
-      contentType="text/html"
+      contentType="application/json"
       method="POST"
       url="https://httpbin.org/post"
       body={JSON.stringify({
@@ -160,7 +179,7 @@ test("POST https page: json data as string", async t => {
     />
   );
 
-  const json = getJSON(output.content);
+  const json = output.content;
   t.deepEqual(json.json, {
     number,
     static: "test this number"
@@ -174,7 +193,7 @@ test("POST https page: json data as string (case insensitive headers)", async t 
     createContext(t.context.webmiddle),
     <Browser
       name="virtual"
-      contentType="text/html"
+      contentType="application/json"
       method="POST"
       url="https://httpbin.org/post"
       body={JSON.stringify({
@@ -187,7 +206,7 @@ test("POST https page: json data as string (case insensitive headers)", async t 
     />
   );
 
-  const json = getJSON(output.content);
+  const json = output.content;
   t.deepEqual(json.json, {
     number,
     static: "test this number"
@@ -201,7 +220,7 @@ test("POST https page: json data as object", async t => {
     createContext(t.context.webmiddle),
     <Browser
       name="virtual"
-      contentType="text/html"
+      contentType="application/json"
       method="POST"
       url="https://httpbin.org/post"
       body={{
@@ -214,7 +233,7 @@ test("POST https page: json data as object", async t => {
     />
   );
 
-  const json = getJSON(output.content);
+  const json = output.content;
   t.deepEqual(json.json, {
     number,
     static: "test this number"
@@ -226,7 +245,7 @@ test("httpHeaders", async t => {
     createContext(t.context.webmiddle),
     <Browser
       name="virtual"
-      contentType="text/html"
+      contentType="application/json"
       method="GET"
       url="https://httpbin.org/get"
       httpHeaders={{
@@ -238,7 +257,7 @@ test("httpHeaders", async t => {
   // Note: uppercase letters inside a word are converted to lowercase by the server
   // e.g: My-CuStoM => My-Custom
 
-  const json = getJSON(output.content);
+  const json = output.content;
   t.is(json.headers["My-Custom-Webmiddle-Header"], "Browser service test");
 });
 
@@ -267,7 +286,7 @@ test("cookies", async t => {
     createContext(t.context.webmiddle),
     <Browser
       name="virtual"
-      contentType="text/html"
+      contentType="application/json"
       method="GET"
       url={`https://httpbin.org/cookies/set?k2=${v2}&k1=${v1}`}
     />
@@ -294,13 +313,13 @@ test("cookies", async t => {
     createContext(t.context.webmiddle),
     <Browser
       name="virtual"
-      contentType="text/html"
+      contentType="application/json"
       method="GET"
       url="https://httpbin.org/cookies"
     />
   );
 
-  const json = getJSON(output.content);
+  const json = output.content;
   t.deepEqual(json.cookies, {
     k2: String(v2),
     k1: String(v1)

@@ -12,10 +12,6 @@ test.beforeEach(t => {
   });
 });
 
-function getJSON(content) {
-  return content;
-}
-
 test("GET https page", async t => {
   const number = Math.round(Math.random() * 100);
 
@@ -31,14 +27,25 @@ test("GET https page", async t => {
     />
   );
 
-  const json = getJSON(output.content);
+  const json = output.content;
   t.deepEqual(json.args, {
     number: number.toString(), // NOTE: type is lost with query data
     static: "test this number"
   });
 });
 
-test("POST https page: form data as string (no content type)", async t => {
+test("GET xml document (infer resource contentType)", async t => {
+  const number = Math.round(Math.random() * 100);
+
+  const output = await evaluate(
+    createContext(t.context.webmiddle),
+    <HttpRequest name="virtual" method="GET" url={`https://httpbin.org/xml`} />
+  );
+
+  t.is(output.contentType, "application/xml");
+});
+
+test("POST https page: form data as string (no content type header)", async t => {
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
@@ -54,14 +61,14 @@ test("POST https page: form data as string (no content type)", async t => {
     />
   );
 
-  const json = getJSON(output.content);
+  const json = output.content;
   t.deepEqual(json.form, {
     number: number.toString(), // NOTE: type is lost with form data
     static: "test this number"
   });
 });
 
-test("POST https page: form data as string (no content type, case insensitive method)", async t => {
+test("POST https page: form data as string (no content type header, case insensitive method)", async t => {
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
@@ -77,14 +84,14 @@ test("POST https page: form data as string (no content type, case insensitive me
     />
   );
 
-  const json = getJSON(output.content);
+  const json = output.content;
   t.deepEqual(json.form, {
     number: number.toString(), // NOTE: type is lost with form data
     static: "test this number"
   });
 });
 
-test("POST https page: form data as object (no content type)", async t => {
+test("POST https page: form data as object (no content type header)", async t => {
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
@@ -101,14 +108,14 @@ test("POST https page: form data as object (no content type)", async t => {
     />
   );
 
-  const json = getJSON(output.content);
+  const json = output.content;
   t.deepEqual(json.form, {
     number: number.toString(), // NOTE: type is lost with form data
     static: "test this number"
   });
 });
 
-test("POST https page: form data as object (with content type)", async t => {
+test("POST https page: form data as object (with content type header)", async t => {
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
@@ -128,7 +135,7 @@ test("POST https page: form data as object (with content type)", async t => {
     />
   );
 
-  const json = getJSON(output.content);
+  const json = output.content;
   t.deepEqual(json.form, {
     number: number.toString(), // NOTE: type is lost with form data
     static: "test this number"
@@ -155,7 +162,7 @@ test("POST https page: json data as string", async t => {
     />
   );
 
-  const json = getJSON(output.content);
+  const json = output.content;
   t.deepEqual(json.json, {
     number,
     static: "test this number"
@@ -182,7 +189,7 @@ test("POST https page: json data as string (case insensitive headers)", async t 
     />
   );
 
-  const json = getJSON(output.content);
+  const json = output.content;
   t.deepEqual(json.json, {
     number,
     static: "test this number"
@@ -209,7 +216,7 @@ test("POST https page: json data as object", async t => {
     />
   );
 
-  const json = getJSON(output.content);
+  const json = output.content;
   t.deepEqual(json.json, {
     number,
     static: "test this number"
@@ -233,7 +240,7 @@ test("httpHeaders", async t => {
   // Note: uppercase letters inside a word are converted to lowercase by the server
   // e.g: My-CuStoM => My-Custom
 
-  const json = getJSON(output.content);
+  const json = output.content;
   t.is(json.headers["My-Custom-Webmiddle-Header"], "HttpRequest service test");
 });
 
@@ -280,7 +287,7 @@ test("cookies", async t => {
     />
   );
 
-  const json = getJSON(output.content);
+  const json = output.content;
   t.deepEqual(json.cookies, {
     k2: String(v2),
     k1: String(v1)
