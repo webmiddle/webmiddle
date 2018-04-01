@@ -38,7 +38,7 @@ test("GET https page", async t => {
   });
 });
 
-test("POST https page: form data as string", async t => {
+test("POST https page: form data as string (no content type)", async t => {
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
@@ -61,7 +61,30 @@ test("POST https page: form data as string", async t => {
   });
 });
 
-test("POST https page: form data as object", async t => {
+test("POST https page: form data as string (no content type, case insensitive method)", async t => {
+  const number = Math.round(Math.random() * 100);
+
+  const output = await evaluate(
+    createContext(t.context.webmiddle),
+    <HttpRequest
+      name="virtual"
+      contentType="application/json"
+      method="pOsT"
+      url="https://httpbin.org/post"
+      body={`number=${encodeURIComponent(number)}&static=${encodeURIComponent(
+        "test this number"
+      )}`}
+    />
+  );
+
+  const json = getJSON(output.content);
+  t.deepEqual(json.form, {
+    number: number.toString(), // NOTE: type is lost with form data
+    static: "test this number"
+  });
+});
+
+test("POST https page: form data as object (no content type)", async t => {
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
@@ -81,6 +104,87 @@ test("POST https page: form data as object", async t => {
   const json = getJSON(output.content);
   t.deepEqual(json.form, {
     number: number.toString(), // NOTE: type is lost with form data
+    static: "test this number"
+  });
+});
+
+test("POST https page: form data as object (with content type)", async t => {
+  const number = Math.round(Math.random() * 100);
+
+  const output = await evaluate(
+    createContext(t.context.webmiddle),
+    <HttpRequest
+      name="virtual"
+      contentType="application/json"
+      method="POST"
+      url="https://httpbin.org/post"
+      body={{
+        number,
+        static: "test this number"
+      }}
+      httpHeaders={{
+        "Content-Type": "application/x-www-form-urlencoded"
+      }}
+    />
+  );
+
+  const json = getJSON(output.content);
+  t.deepEqual(json.form, {
+    number: number.toString(), // NOTE: type is lost with form data
+    static: "test this number"
+  });
+});
+
+test("POST https page: json data as string", async t => {
+  const number = Math.round(Math.random() * 100);
+
+  const output = await evaluate(
+    createContext(t.context.webmiddle),
+    <HttpRequest
+      name="virtual"
+      contentType="application/json"
+      method="POST"
+      url="https://httpbin.org/post"
+      body={JSON.stringify({
+        number,
+        static: "test this number"
+      })}
+      httpHeaders={{
+        "Content-Type": "application/json"
+      }}
+    />
+  );
+
+  const json = getJSON(output.content);
+  t.deepEqual(json.json, {
+    number,
+    static: "test this number"
+  });
+});
+
+test("POST https page: json data as string (case insensitive headers)", async t => {
+  const number = Math.round(Math.random() * 100);
+
+  const output = await evaluate(
+    createContext(t.context.webmiddle),
+    <HttpRequest
+      name="virtual"
+      contentType="application/json"
+      method="POST"
+      url="https://httpbin.org/post"
+      body={JSON.stringify({
+        number,
+        static: "test this number"
+      })}
+      httpHeaders={{
+        "CoNTenT-TYpe": "application/json"
+      }}
+    />
+  );
+
+  const json = getJSON(output.content);
+  t.deepEqual(json.json, {
+    number,
     static: "test this number"
   });
 });
@@ -181,4 +285,47 @@ test("cookies", async t => {
     k2: String(v2),
     k1: String(v1)
   });
+});
+
+test("Should not throw when status code is between 200 and 299", async t => {
+  await t.notThrows(
+    evaluate(
+      createContext(t.context.webmiddle),
+      <HttpRequest
+        name="virtual"
+        contentType="text/html"
+        method="GET"
+        url={`https://httpbin.org/status/201`}
+      />
+    )
+  );
+
+  await t.notThrows(
+    evaluate(
+      createContext(t.context.webmiddle),
+      <HttpRequest
+        name="virtual"
+        contentType="text/html"
+        method="GET"
+        url={`https://httpbin.org/status/299`}
+      />
+    )
+  );
+});
+
+test("Should fail with correct status code", async t => {
+  try {
+    await evaluate(
+      createContext(t.context.webmiddle),
+      <HttpRequest
+        name="virtual"
+        contentType="text/html"
+        method="GET"
+        url={`https://httpbin.org/status/499`}
+      />
+    );
+  } catch (err) {
+    t.is(err.statusCode, 499);
+    t.is(err.message, "success");
+  }
 });

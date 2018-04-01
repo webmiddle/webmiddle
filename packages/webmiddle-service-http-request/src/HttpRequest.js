@@ -55,7 +55,11 @@ function HttpRequest(
           jar
         },
         (error, response, content) => {
-          if (!error && response.statusCode === 200) {
+          if (
+            !error &&
+            response.statusCode >= 200 &&
+            response.statusCode <= 299
+          ) {
             resolve({
               name,
               contentType,
@@ -65,7 +69,12 @@ function HttpRequest(
                   : content
             });
           } else {
-            reject(new HttpError(error, response ? response.statusCode : null));
+            reject(
+              new HttpError(
+                error || "success",
+                response ? response.statusCode : null
+              )
+            );
           }
         }
       );
