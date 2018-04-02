@@ -77,7 +77,6 @@ export default class WebMiddle {
   constructor(options = {}) {
     this.name = options.name;
     this.parent = options.parent;
-    this.settings = options.settings || {};
 
     this.services = mapObjectDeep(options.services || {}, val =>
       wrapService(val, this)
@@ -98,11 +97,8 @@ export default class WebMiddle {
     return mergeAndGet(this, "services", path, "service");
   }
 
-  setting(path) {
-    return mergeAndGet(this, "settings", path, "setting");
-  }
-
+  // TODO: move to context (so to be able to read verbose option)
   log(...args) {
-    if (this.setting("verbose")) console.log(...args);
+    //if (this.options.verbose) console.log(...args);
   }
 }

@@ -265,7 +265,7 @@ async function Browser(
 Browser.options = (props, context) =>
   pickDefaults(
     {
-      retries: context.webmiddle.setting("network.retries")
+      retries: context.options.networkRetries
     },
     context.options
   );

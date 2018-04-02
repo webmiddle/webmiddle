@@ -82,11 +82,6 @@ export default async function webmiddleClient(options = {}) {
     return jsonResource.content;
   }
 
-  async function requestSettingPaths() {
-    const jsonResource = await requestServer("/settings/");
-    return jsonResource.content;
-  }
-
   async function createServices() {
     const servicePaths = await requestServicePaths();
     const services = {};
@@ -103,12 +98,7 @@ export default async function webmiddleClient(options = {}) {
     return services;
   }
 
-  async function createSettings() {
-    // TODO
-  }
-
   return new WebMiddle({
-    services: await createServices(),
-    settings: await createSettings()
+    services: await createServices()
   });
 }

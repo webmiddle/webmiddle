@@ -9,8 +9,7 @@ const PORT = 3000;
 
 function requestExpress(method, path, data = {}) {
   return new Promise((resolve, reject) => {
-    superagent
-      [method.toLowerCase()]("http://localhost:" + PORT + path)
+    superagent[method.toLowerCase()]("http://localhost:" + PORT + path)
       .send(data)
       .end((err, res) => {
         if (err) reject(err);
@@ -91,12 +90,6 @@ const webmiddle = new WebMiddle({
       })
     },
     returnOption: ({ optionName }, context) => context.options[optionName]
-  },
-  settings: {
-    foo: {
-      some: "bar",
-      other: 100
-    }
   }
 });
 
@@ -206,24 +199,6 @@ test("Get progress when executing a service via WEBSOCKET", async t => {
   );
 });
 
-test("Read setting via GET", async t => {
-  const resource = await requestExpress("GET", "/settings/foo/other");
-  t.is(resource.contentType, "x-webmiddle-any");
-  t.is(resource.content, 100);
-});
-
-test("Read setting via POST", async t => {
-  const resource = await requestExpress("POST", "/settings/foo/other");
-  t.is(resource.contentType, "x-webmiddle-any");
-  t.is(resource.content, 100);
-});
-
-test("Read setting via WEBSOCKET", async t => {
-  const resource = await requestWebsocket("/settings/foo/other");
-  t.is(resource.contentType, "x-webmiddle-any");
-  t.is(resource.content, 100);
-});
-
 test("Get service paths", async t => {
   const resource = await requestExpress("GET", "/services/");
   t.deepEqual(resource, {
@@ -239,23 +214,5 @@ test("Get service paths via WEBSOCKET", async t => {
     name: "services",
     contentType: "application/json",
     content: ["math.sum", "math.multiply", "math.divide", "returnOption"]
-  });
-});
-
-test("Get setting paths", async t => {
-  const resource = await requestExpress("GET", "/settings/");
-  t.deepEqual(resource, {
-    name: "settings",
-    contentType: "application/json",
-    content: ["foo.some", "foo.other"]
-  });
-});
-
-test("Get setting paths via WEBSOCKET", async t => {
-  const resource = await requestWebsocket("/settings/");
-  t.deepEqual(resource, {
-    name: "settings",
-    contentType: "application/json",
-    content: ["foo.some", "foo.other"]
   });
 });

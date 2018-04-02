@@ -51,12 +51,6 @@ export default function run(protocol) {
         })
       },
       returnOption: ({ optionName }, context) => context.options[optionName]
-    },
-    settings: {
-      foo: {
-        some: "bar",
-        other: 100
-      }
     }
   });
 
@@ -79,11 +73,6 @@ export default function run(protocol) {
       "returnOption"
     ]);
   });
-
-  /*
-  test('retrieved setting paths', async t => {
-
-  });*/
 
   test("execute remote service at deep path", async t => {
     const Sum = t.context.webmiddleRemote.service("math.sum");
@@ -112,9 +101,4 @@ export default function run(protocol) {
     t.is(resource.contentType, "x-webmiddle-any");
     t.is(resource.content, "you got it!");
   });
-
-  /*
-  test('get remote setting', async t => {
-
-  });*/
 }

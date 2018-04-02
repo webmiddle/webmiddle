@@ -21,17 +21,16 @@ function deleteFolderRecursive(filename) {
 }
 
 test.beforeEach(t => {
-  t.context.webmiddle = new WebMiddle({
-    settings: {
-      outputBasePath: path.resolve(__dirname, "./output")
-    }
+  const webmiddle = new WebMiddle();
+  t.context.context = createContext(webmiddle, {
+    outputBasePath: path.resolve(__dirname, "./output")
   });
 });
 
 test("main", async t => {
   // clear folder
   deleteFolderRecursive(
-    path.resolve(t.context.webmiddle.setting("outputBasePath"), "./main")
+    path.resolve(t.context.context.options.outputBasePath, "./main")
   );
 
   let serviceExecuted;
@@ -49,7 +48,7 @@ test("main", async t => {
 
   serviceExecuted = false;
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <Resume savePath="./main/resource">
       <Service />
     </Resume>
@@ -68,7 +67,7 @@ test("main", async t => {
 
   serviceExecuted = false;
   const secondOutput = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <Resume savePath="./main/resource">
       <Service />
     </Resume>
@@ -88,17 +87,14 @@ test("main", async t => {
 
 test("expect resource", async t => {
   deleteFolderRecursive(
-    path.resolve(
-      t.context.webmiddle.setting("outputBasePath"),
-      "./expectResource"
-    )
+    path.resolve(t.context.context.options.outputBasePath, "./expectResource")
   );
 
   const Service = () => 10; // a service that doesn't return a resource
 
   try {
     await evaluate(
-      createContext(t.context.webmiddle),
+      createContext(t.context.context),
       <Resume savePath="./expectResource/invalidResource">
         <Service />
       </Resume>

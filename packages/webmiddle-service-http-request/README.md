@@ -53,12 +53,11 @@ In case of **http error**, the service fails with an **HttpError
 object** containing the error status code.
 
 The service sets the `retries` option as the one set in the
-`network.retries` webmiddle setting. This way such number can be
-configured at application/webmiddle level:
+`networkRetries` context option (if any):
 
 ```jsx
 HttpRequest.options = (props, context) => (pickDefaults({
-  retries: context.webmiddle.setting('network.retries'),
+  retries: context.options.networkRetries,
 }, context.options));
 ```
 

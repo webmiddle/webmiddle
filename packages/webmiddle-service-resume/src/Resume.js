@@ -4,7 +4,7 @@ import Pipe from "webmiddle-service-pipe";
 import { fileExists, readFile, writeFile } from "./utils/filesystem";
 
 async function Resume({ savePath, children }, context) {
-  const outputBasePath = context.webmiddle.setting("outputBasePath");
+  const outputBasePath = context.options.outputBasePath;
   let filename = path.resolve(outputBasePath, savePath);
   if (!filename.endsWith(".json")) filename += ".json";
 
@@ -15,9 +15,7 @@ async function Resume({ savePath, children }, context) {
   // not exists
   const resource = await evaluate(
     createContext(context, { expectResource: true }),
-    <Pipe>
-      {children}
-    </Pipe>
+    <Pipe>{children}</Pipe>
   );
   await writeFile(filename, JSON.stringify(resource));
 

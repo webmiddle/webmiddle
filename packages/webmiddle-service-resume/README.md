@@ -43,7 +43,7 @@ work in case the application terminated abruptly and in other similar
 scenarios.
 
 The save path is specified via the **savePath** attribute, which is
-relative to the **outputBasePath** webmiddle setting.
+relative to the **outputBasePath** context option.
 
 ## Properties
 

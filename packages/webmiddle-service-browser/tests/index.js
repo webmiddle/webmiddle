@@ -3,12 +3,9 @@ import Browser from "../src/index.js";
 import WebMiddle, { evaluate, createContext } from "webmiddle";
 
 test.beforeEach(t => {
-  t.context.webmiddle = new WebMiddle({
-    settings: {
-      network: {
-        retries: 3
-      }
-    }
+  const webmiddle = new WebMiddle();
+  t.context.context = createContext(webmiddle, {
+    networkRetries: 3
   });
 });
 
@@ -16,7 +13,7 @@ test("GET https page", async t => {
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <Browser
       name="virtual"
       contentType="application/json"
@@ -38,7 +35,7 @@ test("GET xml document (infer resource contentType)", async t => {
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <Browser name="virtual" method="GET" url={`https://httpbin.org/xml`} />
   );
 
@@ -49,7 +46,7 @@ test("GET non-html document: should ignore waitFor", async t => {
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <Browser
       name="virtual"
       contentType="application/xml"
@@ -66,7 +63,7 @@ test("POST https page: form data as string (no content type header)", async t =>
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <Browser
       name="virtual"
       contentType="application/json"
@@ -89,7 +86,7 @@ test("POST https page: form data as string (no content type header, case insensi
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <Browser
       name="virtual"
       contentType="application/json"
@@ -112,7 +109,7 @@ test("POST https page: form data as object (no content type header)", async t =>
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <Browser
       name="virtual"
       contentType="application/json"
@@ -136,7 +133,7 @@ test("POST https page: form data as object (with content type header)", async t 
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <Browser
       name="virtual"
       contentType="application/json"
@@ -163,7 +160,7 @@ test("POST https page: json data as string", async t => {
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <Browser
       name="virtual"
       contentType="application/json"
@@ -190,7 +187,7 @@ test("POST https page: json data as string (case insensitive headers)", async t 
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <Browser
       name="virtual"
       contentType="application/json"
@@ -217,7 +214,7 @@ test("POST https page: json data as object", async t => {
   const number = Math.round(Math.random() * 100);
 
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <Browser
       name="virtual"
       contentType="application/json"
@@ -242,7 +239,7 @@ test("POST https page: json data as object", async t => {
 
 test("httpHeaders", async t => {
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <Browser
       name="virtual"
       contentType="application/json"
@@ -263,7 +260,7 @@ test("httpHeaders", async t => {
 
 test("waitFor", async t => {
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <Browser
       name="virtual"
       contentType="text/html"
@@ -283,7 +280,7 @@ test("cookies", async t => {
   let v1 = Math.floor(Math.random() * 100) + 1;
 
   await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <Browser
       name="virtual"
       contentType="application/json"
@@ -292,7 +289,7 @@ test("cookies", async t => {
     />
   );
 
-  const cookies = t.context.webmiddle.cookieManager.jar.getCookiesSync(
+  const cookies = t.context.context.webmiddle.cookieManager.jar.getCookiesSync(
     "https://httpbin.org"
   );
 
@@ -310,7 +307,7 @@ test("cookies", async t => {
   cookieK1.value = String(v1);
 
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <Browser
       name="virtual"
       contentType="application/json"
@@ -329,7 +326,7 @@ test("cookies", async t => {
 test("Should not throw when status code is between 200 and 299", async t => {
   await t.notThrows(
     evaluate(
-      createContext(t.context.webmiddle),
+      createContext(t.context.context),
       <Browser
         name="virtual"
         contentType="text/html"
@@ -341,7 +338,7 @@ test("Should not throw when status code is between 200 and 299", async t => {
 
   await t.notThrows(
     evaluate(
-      createContext(t.context.webmiddle),
+      createContext(t.context.context),
       <Browser
         name="virtual"
         contentType="text/html"
@@ -355,7 +352,7 @@ test("Should not throw when status code is between 200 and 299", async t => {
 test("Should fail with correct status code", async t => {
   try {
     await evaluate(
-      createContext(t.context.webmiddle),
+      createContext(t.context.context),
       <Browser
         name="virtual"
         contentType="text/html"

@@ -32,8 +32,7 @@ export default class Server {
     this.websocketServer = null;
 
     this.handlersByType = {
-      services: this._handleService,
-      settings: this._handleSetting
+      services: this._handleService
     };
   }
 
@@ -127,23 +126,27 @@ export default class Server {
           const props = message.body.props || {};
           const options = message.body.options || {};
 
-          const output = await this.handlersByType[
-            type
-          ].call(this, path, props, options, message => {
-            ws.send(
-              JSON.stringify({
-                type: "progress",
-                status: message.topic,
-                requestId,
-                body: {
-                  ...message.data,
-                  info: transformCallStateInfo(
-                    message.data && message.data.info
-                  )
-                }
-              })
-            );
-          });
+          const output = await this.handlersByType[type].call(
+            this,
+            path,
+            props,
+            options,
+            message => {
+              ws.send(
+                JSON.stringify({
+                  type: "progress",
+                  status: message.topic,
+                  requestId,
+                  body: {
+                    ...message.data,
+                    info: transformCallStateInfo(
+                      message.data && message.data.info
+                    )
+                  }
+                })
+              );
+            }
+          );
 
           let jsonOutput;
           if (isResource(output)) {
@@ -205,18 +208,6 @@ export default class Server {
     return evaluate(context, <Service {...props} />);
   }
 
-  async _handleSetting(path) {
-    if (!path) {
-      return {
-        name: "settings",
-        contentType: "application/json",
-        content: this._getAllSettingPaths()
-      };
-    }
-
-    return this.webmiddle.setting(path);
-  }
-
   // return all the service paths (including those of the parents)
   _getAllServicePaths() {
     let services = {};
@@ -226,16 +217,5 @@ export default class Server {
       current = current.parent;
     }
     return paths(services);
-  }
-
-  // return all the setting paths (including those of the parents)
-  _getAllSettingPaths() {
-    let settings = {};
-    let current = this.webmiddle;
-    while (current) {
-      settings = _.merge({}, current.settings, settings);
-      current = current.parent;
-    }
-    return paths(settings);
   }
 }

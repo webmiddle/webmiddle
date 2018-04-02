@@ -104,7 +104,7 @@ function HttpRequest(
 HttpRequest.options = (props, context) =>
   pickDefaults(
     {
-      retries: context.webmiddle.setting("network.retries")
+      retries: context.options.networkRetries
     },
     context.options
   );
