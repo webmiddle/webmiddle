@@ -214,7 +214,7 @@ Features currently provided via the core packages:
 
 - **[Concurrency](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-parallel)**, for executing multiple asynchronous services at the same time.
 - **[HTTP](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-http-request)** requests.
-- **[PhantomJS](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-browser)** requests, for SPAs and pages using client-side generated content.
+- **[Headless Chrome](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-browser)** requests, for SPAs and pages using client-side generated content.
 - **[Cookie JAR](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-manager-cookie)**, for sharing cookies among different services and webmiddle objects.
 - **[Caching](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-resume)**, for resuming work in case of crash.
 - **Error handling**, via customizable retries and catch options.
