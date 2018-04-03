@@ -272,7 +272,7 @@ Browser.options = (props, context) =>
 
 Browser.propTypes = {
   name: PropTypes.string.isRequired,
-  contentType: PropTypes.string.isRequired,
+  contentType: PropTypes.string,
   url: PropTypes.string.isRequired,
   method: PropTypes.string,
   body: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
