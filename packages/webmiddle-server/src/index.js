@@ -17,17 +17,6 @@ function httpToServicePath(path) {
   return path;
 }
 
-function paths(obj, parentKey) {
-  if (typeof obj !== "object" || obj === null) return [parentKey];
-  return _.flatten(
-    Object.keys(obj).map(key =>
-      paths(obj[key], key).map(
-        subPath => (parentKey ? `${parentKey}.` : "") + subPath
-      )
-    )
-  );
-}
-
 export default class Server {
   constructor(serviceRoutes, options = {}) {
     this.serviceRoutes = serviceRoutes;
