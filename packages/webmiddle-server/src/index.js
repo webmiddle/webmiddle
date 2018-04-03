@@ -1,4 +1,9 @@
-import WebMiddle, { evaluate, createContext, isResource } from "webmiddle";
+import WebMiddle, {
+  evaluate,
+  createContext,
+  isResource,
+  isVirtual
+} from "webmiddle";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
@@ -9,7 +14,7 @@ import { transformCallStateInfo } from "./utils/transform";
 
 function httpToServicePath(path) {
   if (path.startsWith("/")) path = path.slice(1);
-  return path.replace(/\//g, ".");
+  return path;
 }
 
 function paths(obj, parentKey) {
@@ -24,15 +29,15 @@ function paths(obj, parentKey) {
 }
 
 export default class Server {
-  constructor(webmiddle, options = {}) {
-    this.webmiddle = webmiddle;
+  constructor(serviceRoutes, options = {}) {
+    this.serviceRoutes = serviceRoutes;
 
     this.PORT = options.port || 3000;
     this.expressServer = express();
     this.websocketServer = null;
 
     this.handlersByType = {
-      services: this._handleService
+      services: this._handleService.bind(this)
     };
   }
 
@@ -121,7 +126,7 @@ export default class Server {
           const messagePathParts = message.path.split("/");
           const type = messagePathParts[1];
           const httpPath = messagePathParts.slice(2).join("/"); // e.g. "math/foo" or just ""
-          const path = httpToServicePath(httpPath); // e.g. "math.foo" or just ""
+          const path = httpToServicePath(httpPath);
 
           const props = message.body.props || {};
           const options = message.body.options || {};
@@ -199,23 +204,18 @@ export default class Server {
       };
     }
 
-    const Service = this.webmiddle.service(path);
-    if (!Service) throw new Error("Service not found");
+    const Service = this.serviceRoutes[path];
+    if (!Service) throw new Error("Service not found at path: " + path);
 
-    const context = createContext(this.webmiddle, options);
+    const webmiddle = new WebMiddle();
+    const context = createContext(webmiddle, options);
     if (onMessage) context.rootEmitter.on("message", onMessage);
 
     return evaluate(context, <Service {...props} />);
   }
 
-  // return all the service paths (including those of the parents)
+  // return all the service paths
   _getAllServicePaths() {
-    let services = {};
-    let current = this.webmiddle;
-    while (current) {
-      services = _.merge({}, current.services, services);
-      current = current.parent;
-    }
-    return paths(services);
+    return Object.keys(this.serviceRoutes);
   }
 }

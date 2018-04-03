@@ -1,6 +1,6 @@
 # webmiddle-server
 
-> Easily turns webmiddles into REST APIs, allowing remote access via HTTP or WebSocket.
+> Easily turns webmiddle applications into REST APIs, allowing remote access via HTTP or WebSocket.
 
 ## Install
 
@@ -10,12 +10,24 @@ npm install --save webmiddle-server
 
 ## Usage
 
-Given a `webmiddle` instance, turn it into a server listening on port 3000:
+Given some routes that map paths to services, create a server listening on port 3000:
 
 ```jsx
-import Server from 'webmiddle-server';
+import Server from "webmiddle-server";
 
-const server = new Server(webmiddle, { port: 3000 });
+const textResource = (content, name = "result") => ({
+  name,
+  contentType: "text/plain",
+  content:
+    typeof content !== "undefined" && content !== null
+      ? String(content)
+      : content
+});
+
+const server = new Server({
+  "math/multiply": ({ a, b }) => textResource(a * b),
+  "math/divide": ({ a, b }) => textResource(a / b))
+});
 server.start();
 ```
 
@@ -23,7 +35,7 @@ server.start();
 
 ### Endpoints:
 
-- `/services/`: lists all the service paths, including those of the webmiddle parents (if any).
+- `/services/`: lists all the service paths.
 - `/services/foo/bar`: executes the service at path `foo.bar`.
 
 Endpoints can be called by using both GET, POST or WEBSOCKET requests.
@@ -62,4 +74,4 @@ The server will eventually respond with the following message:
 In case of error, the response will have status `500` (for GET and POST requests) and the error string as the body.
 
 In case of success, the response body will always be a JSON object representing a resource.  
-If the evaluated output isn't a resource already, then such output will be wrapped in a resource having the `x-webmiddle-any` contentType.
+If the evaluated output isn't already a resource, then such output will be wrapped into a resource having the `x-webmiddle-any` contentType.

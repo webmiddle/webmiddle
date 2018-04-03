@@ -67,33 +67,31 @@ function requestWebsocket(path, body = {}, onProgress) {
   });
 }
 
-const webmiddle = new WebMiddle({
-  services: {
-    math: {
-      sum: ({ a, b }) => ({
-        name: "result",
-        contentType: "text/plain",
-        // without Number() a + b would be a string concatenation in GET requests!
-        content: String(Number(a) + Number(b))
-      }),
+const server = new Server(
+  {
+    "math/sum": ({ a, b }) => ({
+      name: "result",
+      contentType: "text/plain",
+      // without Number() a + b would be a string concatenation in GET requests!
+      content: String(Number(a) + Number(b))
+    }),
 
-      multiply: ({ a, b }) => ({
-        name: "result",
-        contentType: "text/plain",
-        content: String(Number(a) * Number(b))
-      }),
+    "math/multiply": ({ a, b }) => ({
+      name: "result",
+      contentType: "text/plain",
+      content: String(Number(a) * Number(b))
+    }),
 
-      divide: ({ a, b }) => ({
-        name: "result",
-        contentType: "text/plain",
-        content: String(Number(a) / Number(b))
-      })
-    },
+    "math/divide": ({ a, b }) => ({
+      name: "result",
+      contentType: "text/plain",
+      content: String(Number(a) / Number(b))
+    }),
+
     returnOption: ({ optionName }, context) => context.options[optionName]
-  }
-});
-
-const server = new Server(webmiddle, { port: PORT });
+  },
+  { port: PORT }
+);
 server.start();
 
 test("Execute service via GET", async t => {
@@ -204,7 +202,7 @@ test("Get service paths", async t => {
   t.deepEqual(resource, {
     name: "services",
     contentType: "application/json",
-    content: ["math.sum", "math.multiply", "math.divide", "returnOption"]
+    content: ["math/sum", "math/multiply", "math/divide", "returnOption"]
   });
 });
 
@@ -213,6 +211,6 @@ test("Get service paths via WEBSOCKET", async t => {
   t.deepEqual(resource, {
     name: "services",
     contentType: "application/json",
-    content: ["math.sum", "math.multiply", "math.divide", "returnOption"]
+    content: ["math/sum", "math/multiply", "math/divide", "returnOption"]
   });
 });

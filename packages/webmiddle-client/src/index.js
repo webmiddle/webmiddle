@@ -1,6 +1,5 @@
 import WebMiddle, { evaluate, createContext, isResource } from "webmiddle";
 import superagent from "superagent";
-import _ from "lodash";
 import WebSocket from "ws";
 import uuid from "uuid";
 
@@ -11,20 +10,24 @@ function appendPathToUrl(url, path) {
   );
 }
 
-export default async function webmiddleClient(options = {}) {
-  const protocol = options.protocol || "ws";
-  const hostname = options.hostname || "locahost";
-  const port = options.port || 3000;
+export default class Client {
+  constructor(options = {}) {
+    const protocol = options.protocol || "ws";
+    const hostname = options.hostname || "locahost";
+    const port = options.port || 3000;
 
-  const serverUrl = `${protocol}://${hostname}:${port}`;
-  const requestServer = protocol.startsWith("ws")
-    ? requestWebsocket
-    : requestExpress;
+    this.serverUrl = `${protocol}://${hostname}:${port}`;
+    this.requestServer = protocol.startsWith("ws")
+      ? this.requestWebsocket
+      : this.requestExpress;
 
-  async function requestExpress(path, body = {}) {
+    this.services = {};
+  }
+
+  async requestExpress(path, body = {}) {
     return new Promise((resolve, reject) => {
       superagent
-        .post(appendPathToUrl(serverUrl, path))
+        .post(appendPathToUrl(this.serverUrl, path))
         .send(body)
         .end((err, res) => {
           if (err) reject(err);
@@ -33,12 +36,11 @@ export default async function webmiddleClient(options = {}) {
     });
   }
 
-  let wsPromise;
-  function getWebsocketConnection() {
-    if (!wsPromise) {
-      wsPromise = new Promise((resolve, reject) => {
+  getWebsocketConnection() {
+    if (!this.wsPromise) {
+      this.wsPromise = new Promise((resolve, reject) => {
         try {
-          const ws = new WebSocket(serverUrl);
+          const ws = new WebSocket(this.serverUrl);
           ws.on("open", () => resolve(ws));
           ws.on("error", reject);
         } catch (err) {
@@ -46,11 +48,11 @@ export default async function webmiddleClient(options = {}) {
         }
       });
     }
-    return wsPromise;
+    return this.wsPromise;
   }
 
-  function requestWebsocket(path, body = {}) {
-    return getWebsocketConnection().then(ws => {
+  requestWebsocket(path, body = {}) {
+    return this.getWebsocketConnection().then(ws => {
       return new Promise((resolve, reject) => {
         try {
           const requestId = uuid.v4();
@@ -77,28 +79,26 @@ export default async function webmiddleClient(options = {}) {
     });
   }
 
-  async function requestServicePaths() {
-    const jsonResource = await requestServer("/services/");
-    return jsonResource.content;
+  async requestServicePaths() {
+    if (!this.requestServicePathsPromise) {
+      this.requestServicePathsPromise = Promise.resolve().then(async () => {
+        const jsonResource = await this.requestServer("/services/");
+        return jsonResource.content;
+      });
+    }
+    return this.requestServicePathsPromise;
   }
 
-  async function createServices() {
-    const servicePaths = await requestServicePaths();
-    const services = {};
-    servicePaths.forEach(path => {
-      const httpPath = path.replace(/\\./g, "/");
-
-      const service = (props, context) =>
-        requestServer(`/services/${httpPath}`, {
+  service(path) {
+    if (!this.services[path]) {
+      const httpPath = path;
+      const Service = (props, context) =>
+        this.requestServer(`/services/${httpPath}`, {
           props,
           options: context.options
         });
-      _.set(services, path, service);
-    });
-    return services;
+      this.services[path] = Service;
+    }
+    return this.services[path];
   }
-
-  return new WebMiddle({
-    services: await createServices()
-  });
 }

@@ -154,57 +154,60 @@ This means that anyone can contribute by adding new services for doing the more 
 
 ## Remote execution
 
-WebMiddle objects can be easily turned into REST APIs by using the `webmiddle-server` package, allowing remote access via HTTP.
+WebMiddle services can be turned into REST APIs by using the `webmiddle-server` package, allowing remote access via HTTP or WebSocket.
 
-Suppose you have the following webmiddle:
+Suppose you have the following services:
 
 ```javascript
-import WebMiddle from 'webmiddle';
-
-const textResource = (content, name = 'result') => ({
+const textResource = (content, name = "result") => ({
   name,
-  contentType: 'text/plain',
-  content: (typeof content !== 'undefined' && content !== null) ? String(content) : content,
+  contentType: "text/plain",
+  content:
+    typeof content !== "undefined" && content !== null
+      ? String(content)
+      : content
 });
 
-const webmiddle = new WebMiddle({
-  services: {
-    divide: ({ a, b }) => textResource(a / b),
-    multiply: ({ a, b }) => textResource(a * b),
-  },
-});
+const Multiply = ({ a, b }) => textResource(a * b);
+const Divide = ({ a, b }) => textResource(a / b);
 ```
 
-Turn it into a server listening on port 3000:
+Turn them into a server listening on port 3000:
 
 ```javascript
 import Server from 'webmiddle-server';
 
-const server = new Server(webmiddle, { port: 3000 });
+const server = new Server({
+  "math/multiply": Multiply,
+  "math/divide": Divide,
+});
 server.start();
 ```
 
-In another machine, you can then use the `webmiddle-client` package to create a replica of the webmiddle run by the server, and execute its services remotely, the nice thing is that almost nothing will change in term of usage, it will be just like using a normal local webmiddle:
+In another machine, you can then use the `webmiddle-client` package to create a replica of the services run by the server, and execute them remotely. In term of usage it will be just like executing local services:
 
 ```javascript
-import webmiddleClient from 'webmiddle-client';
-import WebMiddle, { evaluate, createContext } from 'webmiddle';
+// "localhost" since the server is in the same machine in this example
+const client = new Client({
+  protocol: "http",
+  hostname: "localhost",
+  port: "3000"
+});
 
-webmiddleClient('http://localhost:3000/') // "localhost" since we are using the same machine in this example
-.then(webmiddleRemote => {
-  const Multiply = webmiddleRemote.service('multiply');
+// get the service
+const Multiply = client.service("math/multiply");
 
-  evaluate(createContext(webmiddleRemote, { retries: 2 }),
-    <Multiply
-      a={10}
-      b={20}
-    />
-  ).then(result => {
-    console.log(result); // { name: 'result', contentType: 'text/plain', content: '200' }
-  });
-})
-.catch(err => {
-  console.log(err && err.stack || err);
+// execute it
+const webmiddle = new WebMiddle();
+evaluate(createContext(webmiddle, { retries: 2 }),
+  <Multiply
+    a={10}
+    b={20}
+  />
+).then(result => {
+  console.log(result);
+}).catch(err => {
+  console.log((err && err.stack) || err);
 });
 ```
 

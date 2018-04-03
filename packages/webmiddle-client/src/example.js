@@ -1,20 +1,18 @@
-import webmiddleClient from "./index";
+import Client from "./index";
 import WebMiddle, { evaluate, createContext } from "webmiddle";
 
-webmiddleClient({
+const client = new Client({
   protocol: "http",
   hostname: "localhost",
   port: "3000"
-})
-  .then(webmiddleRemote => {
-    const Multiply = webmiddleRemote.service("multiply");
+});
 
-    evaluate(
-      createContext(webmiddleRemote, { retries: 2 }),
-      <Multiply a={10} b={20} />
-    ).then(result => {
-      console.log(result);
-    });
+const Multiply = client.service("multiply");
+
+const webmiddle = new WebMiddle();
+evaluate(createContext(webmiddle, { retries: 2 }), <Multiply a={10} b={20} />)
+  .then(result => {
+    console.log(result);
   })
   .catch(err => {
     console.log((err && err.stack) || err);

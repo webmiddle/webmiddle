@@ -1,64 +1,42 @@
 import test from "ava";
 import WebMiddle, { evaluate, createContext } from "webmiddle";
 import Server from "webmiddle-server";
-import webmiddleClient from "../../src";
-
-function flatten(array) {
-  const result = [];
-  array.forEach(item => {
-    item = Array.isArray(item) ? item : [item];
-    result.push(...item);
-  });
-  return result;
-}
-
-function paths(obj, parentKey) {
-  if (typeof obj !== "object" || obj === null) return [parentKey];
-  return flatten(
-    Object.keys(obj).map(key =>
-      paths(obj[key], key).map(
-        subPath => (parentKey ? `${parentKey}.` : "") + subPath
-      )
-    )
-  );
-}
+import Client from "../../src";
 
 export default function run(protocol) {
   // NOTE: make sure this is not the same port used in webmiddle-server tests
   // (and in any other test that starts webmiddle-server)
   const PORT = 4000 + (protocol === "ws" ? 1 : 0);
 
-  const webmiddle = new WebMiddle({
-    services: {
-      math: {
-        sum: ({ a, b }) => ({
-          name: "result",
-          contentType: "text/plain",
-          // without Number() a + b would be a string concatenation in GET requests!
-          content: String(Number(a) + Number(b))
-        }),
+  const server = new Server(
+    {
+      "math/sum": ({ a, b }) => ({
+        name: "result",
+        contentType: "text/plain",
+        // without Number() a + b would be a string concatenation in GET requests!
+        content: String(Number(a) + Number(b))
+      }),
 
-        multiply: ({ a, b }) => ({
-          name: "result",
-          contentType: "text/plain",
-          content: String(Number(a) * Number(b))
-        }),
+      "math/multiply": ({ a, b }) => ({
+        name: "result",
+        contentType: "text/plain",
+        content: String(Number(a) * Number(b))
+      }),
 
-        divide: ({ a, b }) => ({
-          name: "result",
-          contentType: "text/plain",
-          content: String(Number(a) / Number(b))
-        })
-      },
+      "math/divide": ({ a, b }) => ({
+        name: "result",
+        contentType: "text/plain",
+        content: String(Number(a) / Number(b))
+      }),
+
       returnOption: ({ optionName }, context) => context.options[optionName]
-    }
-  });
-
-  const server = new Server(webmiddle, { port: PORT });
+    },
+    { port: PORT }
+  );
   server.start();
 
   test.beforeEach(async t => {
-    t.context.webmiddleRemote = await webmiddleClient({
+    t.context.client = new Client({
       protocol,
       hostname: "localhost",
       port: PORT
@@ -66,21 +44,21 @@ export default function run(protocol) {
   });
 
   test("retrieved service paths", async t => {
-    t.deepEqual(paths(t.context.webmiddleRemote.services), [
-      "math.sum",
-      "math.multiply",
-      "math.divide",
+    const servicePaths = await t.context.client.requestServicePaths();
+    t.deepEqual(servicePaths, [
+      "math/sum",
+      "math/multiply",
+      "math/divide",
       "returnOption"
     ]);
   });
 
-  test("execute remote service at deep path", async t => {
-    const Sum = t.context.webmiddleRemote.service("math.sum");
+  test("execute remote service", async t => {
+    const Sum = t.context.client.service("math/sum");
 
+    const webmiddle = new WebMiddle();
     const resource = await evaluate(
-      createContext(t.context.webmiddleRemote, {
-        retries: 2
-      }),
+      createContext(webmiddle, { retries: 2 }),
       <Sum a={10} b={20} />
     );
     t.is(resource.contentType, "text/plain");
@@ -88,10 +66,11 @@ export default function run(protocol) {
   });
 
   test("execute remote service with options", async t => {
-    const ReturnOption = t.context.webmiddleRemote.service("returnOption");
+    const ReturnOption = t.context.client.service("returnOption");
 
+    const webmiddle = new WebMiddle();
     const resource = await evaluate(
-      createContext(t.context.webmiddleRemote, {
+      createContext(webmiddle, {
         retries: 2,
         whatever: "you got it!"
       }),
