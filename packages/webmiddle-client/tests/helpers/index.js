@@ -1,5 +1,5 @@
 import test from "ava";
-import WebMiddle, { evaluate, createContext } from "webmiddle";
+import webmiddle, { evaluate, createContext } from "webmiddle";
 import Server from "webmiddle-server";
 import Client from "../../src";
 
@@ -56,9 +56,8 @@ export default function run(protocol) {
   test("execute remote service", async t => {
     const Sum = t.context.client.service("math/sum");
 
-    const webmiddle = new WebMiddle();
     const resource = await evaluate(
-      createContext(webmiddle, { retries: 2 }),
+      createContext({ retries: 2 }),
       <Sum a={10} b={20} />
     );
     t.is(resource.contentType, "text/plain");
@@ -68,9 +67,8 @@ export default function run(protocol) {
   test("execute remote service with options", async t => {
     const ReturnOption = t.context.client.service("returnOption");
 
-    const webmiddle = new WebMiddle();
     const resource = await evaluate(
-      createContext(webmiddle, {
+      createContext({
         retries: 2,
         whatever: "you got it!"
       }),

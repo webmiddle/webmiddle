@@ -10,11 +10,11 @@ function isRealNaN(target) {
 }
 
 export default async function evaluate(context, value) {
-  context.webmiddle.log("evaluate", value);
+  context.log("evaluate", value);
   let result = value;
 
   if (typeof result === "function") {
-    context.webmiddle.log("evaluate function", result);
+    context.log("evaluate function", result);
     result = result(...(context.options.functionParameters || []));
     return evaluate(context, result);
   }
@@ -24,12 +24,12 @@ export default async function evaluate(context, value) {
     promiseResult !== result &&
     (!isRealNaN(promiseResult) || !isRealNaN(result))
   ) {
-    context.webmiddle.log("evaluate promise result", promiseResult, result);
+    context.log("evaluate promise result", promiseResult, result);
     return evaluate(context, promiseResult);
   }
 
   if (isVirtual(result)) {
-    context.webmiddle.log("evaluate virtual", result);
+    context.log("evaluate virtual", result);
     let resultEvaluated = false;
     ({ result } = await call(
       async newContext => {
@@ -37,32 +37,25 @@ export default async function evaluate(context, value) {
 
         const {
           result: virtualResult,
-          context: virtualContext,
-          linkedWebmiddle
+          context: virtualContext
         } = await callVirtual(newContext, result);
-        try {
-          context = virtualContext; // change context in top scope
 
-          if (virtualResult !== result) {
-            result = await evaluate(context, virtualResult);
-            if (isResource(result)) {
-              // resource overrides by top virtual
-              ["name", "contentType"].forEach(p => {
-                if (typeof topVirtual.attributes[p] !== "undefined") {
-                  result[p] = topVirtual.attributes[p];
-                }
-              });
-            }
-            resultEvaluated = true;
-            return result;
+        context = virtualContext; // change context in top scope
+
+        if (virtualResult !== result) {
+          result = await evaluate(context, virtualResult);
+          if (isResource(result)) {
+            // resource overrides by top virtual
+            ["name", "contentType"].forEach(p => {
+              if (typeof topVirtual.attributes[p] !== "undefined") {
+                result[p] = topVirtual.attributes[p];
+              }
+            });
           }
-          return virtualResult;
-        } finally {
-          if (linkedWebmiddle) {
-            // unlink (unset temp parent)
-            linkedWebmiddle.parent = undefined;
-          }
+          resultEvaluated = true;
+          return result;
         }
+        return virtualResult;
       },
       context,
       {

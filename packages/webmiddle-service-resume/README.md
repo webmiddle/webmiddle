@@ -11,7 +11,7 @@ npm install --save webmiddle-service-resume
 ## Usage
 
 ```jsx
-import WebMiddle, { PropTypes, evaluate, createContext } from 'webmiddle';
+import webmiddle, { PropTypes, evaluate, createContext } from 'webmiddle';
 import Resume from 'webmiddle-service-resume';
 
 const MyService = () => (
@@ -22,8 +22,7 @@ const MyService = () => (
   </Resume>
 );
 
-const webmiddle = new WebMiddle();
-evaluate(createContext(webmiddle), <MyService />)
+evaluate(createContext(), <MyService />)
 .then(resource => {
   console.log(resource.name); // "resource1"
 });

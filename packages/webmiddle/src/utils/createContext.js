@@ -1,11 +1,22 @@
 import EventEmitter from "events";
+import CookieManager from "webmiddle-manager-cookie";
 
-export default function createContext(webmiddleOrContext, options = {}) {
-  if (webmiddleOrContext._isContext) {
+global.webmiddle = global.webmiddle || {
+  cookieManager: new CookieManager()
+};
+
+// createContext()
+// createContext(options)
+// createContext(parentContext, options)
+export default function createContext(...args) {
+  const parentContext = args[0] && args[0]._isContext ? args[0] : null;
+  const options = (args[0] && args[0]._isContext ? args[1] : args[0]) || {};
+
+  if (parentContext) {
     return {
-      ...webmiddleOrContext,
+      ...parentContext,
       options: {
-        ...webmiddleOrContext.options,
+        ...parentContext.options,
         ...options
       }
     };
@@ -19,7 +30,10 @@ export default function createContext(webmiddleOrContext, options = {}) {
     _callStateRoot: callState,
     rootEmitter: new EventEmitter(),
 
-    webmiddle: webmiddleOrContext,
+    cookieManager: global.webmiddle.cookieManager,
+    log(...args) {
+      if (this.options.verbose) console.log(...args);
+    },
     options
   };
 }

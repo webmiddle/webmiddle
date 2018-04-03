@@ -1,10 +1,9 @@
 import test from "ava";
 import Browser from "../src/index.js";
-import WebMiddle, { evaluate, createContext } from "webmiddle";
+import webmiddle, { evaluate, createContext } from "webmiddle";
 
 test.beforeEach(t => {
-  const webmiddle = new WebMiddle();
-  t.context.context = createContext(webmiddle, {
+  t.context.context = createContext({
     networkRetries: 3
   });
 });
@@ -289,7 +288,7 @@ test("cookies", async t => {
     />
   );
 
-  const cookies = t.context.context.webmiddle.cookieManager.jar.getCookiesSync(
+  const cookies = t.context.context.cookieManager.jar.getCookiesSync(
     "https://httpbin.org"
   );
 

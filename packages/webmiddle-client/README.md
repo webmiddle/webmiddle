@@ -24,8 +24,7 @@ const client = new Client({
 // e.g. if the remote server has a Multiply service at path "math/multiply"
 const Multiply = client.service("math/multiply");
 
-const webmiddle = new WebMiddle();
-evaluate(createContext(webmiddle, { retries: 2 }),
+evaluate(createContext({ retries: 2 }),
   <Multiply
     a={10}
     b={20}

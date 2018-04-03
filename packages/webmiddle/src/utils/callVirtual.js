@@ -22,41 +22,6 @@ function validateProps(props, propTypes, service) {
   return true;
 }
 
-function getWebmiddleAncestors(webmiddle) {
-  const ancestors = [];
-
-  let currentWebmiddle = webmiddle;
-  while (currentWebmiddle.parent) {
-    currentWebmiddle = currentWebmiddle.parent;
-    ancestors.push(currentWebmiddle);
-  }
-
-  return ancestors;
-}
-
-function getTopWebmiddle(webmiddle) {
-  const ancestors = getWebmiddleAncestors(webmiddle);
-  return ancestors.length > 0 ? ancestors[ancestors.length - 1] : webmiddle;
-}
-
-// Two webmiddles are related if they are the same
-// or if one is ancestor of the other
-function areWebmiddlesRelated(first, second) {
-  const firstAncestors = getWebmiddleAncestors(first);
-  const secondAncestors = getWebmiddleAncestors(second);
-  return (
-    first === second ||
-    (firstAncestors.indexOf(second) !== -1 ||
-      secondAncestors.indexOf(first) !== -1)
-  );
-}
-
-function getLinkedWebmiddle(webmiddle, newWebmiddle) {
-  return areWebmiddlesRelated(webmiddle, newWebmiddle)
-    ? null
-    : getTopWebmiddle(newWebmiddle);
-}
-
 // Call the service multiple times based on the "retries" option.
 // As last resort, use the "catch" option.
 // Note: retries < 0 means infinite retries.
@@ -122,16 +87,6 @@ export default async function callVirtual(context, virtual) {
   // clone the context
   context = { ...context };
 
-  // calculate new webmiddle
-  const newWebmiddle =
-    service && service.webmiddle ? service.webmiddle : context.webmiddle;
-  const linkedWebmiddle = getLinkedWebmiddle(context.webmiddle, newWebmiddle);
-  if (linkedWebmiddle) {
-    // link (set temp parent)
-    linkedWebmiddle.parent = context.webmiddle;
-  }
-  context.webmiddle = newWebmiddle;
-
   const props = {
     ...virtual.attributes,
     children: virtual.children
@@ -163,5 +118,5 @@ export default async function callVirtual(context, virtual) {
     result = virtual;
   }
 
-  return { result, context, linkedWebmiddle };
+  return { result, context };
 }

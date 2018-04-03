@@ -1,4 +1,4 @@
-import WebMiddle, {
+import webmiddle, {
   PropTypes,
   evaluate,
   createContext,

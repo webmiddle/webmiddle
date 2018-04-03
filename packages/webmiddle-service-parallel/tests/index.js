@@ -1,13 +1,13 @@
 import test from "ava";
 import Parallel from "../src/index.js";
-import WebMiddle, { evaluate, createContext } from "webmiddle";
+import webmiddle, { evaluate, createContext } from "webmiddle";
 
 function range(num) {
   return [...Array(num).keys()];
 }
 
 test.beforeEach(t => {
-  t.context.webmiddle = new WebMiddle();
+  t.context.context = createContext();
 });
 
 test("main", async t => {
@@ -42,7 +42,7 @@ test("main", async t => {
     });
 
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <Parallel name="resources">
       <FirstService />
       <SecondService />
@@ -79,7 +79,7 @@ test("expect resource", async t => {
 
   try {
     await evaluate(
-      createContext(t.context.webmiddle),
+      createContext(t.context.context),
       <Parallel name="whatever">
         <Service />
       </Parallel>
@@ -117,7 +117,7 @@ test("limit", async t => {
   current = 0;
   overLimit = false;
   await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <Parallel name="resources" limit={limit}>
       {range(100).map(i => <Service name={i} />)}
     </Parallel>
@@ -128,7 +128,7 @@ test("limit", async t => {
   current = 0;
   overLimit = false;
   await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <Parallel name="resources" limit={0}>
       {range(100).map(i => <Service name={i} />)}
     </Parallel>

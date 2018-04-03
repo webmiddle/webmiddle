@@ -1,6 +1,6 @@
 import test from "ava";
 import CheerioToJson, { helpers } from "../src/index.js";
-import WebMiddle, { evaluate, createContext } from "webmiddle";
+import webmiddle, { evaluate, createContext } from "webmiddle";
 
 const { elMap, elText } = helpers;
 
@@ -26,19 +26,15 @@ const xmlResource = {
 };
 
 test.beforeEach(t => {
-  t.context.webmiddle = new WebMiddle();
+  t.context.context = createContext();
 });
 
 test("must return a json resource", async t => {
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <CheerioToJson name="virtual" from={xmlResource}>
       <titles el="title">
-        {elMap(el =>
-          <title el={el}>
-            {elText()}
-          </title>
-        )}
+        {elMap(el => <title el={el}>{elText()}</title>)}
       </titles>
     </CheerioToJson>
   );

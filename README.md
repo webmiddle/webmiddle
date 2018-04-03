@@ -4,30 +4,30 @@
   <a href="https://codecov.io/gh/webmiddle/webmiddle"><img alt="Coverage Status" src="https://img.shields.io/codecov/c/github/webmiddle/webmiddle/master.svg?maxAge=43200"></a>
 </p>
 
-# WebMiddle
+# webmiddle
 
 > Node.js JSX framework for modular web scraping and data integration 
 
-WebMiddle is a Node.js framework for extracting, transforming and combining data from multiple websites and web APIs.
+webmiddle is a Node.js framework for extracting, transforming and combining data from multiple websites and web APIs.
 
-WebMiddle applications can range from simple web scrapers to complex web integration tools targeting JSON APIs, raw HTML pages, XML resources and so on.
+webmiddle applications can range from simple web scrapers to complex web integration tools targeting JSON APIs, raw HTML pages, XML resources and so on.
 
-WebMiddle applications are written in a declarative, functional and modular way, by using their most evident aspect: **[JSX](https://facebook.github.io/jsx/) services**.
+webmiddle applications are written in a declarative, functional and modular way, by using their most evident aspect: **[JSX](https://facebook.github.io/jsx/) services**.
 
 Each service executes one task, or controls the execution of other tasks, by composing together other services in a tree-like fashion.
 
 ```jsx
 function Main(props) {
-  const { sites } = props;
+  const { sites: siteNames } = props;
   return (
     <Pipe>
       <Parallel name="articlesBySite">
-        {sites.map(siteName => {
-          const siteWebMiddle = siteWebMiddles[siteName];
+        {siteNames.map(siteName => {
+          const site = sites[siteName];
           return (
             <SiteMain
               {...props}
-              site={siteWebMiddle}
+              site={site}
               name={siteName}
             />
           );
@@ -55,7 +55,7 @@ Services registered with remote webmiddles can be used locally as if they were r
 
 - [The site webmiddle for The New York Times](https://github.com/Maluen/webmiddle-site-nytimes)
 - [The site webmiddle for Fox News](https://github.com/Maluen/webmiddle-site-foxnews)
-- [WebMiddle application for searching articles from news sites](https://github.com/Maluen/webmiddle-project-search-news)
+- [webmiddle application for searching articles from news sites](https://github.com/Maluen/webmiddle-project-search-news)
 
 ## Getting started
 
@@ -154,7 +154,7 @@ This means that anyone can contribute by adding new services for doing the more 
 
 ## Remote execution
 
-WebMiddle services can be turned into REST APIs by using the `webmiddle-server` package, allowing remote access via HTTP or WebSocket.
+webmiddle services can be turned into REST APIs by using the `webmiddle-server` package, allowing remote access via HTTP or WebSocket.
 
 Suppose you have the following services:
 
@@ -198,8 +198,7 @@ const client = new Client({
 const Multiply = client.service("math/multiply");
 
 // execute it
-const webmiddle = new WebMiddle();
-evaluate(createContext(webmiddle, { retries: 2 }),
+evaluate(createContext({ retries: 2 }),
   <Multiply
     a={10}
     b={20}

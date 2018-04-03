@@ -1,7 +1,7 @@
 import test from "ava";
 import CheerioToVirtual from "../src/index.js";
 import { elAttr, elJoin, elMap, elPipe, elText } from "../src/helpers";
-import WebMiddle, { evaluate, createContext } from "webmiddle";
+import webmiddle, { evaluate, createContext } from "webmiddle";
 
 const xmlResource = {
   name: "xmlResource",
@@ -119,13 +119,13 @@ const virtualResource = {
 };
 
 test.beforeEach(t => {
-  t.context.webmiddle = new WebMiddle();
+  t.context.context = createContext();
 });
 
 test("must throw if neither fullConversion and children are specified", async t => {
   await t.throws(
     evaluate(
-      createContext(t.context.webmiddle),
+      createContext(t.context.context),
       <CheerioToVirtual name="virtual" from={xmlResource} />
     )
   );
@@ -133,7 +133,7 @@ test("must throw if neither fullConversion and children are specified", async t 
 
 test("must return virtual resource", async t => {
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <CheerioToVirtual name="virtual" from={xmlResource} fullConversion />
   );
 
@@ -143,7 +143,7 @@ test("must return virtual resource", async t => {
 
 test("must default to null in case of evaluation exception", async t => {
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <CheerioToVirtual name="virtual" from={xmlResource}>
       <title el="title">
         {() => {
@@ -168,11 +168,9 @@ test("must default to null in case of evaluation exception", async t => {
 
 test("undefined should be converted to null", async t => {
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <CheerioToVirtual name="virtual" from={xmlResource}>
-      <title el="title">
-        {() => undefined}
-      </title>
+      <title el="title">{() => undefined}</title>
     </CheerioToVirtual>
   );
 
@@ -191,15 +189,18 @@ test("undefined should be converted to null", async t => {
 
 test("condition", async t => {
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <CheerioToVirtual name="virtual" from={xmlResource}>
       <book
         el="book"
-        condition={el => el.find("title").text().trim() === "Harry Potter"}
+        condition={el =>
+          el
+            .find("title")
+            .text()
+            .trim() === "Harry Potter"
+        }
       >
-        <author el="author">
-          {elText()}
-        </author>
+        <author el="author">{elText()}</author>
       </book>
     </CheerioToVirtual>
   );
@@ -226,7 +227,7 @@ test("condition", async t => {
 test("condition: must throw if is not a function", async t => {
   await t.throws(
     evaluate(
-      createContext(t.context.webmiddle),
+      createContext(t.context.context),
       <CheerioToVirtual name="virtual" from={xmlResource}>
         <title el="title" condition="true" />
       </CheerioToVirtual>
@@ -236,14 +237,10 @@ test("condition: must throw if is not a function", async t => {
 
 test("helpers: elMap + elAttr", async t => {
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <CheerioToVirtual name="virtual" from={xmlResource}>
       <categories el="book">
-        {elMap(el =>
-          <category el={el}>
-            {elAttr("category")}
-          </category>
-        )}
+        {elMap(el => <category el={el}>{elAttr("category")}</category>)}
       </categories>
     </CheerioToVirtual>
   );
@@ -276,14 +273,14 @@ test("helpers: elMap + elAttr", async t => {
 
 test("helpers: elPipe + elMap + elText + elJoin", async t => {
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <CheerioToVirtual name="virtual" from={xmlResource}>
       <books el="book">
-        {elMap(el =>
+        {elMap(el => (
           <book el={el.find("*")}>
             {elPipe([elMap(elText()), elJoin("; ")])}
           </book>
-        )}
+        ))}
       </books>
     </CheerioToVirtual>
   );
@@ -316,7 +313,7 @@ test("helpers: elPipe + elMap + elText + elJoin", async t => {
 
 test("fullconversion", async t => {
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <CheerioToVirtual name="virtual" from={xmlResource} fullConversion />
   );
 
@@ -325,11 +322,9 @@ test("fullconversion", async t => {
 
 test("fullConversion: children must be ignored", async t => {
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <CheerioToVirtual name="virtual" from={xmlResource} fullConversion>
-      <title el="title">
-        {elText()}
-      </title>
+      <title el="title">{elText()}</title>
     </CheerioToVirtual>
   );
 

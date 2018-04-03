@@ -1,9 +1,9 @@
 import test from "ava";
 import Pipe from "../src/index.js";
-import WebMiddle, { evaluate, createContext } from "webmiddle";
+import webmiddle, { evaluate, createContext } from "webmiddle";
 
 test.beforeEach(t => {
-  t.context.webmiddle = new WebMiddle();
+  t.context.context = createContext();
 });
 
 test("main", async t => {
@@ -19,15 +19,16 @@ test("main", async t => {
   });
 
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <Pipe>
       <FirstService />
 
-      {({ firstResource }) =>
+      {({ firstResource }) => (
         <SecondService
           name="secondResource"
           num={parseInt(firstResource.content, 10)}
-        />}
+        />
+      )}
     </Pipe>
   );
 
@@ -40,7 +41,7 @@ test("expect resource", async t => {
 
   try {
     await evaluate(
-      createContext(t.context.webmiddle),
+      createContext(t.context.context),
       <Pipe>
         <Service />
       </Pipe>

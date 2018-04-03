@@ -1,4 +1,4 @@
-import WebMiddle, {
+import webmiddle, {
   evaluate,
   createContext,
   isResource,
@@ -38,7 +38,7 @@ export default class Server {
     );
 
     const httpServer = this.expressServer.listen(this.PORT, () => {
-      console.log(`WebMiddle server listening on port ${this.PORT}!`);
+      console.log(`webmiddle server listening on port ${this.PORT}!`);
     });
 
     this.websocketServer = new WebSocket.Server({ server: httpServer });
@@ -196,8 +196,7 @@ export default class Server {
     const Service = this.serviceRoutes[path];
     if (!Service) throw new Error("Service not found at path: " + path);
 
-    const webmiddle = new WebMiddle();
-    const context = createContext(webmiddle, options);
+    const context = createContext(options);
     if (onMessage) context.rootEmitter.on("message", onMessage);
 
     return evaluate(context, <Service {...props} />);

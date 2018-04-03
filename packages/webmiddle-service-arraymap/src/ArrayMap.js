@@ -1,4 +1,4 @@
-import WebMiddle, { PropTypes, evaluate, createContext } from "webmiddle";
+import webmiddle, { PropTypes, evaluate, createContext } from "webmiddle";
 
 async function ArrayMap({ name, array, callback, limit }, context) {
   const resources = [];

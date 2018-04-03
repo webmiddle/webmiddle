@@ -11,7 +11,7 @@ npm install --save webmiddle-service-jsonselect-to-virtual
 ## Usage
 
 ```jsx
-import WebMiddle, { PropTypes, evaluate, createContext } from 'webmiddle';
+import webmiddle, { PropTypes, evaluate, createContext } from 'webmiddle';
 import Pipe from 'webmiddle-service-pipe';
 import HttpRequest from 'webmiddle-service-http-request';
 import JSONSelectToVirtual, { helpers } from 'webmiddle-service-jsonselect-to-virtual';
@@ -61,8 +61,7 @@ const MyService = ({ apiKey, query, pageNumber }) => (
   </Pipe>
 );
 
-const webmiddle = new WebMiddle();
-evaluate(createContext(webmiddle),
+evaluate(createContext(),
   <MyService
     apiKey="MY API KEY HERE"
     query="javascript"

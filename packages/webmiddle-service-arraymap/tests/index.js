@@ -1,18 +1,18 @@
 import test from "ava";
 import ArrayMap from "../src/index.js";
-import WebMiddle, { evaluate, createContext } from "webmiddle";
+import webmiddle, { evaluate, createContext } from "webmiddle";
 
 function range(num) {
   return [...Array(num).keys()];
 }
 
 test.beforeEach(t => {
-  t.context.webmiddle = new WebMiddle();
+  t.context.context = createContext();
 });
 
 test("main", async t => {
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <ArrayMap
       name="resources"
       array={[1, 2]}
@@ -49,7 +49,7 @@ test("expect resource", async t => {
 
   try {
     await evaluate(
-      createContext(t.context.webmiddle),
+      createContext(t.context.context),
       <ArrayMap name="whatever" array={[0]} callback={() => <Service />} />
     );
     t.fail("expected rejection");
@@ -85,7 +85,7 @@ test("limit", async t => {
   current = 0;
   overLimit = false;
   await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <ArrayMap
       name="resources"
       array={range(100)}
@@ -99,7 +99,7 @@ test("limit", async t => {
   current = 0;
   overLimit = false;
   await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <ArrayMap
       name="resources"
       array={range(100)}

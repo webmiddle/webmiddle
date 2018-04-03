@@ -1,5 +1,5 @@
 import Client from "./index";
-import WebMiddle, { evaluate, createContext } from "webmiddle";
+import webmiddle, { evaluate, createContext } from "webmiddle";
 
 const client = new Client({
   protocol: "http",
@@ -9,8 +9,7 @@ const client = new Client({
 
 const Multiply = client.service("multiply");
 
-const webmiddle = new WebMiddle();
-evaluate(createContext(webmiddle, { retries: 2 }), <Multiply a={10} b={20} />)
+evaluate(createContext({ retries: 2 }), <Multiply a={10} b={20} />)
   .then(result => {
     console.log(result);
   })

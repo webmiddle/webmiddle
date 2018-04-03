@@ -1,6 +1,6 @@
 import test from "ava";
 import Resume from "../src/index.js";
-import WebMiddle, { evaluate, createContext } from "webmiddle";
+import webmiddle, { evaluate, createContext } from "webmiddle";
 import path from "path";
 import fs from "fs";
 
@@ -21,8 +21,7 @@ function deleteFolderRecursive(filename) {
 }
 
 test.beforeEach(t => {
-  const webmiddle = new WebMiddle();
-  t.context.context = createContext(webmiddle, {
+  t.context.context = createContext({
     outputBasePath: path.resolve(__dirname, "./output")
   });
 });

@@ -1,4 +1,4 @@
-import WebMiddle, { PropTypes, pickDefaults } from "webmiddle";
+import webmiddle, { PropTypes, pickDefaults } from "webmiddle";
 import HttpError from "webmiddle/dist/utils/HttpError";
 import request from "request";
 
@@ -35,7 +35,7 @@ function HttpRequest(
       // thus we just use the webmiddle cookie jar directly.
       // Things might go wrong in case of incompatible versions!
       const jar = request.jar();
-      jar._jar = context.webmiddle.cookieManager.jar;
+      jar._jar = context.cookieManager.jar;
 
       if (typeof body === "object" && body !== null) {
         // body as string

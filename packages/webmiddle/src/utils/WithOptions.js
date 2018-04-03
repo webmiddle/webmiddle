@@ -1,4 +1,4 @@
-import WebMiddle, { evaluate, createContext } from "../index";
+import webmiddle, { evaluate, createContext } from "../index";
 import PropTypes from "proptypes"; // explicit import because of circular dependency with index
 
 export default function WithOptions({ children, ...options }, context) {

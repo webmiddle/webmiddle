@@ -1,15 +1,15 @@
 import test from "ava";
-import WebMiddle, { evaluate, createContext } from "../src/index";
+import webmiddle, { evaluate, createContext } from "../src/index";
 
 test.beforeEach(t => {
-  t.context.webmiddle = new WebMiddle();
+  t.context.context = createContext();
 });
 
 test("virtual -> service", async t => {
   const Service = () => "yes";
   const virtual = <Service a={10} b={20} />;
 
-  const context = createContext(t.context.webmiddle, { debug: true });
+  const context = createContext(t.context.context, { debug: true });
   const output = await evaluate(context, virtual);
 
   t.deepEqual(context._callStateRoot, [
@@ -45,7 +45,7 @@ test("virtual -> service with retries", async t => {
   };
   const virtual = <Service a={10} b={20} />;
 
-  const context = createContext(t.context.webmiddle, {
+  const context = createContext(t.context.context, {
     debug: true,
     retries: 1
   });
@@ -90,7 +90,7 @@ test("virtual -> service with retries and final catch", async t => {
   const catchExpr = () => "failsafe";
   const virtual = <Service a={10} b={20} />;
 
-  const context = createContext(t.context.webmiddle, {
+  const context = createContext(t.context.context, {
     debug: true,
     retries: 1,
     catch: catchExpr
@@ -144,7 +144,7 @@ test("service returning virtual (virtual -> service -> virtual -> service)", asy
   const Service = () => subVirtual;
   const virtual = <Service a={10} b={20} />;
 
-  const context = createContext(t.context.webmiddle, { debug: true });
+  const context = createContext(t.context.context, { debug: true });
   const output = await evaluate(context, virtual);
 
   t.deepEqual(context._callStateRoot, [
@@ -192,7 +192,7 @@ test('must emit "add" events with correct paths', async t => {
   const Service = () => "yes";
   const virtual = <Service a={10} b={20} />;
 
-  const context = createContext(t.context.webmiddle, { debug: true });
+  const context = createContext(t.context.context, { debug: true });
 
   const addData = [];
   context.rootEmitter.on("message", message => {

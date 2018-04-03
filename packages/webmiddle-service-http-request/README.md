@@ -11,7 +11,7 @@ npm install --save webmiddle-service-http-request
 ## Usage
 
 ```jsx
-import WebMiddle, { PropTypes, evaluate, createContext } from 'webmiddle';
+import webmiddle, { PropTypes, evaluate, createContext } from 'webmiddle';
 import HttpRequest from 'webmiddle-service-http-request';
 
 const MyService = () => (
@@ -22,8 +22,7 @@ const MyService = () => (
   />
 );
 
-const webmiddle = new WebMiddle();
-evaluate(createContext(webmiddle), <MyService />)
+evaluate(createContext(), <MyService />)
 .then(resource => {
   console.log(resource.content); // the html page as a string
 });

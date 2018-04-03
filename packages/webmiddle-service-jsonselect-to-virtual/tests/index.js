@@ -1,6 +1,6 @@
 import test from "ava";
 import JSONSelectToVirtual, { helpers } from "../src/index.js";
-import WebMiddle, { evaluate, createContext } from "webmiddle";
+import webmiddle, { evaluate, createContext } from "webmiddle";
 
 const { elGet, elJoin, elMap, elPipe } = helpers;
 
@@ -149,13 +149,13 @@ const virtualResource = {
 };
 
 test.beforeEach(t => {
-  t.context.webmiddle = new WebMiddle();
+  t.context.context = createContext();
 });
 
 test("must throw if neither fullConversion and children are specified", async t => {
   await t.throws(
     evaluate(
-      createContext(t.context.webmiddle),
+      createContext(t.context.context),
       <JSONSelectToVirtual name="virtual" from={jsonResource} />
     )
   );
@@ -163,11 +163,9 @@ test("must throw if neither fullConversion and children are specified", async t 
 
 test("must default to null in case of evaluation exception", async t => {
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <JSONSelectToVirtual name="virtual" from={jsonResource}>
-      <name el=".name">
-        {el => el[3].toUpperCase()}
-      </name>
+      <name el=".name">{el => el[3].toUpperCase()}</name>
     </JSONSelectToVirtual>
   );
 
@@ -186,11 +184,9 @@ test("must default to null in case of evaluation exception", async t => {
 
 test("undefined should be converted to null", async t => {
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <JSONSelectToVirtual name="virtual" from={jsonResource}>
-      <name el=".name">
-        {el => el["not existing"]}
-      </name>
+      <name el=".name">{el => el["not existing"]}</name>
     </JSONSelectToVirtual>
   );
 
@@ -209,7 +205,7 @@ test("undefined should be converted to null", async t => {
 
 test("must return a virtual resource", async t => {
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <JSONSelectToVirtual name="virtual" from={jsonResource} fullConversion />
   );
 
@@ -219,7 +215,7 @@ test("must return a virtual resource", async t => {
 
 test("fullconversion", async t => {
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <JSONSelectToVirtual name="virtual" from={jsonResource} fullConversion />
   );
 
@@ -228,11 +224,9 @@ test("fullconversion", async t => {
 
 test("fullConversion: children must be ignored", async t => {
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <JSONSelectToVirtual name="virtual" from={jsonResource} fullConversion>
-      <name el=".name">
-        {el => el[0]}
-      </name>
+      <name el=".name">{el => el[0]}</name>
     </JSONSelectToVirtual>
   );
 
@@ -241,7 +235,7 @@ test("fullConversion: children must be ignored", async t => {
 
 test("condition", async t => {
   const resource = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <JSONSelectToVirtual name="virtual" from={jsonResource}>
       <name el=".name" condition={el => el.indexOf("Sea") !== -1}>
         {el => el[0]}
@@ -265,7 +259,7 @@ test("condition", async t => {
 test("condition: must throw if is not a function", async t => {
   await t.throws(
     evaluate(
-      createContext(t.context.webmiddle),
+      createContext(t.context.context),
       <JSONSelectToVirtual name="virtual" from={jsonResource}>
         <name el=".name" condition="true" />
       </JSONSelectToVirtual>
@@ -275,11 +269,9 @@ test("condition: must throw if is not a function", async t => {
 
 test("elGet", async t => {
   const resource = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <JSONSelectToVirtual name="virtual" from={jsonResource}>
-      <firstName el=".name">
-        {elGet()}
-      </firstName>
+      <firstName el=".name">{elGet()}</firstName>
     </JSONSelectToVirtual>
   );
 
@@ -298,11 +290,9 @@ test("elGet", async t => {
 
 test("elGet: selector", async t => {
   const resource = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <JSONSelectToVirtual name="virtual" from={jsonResource}>
-      <firstName>
-        {elGet(".name")}
-      </firstName>
+      <firstName>{elGet(".name")}</firstName>
     </JSONSelectToVirtual>
   );
 
@@ -326,11 +316,9 @@ test('elGet: values', async t => {
 
 test("elJoin", async t => {
   const resource = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <JSONSelectToVirtual name="virtual" from={jsonResource}>
-      <names el=".name">
-        {elJoin(", ")}
-      </names>
+      <names el=".name">{elJoin(", ")}</names>
     </JSONSelectToVirtual>
   );
 
@@ -349,15 +337,9 @@ test("elJoin", async t => {
 
 test("elMap", async t => {
   const resource = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <JSONSelectToVirtual name="virtual" from={jsonResource}>
-      <names el=".name">
-        {elMap(el =>
-          <name>
-            {el}
-          </name>
-        )}
-      </names>
+      <names el=".name">{elMap(el => <name>{el}</name>)}</names>
     </JSONSelectToVirtual>
   );
 
@@ -389,7 +371,7 @@ test("elMap", async t => {
 
 test("elPipe", async t => {
   const resource = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <JSONSelectToVirtual name="virtual" from={jsonResource}>
       <names el=".name">
         {elPipe([elJoin(", "), text => text.toUpperCase()])}

@@ -1,4 +1,4 @@
-import WebMiddle, { evaluate, createContext, isResource } from "webmiddle";
+import webmiddle, { evaluate, createContext, isResource } from "webmiddle";
 import superagent from "superagent";
 import WebSocket from "ws";
 import uuid from "uuid";

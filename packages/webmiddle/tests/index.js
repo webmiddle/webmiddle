@@ -1,5 +1,5 @@
 import test from "ava";
-import WebMiddle, {
+import webmiddle, {
   isResource,
   isVirtual,
   callVirtual,
@@ -9,7 +9,7 @@ import WebMiddle, {
 } from "../src/index.js";
 
 test.beforeEach(t => {
-  t.context.webmiddle = new WebMiddle();
+  t.context.context = createContext();
 });
 
 test("h -> isVirtual", t => {
@@ -42,11 +42,23 @@ test("isResource -> true", t => {
   );
 });
 
+test("createContext", t => {
+  // createContext()
+  t.deepEqual(createContext().options, {});
+
+  // createContext(options)
+  t.deepEqual(createContext({ foo: "bar" }).options, { foo: "bar" });
+
+  // createContext(parentContext, options)
+  const parentContext = createContext({ foo: "bar" });
+  const context = createContext(parentContext, { test: "some" });
+  t.deepEqual(context.options, { foo: "bar", test: "some" });
+});
+
 test("callVirtual: when type is not a function", async t => {
   const virtual = <element />;
-  const output = await callVirtual(createContext(t.context.webmiddle), virtual);
+  const output = await callVirtual(createContext(t.context.context), virtual);
   t.is(output.result, virtual, "result");
-  t.is(output.context.webmiddle, t.context.webmiddle, "webmiddle");
 });
 
 test("callVirtual: service must be called correctly", async t => {
@@ -61,7 +73,7 @@ test("callVirtual: service must be called correctly", async t => {
     </Service>
   );
 
-  const output = await callVirtual(createContext(t.context.webmiddle), virtual);
+  const output = await callVirtual(createContext(t.context.context), virtual);
   t.deepEqual(
     output.result.args,
     {
@@ -71,8 +83,6 @@ test("callVirtual: service must be called correctly", async t => {
   );
 
   t.is(output.result.children[0].type, "element", "children");
-
-  t.is(output.context.webmiddle, t.context.webmiddle, "webmiddle");
 });
 
 test("callVirtual: resource overrides", async t => {
@@ -85,7 +95,7 @@ test("callVirtual: resource overrides", async t => {
   const TopService = () => <Service name="rawtext" contentType="text/plain" />;
 
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <TopService name="other" />
   );
 
@@ -94,113 +104,15 @@ test("callVirtual: resource overrides", async t => {
   t.is(output.content, "<div></div>", "content");
 });
 
-test("registerService", t => {
-  const Service = () => {};
-  t.context.webmiddle.registerService("foo", Service);
-  t.is(typeof t.context.webmiddle.service("foo"), "function");
-  t.is(typeof t.context.webmiddle.service("bar"), "undefined");
-});
-
-test("registerService: must only accept functions", t => {
-  t.throws(() => {
-    t.context.webmiddle.registerService("foo", { foo: "bar" });
-  });
-});
-
-test("registerService: must support deep paths", t => {
-  t.context.webmiddle.registerService("some.foo", () => {});
-  t.is(typeof t.context.webmiddle.service("some").foo, "function");
-});
-
-test("services: with parent and constructor options", t => {
-  const Service = () => {};
-  const webmiddle = new WebMiddle({
-    parent: new WebMiddle({
-      services: {
-        foo: () => <Service />
-      }
-    })
-  });
-
-  t.is(typeof webmiddle.service("foo"), "function");
-  t.is(typeof webmiddle.service("bar"), "undefined");
-});
-
-test("services: deep object", t => {
-  const webmiddle = new WebMiddle({
-    services: {
-      math: {
-        divide: ({ a, b }) => a / b
-      }
-    }
-  });
-
-  t.is(typeof webmiddle.service("math.divide"), "function");
-});
-
-test("services: must only accept functions as leafs", t => {
-  t.throws(() => {
-    new WebMiddle({
-      services: {
-        math: {
-          divide: "FAKE"
-        }
-      }
-    });
-  });
-});
-
-test("services: must return an object of services when path is broad", t => {
-  const webmiddle = new WebMiddle({
-    services: {
-      math: {
-        divide: ({ a, b }) => a / b,
-        multiply: ({ a, b }) => a * b
-      }
-    }
-  });
-
-  const services = webmiddle.service("math");
-  t.truthy(
-    Object.keys(services).length === 2 && services.divide && services.multiply
-  );
-});
-
-test("services: must return undefined when requesting one that does not exist", t => {
-  const webmiddle = new WebMiddle({
-    services: {
-      math: {
-        divide: ({ a, b }) => a / b,
-        multiply: ({ a, b }) => a * b
-      }
-    }
-  });
-
-  const service = webmiddle.service("math.random");
-  t.is(typeof service, "undefined");
-});
-
-test("services: must throw when passing a virtual instead of a function (common error)", t => {
-  const Service = () => {};
-  t.throws(
-    () =>
-      new WebMiddle({
-        services: {
-          foo: <Service />
-        }
-      })
-  );
-});
-
 test("evaluate: NaN", async t => {
   // regression test: NaN result should not cause infinite loop
-  await evaluate(createContext(t.context.webmiddle), NaN);
+  await evaluate(createContext(t.context.context), NaN);
   t.pass();
 });
 
 test("evaluate: function", async t => {
   const output = await evaluate(
-    createContext(t.context.webmiddle, {
+    createContext(t.context.context, {
       functionParameters: [3]
     }),
     num => num * 2
@@ -210,13 +122,13 @@ test("evaluate: function", async t => {
 
 test("evaluate: promise", async t => {
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     Promise.resolve(10)
   );
   t.is(output, 10);
 
   try {
-    await evaluate(createContext(t.context.webmiddle), Promise.reject());
+    await evaluate(createContext(t.context.context), Promise.reject());
     t.fail("expected rejection");
   } catch (e) {
     t.pass();
@@ -226,7 +138,7 @@ test("evaluate: promise", async t => {
 test("evaluate: virtual", async t => {
   const Service = ({ num }) => num * 2;
   const output = await evaluate(
-    createContext(t.context.webmiddle),
+    createContext(t.context.context),
     <Service num={6} />
   );
   t.is(output, 12);
@@ -235,7 +147,7 @@ test("evaluate: virtual", async t => {
 test("evaluate: expectResource", async t => {
   try {
     await evaluate(
-      createContext(t.context.webmiddle, {
+      createContext(t.context.context, {
         expectResource: true
       }),
       () => 3
@@ -244,22 +156,6 @@ test("evaluate: expectResource", async t => {
   } catch (e) {
     t.pass();
   }
-});
-
-test("temp parent", async t => {
-  const Service = (props, context) => {
-    return !!context.webmiddle.service("foo");
-  };
-  Service.webmiddle = new WebMiddle();
-
-  const webmiddle = new WebMiddle({
-    services: { foo: () => {} }
-  });
-
-  const output = await evaluate(createContext(webmiddle), <Service />);
-
-  t.is(output, true);
-  t.is(Service.webmiddle.parent, undefined);
 });
 
 [0, 1, 2, 3].forEach(n =>
@@ -273,7 +169,7 @@ test("temp parent", async t => {
     const retries = n;
     try {
       await evaluate(
-        createContext(t.context.webmiddle, { retries }),
+        createContext(t.context.context, { retries }),
         <Service />
       );
     } catch (err) {
@@ -299,7 +195,7 @@ test("service options (WithOptions)", async t => {
     myCustomOption: "foo"
   };
 
-  const context = createContext(t.context.webmiddle, {
+  const context = createContext(t.context.context, {
     otherOption: "bar",
     anotherOption: "again"
   });
@@ -329,7 +225,7 @@ test("service options: as a function", async t => {
   });
 
   const output = await evaluate(
-    createContext(t.context.webmiddle, {
+    createContext(t.context.context, {
       otherOption: "bar",
       anotherOption: "again"
     }),
@@ -347,7 +243,7 @@ test("catch (createContext from context)", async t => {
   };
   const Service = () => <ThrowService />;
 
-  const context = createContext(t.context.webmiddle);
+  const context = createContext(t.context.context);
   const output = await evaluate(
     createContext(context, {
       catch: err => <SuccessService />
@@ -363,5 +259,5 @@ test("must throw when there is no catch", async t => {
     throw new Error("expected throw");
   };
 
-  await t.throws(evaluate(createContext(t.context.webmiddle), <Service />));
+  await t.throws(evaluate(createContext(t.context.context), <Service />));
 });

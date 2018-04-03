@@ -1,9 +1,9 @@
-import WebMiddle, { PropTypes, pickDefaults } from "webmiddle";
+import webmiddle, { PropTypes, pickDefaults } from "webmiddle";
 import HttpError from "webmiddle/dist/utils/HttpError";
 import puppeteer from "puppeteer";
 
 function pageSetCookies(page, context) {
-  const allCookies = context.webmiddle.cookieManager.jar.toJSON().cookies;
+  const allCookies = context.cookieManager.jar.toJSON().cookies;
   return Promise.all(
     allCookies.map(cookie =>
       page.setCookie({
@@ -176,14 +176,10 @@ async function Browser(
         if (headerName.toLowerCase() === "set-cookie") {
           const values = headerValue.split("\n");
           values.forEach(value => {
-            const cookie = context.webmiddle.cookieManager.Cookie.parse(value, {
+            const cookie = context.cookieManager.Cookie.parse(value, {
               loose: true
             });
-            context.webmiddle.cookieManager.jar.setCookieSync(
-              cookie,
-              response.url(),
-              {}
-            );
+            context.cookieManager.jar.setCookieSync(cookie, response.url(), {});
           });
         }
       });
