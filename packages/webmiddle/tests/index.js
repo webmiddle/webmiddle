@@ -1,5 +1,5 @@
 import test from "ava";
-import webmiddle, {
+import {
   isResource,
   isVirtual,
   callVirtual,

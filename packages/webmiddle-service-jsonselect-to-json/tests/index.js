@@ -1,6 +1,6 @@
 import test from "ava";
 import JSONSelectToJson from "../src/index.js";
-import webmiddle, { evaluate, createContext } from "webmiddle";
+import { evaluate, createContext } from "webmiddle";
 
 const jsonResource = {
   name: "jsonResource",

@@ -1,4 +1,3 @@
-import webmiddle from "webmiddle";
 import superagent from "superagent";
 import WebSocket from "ws";
 import uuid from "uuid";

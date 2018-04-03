@@ -1,6 +1,6 @@
 import test from "ava";
 import CheerioToJson, { helpers } from "../src/index.js";
-import webmiddle, { evaluate, createContext } from "webmiddle";
+import { evaluate, createContext } from "webmiddle";
 
 const { elMap, elText } = helpers;
 

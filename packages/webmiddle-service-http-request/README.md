@@ -11,7 +11,7 @@ npm install --save webmiddle-service-http-request
 ## Usage
 
 ```jsx
-import webmiddle, { PropTypes, evaluate, createContext } from 'webmiddle';
+import { PropTypes, evaluate, createContext } from 'webmiddle';
 import HttpRequest from 'webmiddle-service-http-request';
 
 const MyService = () => (

@@ -1,6 +1,6 @@
 import test from "ava";
 import JSONSelectToVirtual, { helpers } from "../src/index.js";
-import webmiddle, { evaluate, createContext } from "webmiddle";
+import { evaluate, createContext } from "webmiddle";
 
 const { elGet, elJoin, elMap, elPipe } = helpers;
 

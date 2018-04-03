@@ -1,5 +1,5 @@
 import test from "ava";
-import webmiddle, { evaluate, createContext } from "webmiddle";
+import { evaluate, createContext } from "webmiddle";
 import Server from "webmiddle-server";
 import Client from "../../src";
 

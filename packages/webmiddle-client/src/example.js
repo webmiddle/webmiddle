@@ -1,5 +1,5 @@
 import Client from "./index";
-import webmiddle, { evaluate, createContext } from "webmiddle";
+import { evaluate, createContext } from "webmiddle";
 
 const client = new Client({
   protocol: "http",

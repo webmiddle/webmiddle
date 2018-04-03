@@ -1,9 +1,4 @@
-import webmiddle, {
-  PropTypes,
-  evaluate,
-  createContext,
-  isVirtual
-} from "webmiddle";
+import { PropTypes, evaluate, createContext, isVirtual } from "webmiddle";
 import JSONSelect from "JSONSelect";
 
 // Note: virtual.type must be a string

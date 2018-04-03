@@ -12,7 +12,7 @@ npm install --save webmiddle-service-pipe
 
 
 ```jsx
-import webmiddle, { PropTypes, evaluate, createContext } from 'webmiddle';
+import { PropTypes, evaluate, createContext } from 'webmiddle';
 import Pipe from 'webmiddle-service-pipe';
 
 const MyService = () => (

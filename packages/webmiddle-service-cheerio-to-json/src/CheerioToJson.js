@@ -1,4 +1,4 @@
-import webmiddle, { PropTypes } from "webmiddle";
+import { PropTypes } from "webmiddle";
 import Pipe from "webmiddle-service-pipe";
 import CheerioToVirtual from "webmiddle-service-cheerio-to-virtual";
 import VirtualToJson from "webmiddle-service-virtual-to-json";

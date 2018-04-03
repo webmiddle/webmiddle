@@ -1,6 +1,6 @@
 import test from "ava";
 import HttpRequest from "../src/index.js";
-import webmiddle, { evaluate, createContext } from "webmiddle";
+import { evaluate, createContext } from "webmiddle";
 
 test.beforeEach(t => {
   t.context.context = createContext({

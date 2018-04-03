@@ -1,4 +1,4 @@
-import webmiddle, { PropTypes, evaluate, createContext } from "webmiddle";
+import { PropTypes, evaluate, createContext } from "webmiddle";
 
 async function Pipe({ children }, context) {
   const resources = {};

@@ -1,4 +1,3 @@
-import webmiddle from "webmiddle";
 import test from "ava";
 import { transformValue, transformCallStateInfo } from "../src/utils/transform";
 

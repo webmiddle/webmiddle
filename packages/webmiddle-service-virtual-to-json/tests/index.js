@@ -1,6 +1,6 @@
 import test from "ava";
 import VirtualToJson from "../src/index.js";
-import webmiddle, { evaluate, createContext } from "webmiddle";
+import { evaluate, createContext } from "webmiddle";
 
 const virtualResource = {
   name: "virtualResource",

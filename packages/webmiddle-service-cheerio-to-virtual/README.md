@@ -13,7 +13,7 @@ npm install --save webmiddle-service-cheerio-to-virtual
 ## Usage
 
 ```jsx
-import webmiddle, { PropTypes, evaluate, createContext } from 'webmiddle';
+import { PropTypes, evaluate, createContext } from 'webmiddle';
 import Pipe from 'webmiddle-service-pipe';
 import HttpRequest from 'webmiddle-service-http-request';
 import CheerioToVirtual, { helpers } from 'webmiddle-service-cheerio-to-virtual';

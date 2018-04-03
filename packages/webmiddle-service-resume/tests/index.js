@@ -1,6 +1,6 @@
 import test from "ava";
 import Resume from "../src/index.js";
-import webmiddle, { evaluate, createContext } from "webmiddle";
+import { evaluate, createContext } from "webmiddle";
 import path from "path";
 import fs from "fs";
 

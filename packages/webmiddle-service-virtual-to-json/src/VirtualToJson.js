@@ -1,4 +1,4 @@
-import webmiddle, { PropTypes, isVirtual } from "webmiddle";
+import { PropTypes, isVirtual } from "webmiddle";
 import values from "lodash.values";
 
 async function processVirtual(virtual, context) {

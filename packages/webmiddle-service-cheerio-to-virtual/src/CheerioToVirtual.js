@@ -1,9 +1,4 @@
-import webmiddle, {
-  PropTypes,
-  evaluate,
-  createContext,
-  isVirtual
-} from "webmiddle";
+import { PropTypes, evaluate, createContext, isVirtual } from "webmiddle";
 import cheerio from "cheerio";
 import isDomNode from "./isDomNode";
 

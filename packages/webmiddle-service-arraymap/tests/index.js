@@ -1,6 +1,6 @@
 import test from "ava";
 import ArrayMap from "../src/index.js";
-import webmiddle, { evaluate, createContext } from "webmiddle";
+import { evaluate, createContext } from "webmiddle";
 
 function range(num) {
   return [...Array(num).keys()];

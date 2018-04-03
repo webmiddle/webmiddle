@@ -11,7 +11,7 @@ npm install --save webmiddle-service-browser
 ## Usage
 
 ```jsx
-import webmiddle, { PropTypes, evaluate, createContext } from 'webmiddle';
+import { PropTypes, evaluate, createContext } from 'webmiddle';
 import Browser from 'webmiddle-service-browser';
 
 const MyService = () => (

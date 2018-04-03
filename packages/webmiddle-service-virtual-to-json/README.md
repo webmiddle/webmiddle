@@ -11,7 +11,7 @@ npm install --save webmiddle-service-virtual-to-json
 ## Usage
 
 ```jsx
-import webmiddle, { PropTypes, evaluate, createContext } from 'webmiddle';
+import { PropTypes, evaluate, createContext } from 'webmiddle';
 import VirtualToJson from 'webmiddle-service-virtual-to-json';
 
 const virtual = { /*...*/ }; // given an existing virtual resource

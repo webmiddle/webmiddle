@@ -1,9 +1,4 @@
-import webmiddle, {
-  evaluate,
-  createContext,
-  isResource,
-  isVirtual
-} from "webmiddle";
+import { evaluate, createContext, isResource, isVirtual } from "webmiddle";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";

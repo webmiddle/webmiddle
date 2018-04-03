@@ -1,4 +1,4 @@
-import webmiddle, { PropTypes, pickDefaults } from "webmiddle";
+import { PropTypes, pickDefaults } from "webmiddle";
 import HttpError from "webmiddle/dist/utils/HttpError";
 import puppeteer from "puppeteer";
 

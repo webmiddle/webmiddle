@@ -1,4 +1,4 @@
-import webmiddle, { PropTypes, evaluate, createContext } from "webmiddle";
+import { PropTypes, evaluate, createContext } from "webmiddle";
 import path from "path";
 import Pipe from "webmiddle-service-pipe";
 import { fileExists, readFile, writeFile } from "./utils/filesystem";

@@ -1,5 +1,5 @@
 import test from "ava";
-import webmiddle, { evaluate, createContext } from "../src/index";
+import { evaluate, createContext } from "../src/index";
 
 test.beforeEach(t => {
   t.context.context = createContext();

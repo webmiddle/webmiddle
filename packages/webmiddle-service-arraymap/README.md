@@ -12,7 +12,7 @@ npm install --save webmiddle-service-arraymap
 ## Usage
 
 ```jsx
-import webmiddle, { PropTypes, evaluate, createContext } from 'webmiddle';
+import { PropTypes, evaluate, createContext } from 'webmiddle';
 import ArrayMap from 'webmiddle-service-arraymap';
 
 const MyService = () => (

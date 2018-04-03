@@ -1,7 +1,7 @@
 import test from "ava";
 import CheerioToVirtual from "../src/index.js";
 import { elAttr, elJoin, elMap, elPipe, elText } from "../src/helpers";
-import webmiddle, { evaluate, createContext } from "webmiddle";
+import { evaluate, createContext } from "webmiddle";
 
 const xmlResource = {
   name: "xmlResource",

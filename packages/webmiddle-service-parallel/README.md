@@ -11,7 +11,7 @@ npm install --save webmiddle-service-parallel
 ## Usage
 
 ```jsx
-import webmiddle, { PropTypes, evaluate, createContext } from 'webmiddle';
+import { PropTypes, evaluate, createContext } from 'webmiddle';
 import Parallel from 'webmiddle-service-parallel';
 
 const MyService = () => (
