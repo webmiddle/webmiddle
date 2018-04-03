@@ -31,7 +31,10 @@ export default function run(protocol) {
 
       returnOption: ({ optionName }, context) => context.options[optionName]
     },
-    { port: PORT }
+    {
+      port: PORT,
+      context: createContext({ base: "default option" })
+    }
   );
   server.start();
 
@@ -77,5 +80,19 @@ export default function run(protocol) {
 
     t.is(resource.contentType, "x-webmiddle-any");
     t.is(resource.content, "you got it!");
+  });
+
+  test("execute remote service with default options", async t => {
+    const ReturnOption = t.context.client.service("returnOption");
+
+    const resource = await evaluate(
+      createContext({
+        retries: 2
+      }),
+      <ReturnOption optionName="base" />
+    );
+
+    t.is(resource.contentType, "x-webmiddle-any");
+    t.is(resource.content, "default option");
   });
 }

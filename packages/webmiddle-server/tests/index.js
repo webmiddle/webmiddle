@@ -3,6 +3,7 @@ import WebSocket from "ws";
 import uuid from "uuid";
 import test from "ava";
 import Server from "../src";
+import { createContext } from "webmiddle";
 
 const PORT = 3000;
 
@@ -89,7 +90,10 @@ const server = new Server(
 
     returnOption: ({ optionName }, context) => context.options[optionName]
   },
-  { port: PORT }
+  {
+    port: PORT,
+    context: createContext({ base: "default option" })
+  }
 );
 server.start();
 
@@ -142,6 +146,37 @@ test("Must throw when executing a non existing service via POST", async t => {
 
 test("Must throw when executing a non existing service via WEBSOCKET", async t => {
   await t.throws(requestWebsocket("/services/wrongUndefinedService"));
+});
+
+test("Must throw when creating the server with an invalid context", async t => {
+  await t.throws(() => {
+    new Server(
+      {},
+      {
+        context: {}
+      }
+    );
+  });
+});
+
+test("Default context options via POST", async t => {
+  const resource = await requestExpress("POST", "/services/returnOption", {
+    props: {
+      optionName: "base"
+    }
+  });
+  t.is(resource.contentType, "x-webmiddle-any");
+  t.is(resource.content, "default option");
+});
+
+test("Default context options via WEBSOCKET", async t => {
+  const resource = await requestWebsocket("/services/returnOption", {
+    props: {
+      optionName: "base"
+    }
+  });
+  t.is(resource.contentType, "x-webmiddle-any");
+  t.is(resource.content, "default option");
 });
 
 test("Pass context options to service via POST", async t => {

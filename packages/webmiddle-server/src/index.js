@@ -15,6 +15,11 @@ function httpToServicePath(path) {
 export default class Server {
   constructor(serviceRoutes, options = {}) {
     this.serviceRoutes = serviceRoutes;
+    this.context = options.context || createContext();
+
+    if (!this.context._isContext) {
+      throw new Error("Invalid context");
+    }
 
     this.PORT = options.port || 3000;
     this.expressServer = express();
@@ -191,7 +196,7 @@ export default class Server {
     const Service = this.serviceRoutes[path];
     if (!Service) throw new Error("Service not found at path: " + path);
 
-    const context = createContext(options);
+    const context = createContext(this.context, options);
     if (onMessage) context.rootEmitter.on("message", onMessage);
 
     return evaluate(context, <Service {...props} />);

@@ -180,7 +180,7 @@ import Server from 'webmiddle-server';
 const server = new Server({
   "math/multiply": Multiply,
   "math/divide": Divide,
-});
+}, { port: 3000 });
 server.start();
 ```
 
