@@ -1,6 +1,6 @@
 import test from "ava";
 import VirtualToJson from "../src/index.js";
-import { evaluate, createContext } from "webmiddle";
+import { rootContext } from "webmiddle";
 
 const virtualResource = {
   name: "virtualResource",
@@ -120,12 +120,11 @@ const virtualResource = {
 };
 
 test.beforeEach(t => {
-  t.context.context = createContext();
+  t.context.context = rootContext;
 });
 
 test("fullConversion", async t => {
-  const output = await evaluate(
-    createContext(t.context.context),
+  const output = await t.context.context.evaluate(
     <VirtualToJson name="virtual" from={virtualResource} fullConversion />
   );
 

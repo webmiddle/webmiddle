@@ -24,7 +24,9 @@ const client = new Client({
 // e.g. if the remote server has a Multiply service at path "math/multiply"
 const Multiply = client.service("math/multiply");
 
-evaluate(createContext({ retries: 2 }),
+rootContext.extend({
+  retries: 2
+}).evaluate(
   <Multiply
     a={10}
     b={20}
@@ -34,7 +36,6 @@ evaluate(createContext({ retries: 2 }),
 }).catch(err => {
   console.log((err && err.stack) || err);
 });
-
 ```
 
 ## How it works

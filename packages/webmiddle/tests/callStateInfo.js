@@ -1,7 +1,10 @@
 import test from "ava";
-import { evaluate, createContext } from "../src/index";
+import createContext from "../src/utils/createContext";
 
 test.beforeEach(t => {
+  // In this special case we want to use a new root context
+  // for every test, since we want to test the callState
+  // in isolation
   t.context.context = createContext();
 });
 
@@ -9,8 +12,8 @@ test("virtual -> service", async t => {
   const Service = () => "yes";
   const virtual = <Service a={10} b={20} />;
 
-  const context = createContext(t.context.context, { debug: true });
-  const output = await evaluate(context, virtual);
+  const context = t.context.context.extend({ debug: true });
+  const output = await context.evaluate(virtual);
 
   t.deepEqual(context._callStateRoot, [
     {
@@ -45,11 +48,11 @@ test("virtual -> service with retries", async t => {
   };
   const virtual = <Service a={10} b={20} />;
 
-  const context = createContext(t.context.context, {
+  const context = t.context.context.extend({
     debug: true,
     retries: 1
   });
-  const output = await evaluate(context, virtual);
+  const output = await context.evaluate(virtual);
 
   t.deepEqual(context._callStateRoot, [
     {
@@ -90,12 +93,12 @@ test("virtual -> service with retries and final catch", async t => {
   const catchExpr = () => "failsafe";
   const virtual = <Service a={10} b={20} />;
 
-  const context = createContext(t.context.context, {
+  const context = t.context.context.extend({
     debug: true,
     retries: 1,
     catch: catchExpr
   });
-  const output = await evaluate(context, virtual);
+  const output = await context.evaluate(virtual);
 
   t.deepEqual(context._callStateRoot, [
     {
@@ -144,8 +147,8 @@ test("service returning virtual (virtual -> service -> virtual -> service)", asy
   const Service = () => subVirtual;
   const virtual = <Service a={10} b={20} />;
 
-  const context = createContext(t.context.context, { debug: true });
-  const output = await evaluate(context, virtual);
+  const context = t.context.context.extend({ debug: true });
+  const output = await context.evaluate(virtual);
 
   t.deepEqual(context._callStateRoot, [
     {
@@ -192,14 +195,14 @@ test('must emit "add" events with correct paths', async t => {
   const Service = () => "yes";
   const virtual = <Service a={10} b={20} />;
 
-  const context = createContext(t.context.context, { debug: true });
+  const context = t.context.context.extend({ debug: true });
 
   const addData = [];
   context.rootEmitter.on("message", message => {
     if (message.topic === "callStateInfo:add") addData.push(message.data);
   });
 
-  const output = await evaluate(context, virtual);
+  const output = await context.evaluate(virtual);
 
   t.deepEqual(addData, [
     {

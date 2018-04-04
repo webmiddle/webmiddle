@@ -1,6 +1,6 @@
 import test from "ava";
 import Resume from "../src/index.js";
-import { evaluate, createContext } from "webmiddle";
+import { rootContext } from "webmiddle";
 import path from "path";
 import fs from "fs";
 
@@ -21,7 +21,7 @@ function deleteFolderRecursive(filename) {
 }
 
 test.beforeEach(t => {
-  t.context.context = createContext({
+  t.context.context = rootContext.extend({
     outputBasePath: path.resolve(__dirname, "./output")
   });
 });
@@ -46,8 +46,7 @@ test("main", async t => {
   };
 
   serviceExecuted = false;
-  const output = await evaluate(
-    createContext(t.context.context),
+  const output = await t.context.context.evaluate(
     <Resume savePath="./main/resource">
       <Service />
     </Resume>
@@ -65,8 +64,7 @@ test("main", async t => {
   );
 
   serviceExecuted = false;
-  const secondOutput = await evaluate(
-    createContext(t.context.context),
+  const secondOutput = await t.context.context.evaluate(
     <Resume savePath="./main/resource">
       <Service />
     </Resume>
@@ -92,8 +90,7 @@ test("expect resource", async t => {
   const Service = () => 10; // a service that doesn't return a resource
 
   try {
-    await evaluate(
-      createContext(t.context.context),
+    await t.context.context.evaluate(
       <Resume savePath="./expectResource/invalidResource">
         <Service />
       </Resume>

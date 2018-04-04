@@ -1,4 +1,3 @@
-import { evaluate, createContext } from "../index";
 import PropTypes from "proptypes"; // explicit import because of circular dependency with index
 
 export default function WithOptions({ children, ...options }, context) {
@@ -6,7 +5,7 @@ export default function WithOptions({ children, ...options }, context) {
     throw new Error("WithOptions MUST get exactly one child!");
   }
 
-  return evaluate(createContext(context, options), children[0]);
+  return context.extend(options).evaluate(children[0]);
 }
 
 WithOptions.propTypes = {

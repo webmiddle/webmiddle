@@ -1,17 +1,16 @@
-import { PropTypes, evaluate, createContext } from "webmiddle";
+import { PropTypes } from "webmiddle";
 
 async function Pipe({ children }, context) {
   const resources = {};
   let lastResource;
 
   for (const child of children) {
-    const resource = await evaluate(
-      createContext(context, {
+    const resource = await context
+      .extend({
         expectResource: true,
         functionParameters: [resources]
-      }),
-      child
-    );
+      })
+      .evaluate(child);
     resources[resource.name] = resource;
     lastResource = resource;
   }

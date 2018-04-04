@@ -3,7 +3,6 @@ import WebSocket from "ws";
 import uuid from "uuid";
 import test from "ava";
 import Server from "../src";
-import { createContext } from "webmiddle";
 
 const PORT = 3000;
 
@@ -92,7 +91,7 @@ const server = new Server(
   },
   {
     port: PORT,
-    context: createContext({ base: "default option" })
+    contextOptions: { base: "default option" }
   }
 );
 server.start();
@@ -146,17 +145,6 @@ test("Must throw when executing a non existing service via POST", async t => {
 
 test("Must throw when executing a non existing service via WEBSOCKET", async t => {
   await t.throws(requestWebsocket("/services/wrongUndefinedService"));
-});
-
-test("Must throw when creating the server with an invalid context", async t => {
-  await t.throws(() => {
-    new Server(
-      {},
-      {
-        context: {}
-      }
-    );
-  });
 });
 
 test("Default context options via POST", async t => {

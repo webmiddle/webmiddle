@@ -198,7 +198,9 @@ const client = new Client({
 const Multiply = client.service("math/multiply");
 
 // execute it
-evaluate(createContext({ retries: 2 }),
+rootContext.extend({
+  retries: 2  
+}).evaluate(
   <Multiply
     a={10}
     b={20}

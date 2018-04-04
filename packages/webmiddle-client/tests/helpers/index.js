@@ -1,5 +1,5 @@
 import test from "ava";
-import { evaluate, createContext } from "webmiddle";
+import { rootContext } from "webmiddle";
 import Server from "webmiddle-server";
 import Client from "../../src";
 
@@ -33,7 +33,7 @@ export default function run(protocol) {
     },
     {
       port: PORT,
-      context: createContext({ base: "default option" })
+      contextOptions: { base: "default option" }
     }
   );
   server.start();
@@ -59,10 +59,11 @@ export default function run(protocol) {
   test("execute remote service", async t => {
     const Sum = t.context.client.service("math/sum");
 
-    const resource = await evaluate(
-      createContext({ retries: 2 }),
-      <Sum a={10} b={20} />
-    );
+    const resource = await rootContext
+      .extend({
+        retries: 2
+      })
+      .evaluate(<Sum a={10} b={20} />);
     t.is(resource.contentType, "text/plain");
     t.is(resource.content, "30");
   });
@@ -70,13 +71,12 @@ export default function run(protocol) {
   test("execute remote service with options", async t => {
     const ReturnOption = t.context.client.service("returnOption");
 
-    const resource = await evaluate(
-      createContext({
+    const resource = await rootContext
+      .extend({
         retries: 2,
         whatever: "you got it!"
-      }),
-      <ReturnOption optionName="whatever" />
-    );
+      })
+      .evaluate(<ReturnOption optionName="whatever" />);
 
     t.is(resource.contentType, "x-webmiddle-any");
     t.is(resource.content, "you got it!");
@@ -85,12 +85,11 @@ export default function run(protocol) {
   test("execute remote service with default options", async t => {
     const ReturnOption = t.context.client.service("returnOption");
 
-    const resource = await evaluate(
-      createContext({
+    const resource = await rootContext
+      .extend({
         retries: 2
-      }),
-      <ReturnOption optionName="base" />
-    );
+      })
+      .evaluate(<ReturnOption optionName="base" />);
 
     t.is(resource.contentType, "x-webmiddle-any");
     t.is(resource.content, "default option");

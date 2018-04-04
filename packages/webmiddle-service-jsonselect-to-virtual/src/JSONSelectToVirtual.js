@@ -1,4 +1,4 @@
-import { PropTypes, evaluate, createContext, isVirtual } from "webmiddle";
+import { PropTypes, isVirtual } from "webmiddle";
 import JSONSelect from "JSONSelect";
 
 // Note: virtual.type must be a string
@@ -58,13 +58,12 @@ async function processObject(obj, sourceEl, source, context) {
 async function process(value, sourceEl, source, context) {
   let result;
   try {
-    result = await evaluate(
-      createContext(context, {
+    result = await context
+      .extend({
         expectResource: false,
         functionParameters: [sourceEl, source]
-      }),
-      value
-    );
+      })
+      .evaluate(value);
   } catch (err) {
     console.error(err instanceof Error ? err.stack : err);
     result = null;

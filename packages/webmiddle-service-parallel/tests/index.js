@@ -1,13 +1,13 @@
 import test from "ava";
 import Parallel from "../src/index.js";
-import { evaluate, createContext } from "webmiddle";
+import { rootContext } from "webmiddle";
 
 function range(num) {
   return [...Array(num).keys()];
 }
 
 test.beforeEach(t => {
-  t.context.context = createContext();
+  t.context.context = rootContext;
 });
 
 test("main", async t => {
@@ -41,8 +41,7 @@ test("main", async t => {
       }, 100);
     });
 
-  const output = await evaluate(
-    createContext(t.context.context),
+  const output = await t.context.context.evaluate(
     <Parallel name="resources">
       <FirstService />
       <SecondService />
@@ -78,8 +77,7 @@ test("expect resource", async t => {
   const Service = () => 10; // a service that doesn't return a resource
 
   try {
-    await evaluate(
-      createContext(t.context.context),
+    await t.context.context.evaluate(
       <Parallel name="whatever">
         <Service />
       </Parallel>
@@ -116,8 +114,7 @@ test("limit", async t => {
 
   current = 0;
   overLimit = false;
-  await evaluate(
-    createContext(t.context.context),
+  await t.context.context.evaluate(
     <Parallel name="resources" limit={limit}>
       {range(100).map(i => <Service name={i} />)}
     </Parallel>
@@ -127,8 +124,7 @@ test("limit", async t => {
 
   current = 0;
   overLimit = false;
-  await evaluate(
-    createContext(t.context.context),
+  await t.context.context.evaluate(
     <Parallel name="resources" limit={0}>
       {range(100).map(i => <Service name={i} />)}
     </Parallel>

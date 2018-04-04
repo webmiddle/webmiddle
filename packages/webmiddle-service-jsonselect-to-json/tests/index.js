@@ -1,6 +1,6 @@
 import test from "ava";
 import JSONSelectToJson from "../src/index.js";
-import { evaluate, createContext } from "webmiddle";
+import { rootContext } from "webmiddle";
 
 const jsonResource = {
   name: "jsonResource",
@@ -34,12 +34,11 @@ const jsonResource = {
 };
 
 test.beforeEach(t => {
-  t.context.context = createContext();
+  t.context.context = rootContext;
 });
 
 test("must return a json resource", async t => {
-  const output = await evaluate(
-    createContext(t.context.context),
+  const output = await t.context.context.evaluate(
     <JSONSelectToJson name="virtual" from={jsonResource}>
       <names el=".name">{els => els.map(el => <name>{el}</name>)}</names>
     </JSONSelectToJson>

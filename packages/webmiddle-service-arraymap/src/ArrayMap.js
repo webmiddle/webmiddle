@@ -1,4 +1,4 @@
-import { PropTypes, evaluate, createContext } from "webmiddle";
+import { PropTypes } from "webmiddle";
 
 async function ArrayMap({ name, array, callback, limit }, context) {
   const resources = [];
@@ -10,17 +10,17 @@ async function ArrayMap({ name, array, callback, limit }, context) {
       await Promise.race(promises);
     }
 
-    const promise = evaluate(
-      createContext(context, {
+    const promise = context
+      .extend({
         expectResource: true,
         functionParameters: [array[i], i]
-      }),
-      callback
-    ).then(result => {
-      promises.splice(promises.indexOf(promise), 1);
-      //console.log('fullfilled', promises.length);
-      resources[i] = result;
-    });
+      })
+      .evaluate(callback)
+      .then(result => {
+        promises.splice(promises.indexOf(promise), 1);
+        //console.log('fullfilled', promises.length);
+        resources[i] = result;
+      });
     promises.push(promise);
     //console.log('new one', promises.length);
   }

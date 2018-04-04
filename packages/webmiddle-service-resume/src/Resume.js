@@ -1,4 +1,4 @@
-import { PropTypes, evaluate, createContext } from "webmiddle";
+import { PropTypes } from "webmiddle";
 import path from "path";
 import Pipe from "webmiddle-service-pipe";
 import { fileExists, readFile, writeFile } from "./utils/filesystem";
@@ -13,10 +13,11 @@ async function Resume({ savePath, children }, context) {
     return JSON.parse(data);
   }
   // not exists
-  const resource = await evaluate(
-    createContext(context, { expectResource: true }),
-    <Pipe>{children}</Pipe>
-  );
+  const resource = await context
+    .extend({
+      expectResource: true
+    })
+    .evaluate(<Pipe>{children}</Pipe>);
   await writeFile(filename, JSON.stringify(resource));
 
   return resource;

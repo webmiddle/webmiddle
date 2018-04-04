@@ -1,9 +1,6 @@
 import EventEmitter from "events";
 import CookieManager from "webmiddle-manager-cookie";
-
-global.webmiddle = global.webmiddle || {
-  cookieManager: new CookieManager()
-};
+import evaluate from "./evaluate";
 
 // createContext()
 // createContext(options)
@@ -30,7 +27,13 @@ export default function createContext(...args) {
     _callStateRoot: callState,
     rootEmitter: new EventEmitter(),
 
-    cookieManager: global.webmiddle.cookieManager,
+    cookieManager: new CookieManager(),
+    extend(options) {
+      return createContext(this, options);
+    },
+    evaluate(value) {
+      return evaluate(this, value);
+    },
     log(...args) {
       if (this.options.verbose) console.log(...args);
     },

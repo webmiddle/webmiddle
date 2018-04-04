@@ -11,7 +11,7 @@ npm install --save webmiddle-service-browser
 ## Usage
 
 ```jsx
-import { PropTypes, evaluate, createContext } from 'webmiddle';
+import { PropTypes, rootContext } from 'webmiddle';
 import Browser from 'webmiddle-service-browser';
 
 const MyService = () => (
@@ -23,7 +23,7 @@ const MyService = () => (
   />
 );
 
-evaluate(createContext(), <MyService />)
+rootContext.evaluate(<MyService />)
 .then(resource => {
   console.log(resource.content); // the html page as a string
 });

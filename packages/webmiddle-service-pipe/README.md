@@ -12,7 +12,7 @@ npm install --save webmiddle-service-pipe
 
 
 ```jsx
-import { PropTypes, evaluate, createContext } from 'webmiddle';
+import { PropTypes, rootContext } from 'webmiddle';
 import Pipe from 'webmiddle-service-pipe';
 
 const MyService = () => (
@@ -37,7 +37,7 @@ const MyService = () => (
   </Pipe>
 );
 
-evaluate(createContext(), <MyService />)
+rootContext.evaluate(<MyService />)
 .then(resource => {
   console.log(resource.name); // "output3"
 });

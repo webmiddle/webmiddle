@@ -14,7 +14,6 @@ Given some routes that map paths to services, create a server listening on port 
 
 ```jsx
 import Server from "webmiddle-server";
-import { createContext } from "webmiddle";
 
 const textResource = (content, name = "result") => ({
   name,
@@ -30,7 +29,7 @@ const server = new Server({
   "math/divide": ({ a, b }) => textResource(a / b))
 }, {
   port: 3000,
-  context: createContext({ retries: 2 }), // default context
+  contextOptions: { retries: 2 }, // default context options
 });
 server.start();
 ```

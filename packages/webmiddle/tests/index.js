@@ -3,13 +3,12 @@ import {
   isResource,
   isVirtual,
   callVirtual,
-  evaluate,
-  createContext,
+  rootContext,
   WithOptions
 } from "../src/index.js";
 
 test.beforeEach(t => {
-  t.context.context = createContext();
+  t.context.context = rootContext;
 });
 
 test("h -> isVirtual", t => {
@@ -42,22 +41,19 @@ test("isResource -> true", t => {
   );
 });
 
-test("createContext", t => {
-  // createContext()
-  t.deepEqual(createContext().options, {});
+test("context extend", t => {
+  t.deepEqual(rootContext.options, {});
 
-  // createContext(options)
-  t.deepEqual(createContext({ foo: "bar" }).options, { foo: "bar" });
+  t.deepEqual(rootContext.extend({ foo: "bar" }).options, { foo: "bar" });
 
-  // createContext(parentContext, options)
-  const parentContext = createContext({ foo: "bar" });
-  const context = createContext(parentContext, { test: "some" });
+  const parentContext = rootContext.extend({ foo: "bar" });
+  const context = parentContext.extend({ test: "some" });
   t.deepEqual(context.options, { foo: "bar", test: "some" });
 });
 
 test("callVirtual: when type is not a function", async t => {
   const virtual = <element />;
-  const output = await callVirtual(createContext(t.context.context), virtual);
+  const output = await callVirtual(t.context.context, virtual);
   t.is(output.result, virtual, "result");
 });
 
@@ -73,7 +69,7 @@ test("callVirtual: service must be called correctly", async t => {
     </Service>
   );
 
-  const output = await callVirtual(createContext(t.context.context), virtual);
+  const output = await callVirtual(t.context.context, virtual);
   t.deepEqual(
     output.result.args,
     {
@@ -94,10 +90,7 @@ test("callVirtual: resource overrides", async t => {
   });
   const TopService = () => <Service name="rawtext" contentType="text/plain" />;
 
-  const output = await evaluate(
-    createContext(t.context.context),
-    <TopService name="other" />
-  );
+  const output = await t.context.context.evaluate(<TopService name="other" />);
 
   t.is(output.name, "other", "name");
   t.is(output.contentType, "text/plain", "contentType");
@@ -106,29 +99,25 @@ test("callVirtual: resource overrides", async t => {
 
 test("evaluate: NaN", async t => {
   // regression test: NaN result should not cause infinite loop
-  await evaluate(createContext(t.context.context), NaN);
+  await t.context.context.evaluate(NaN);
   t.pass();
 });
 
 test("evaluate: function", async t => {
-  const output = await evaluate(
-    createContext(t.context.context, {
+  const output = await t.context.context
+    .extend({
       functionParameters: [3]
-    }),
-    num => num * 2
-  );
+    })
+    .evaluate(num => num * 2);
   t.is(output, 6);
 });
 
 test("evaluate: promise", async t => {
-  const output = await evaluate(
-    createContext(t.context.context),
-    Promise.resolve(10)
-  );
+  const output = await t.context.context.evaluate(Promise.resolve(10));
   t.is(output, 10);
 
   try {
-    await evaluate(createContext(t.context.context), Promise.reject());
+    await t.context.context.evaluate(Promise.reject());
     t.fail("expected rejection");
   } catch (e) {
     t.pass();
@@ -137,21 +126,17 @@ test("evaluate: promise", async t => {
 
 test("evaluate: virtual", async t => {
   const Service = ({ num }) => num * 2;
-  const output = await evaluate(
-    createContext(t.context.context),
-    <Service num={6} />
-  );
+  const output = await t.context.context.evaluate(<Service num={6} />);
   t.is(output, 12);
 });
 
 test("evaluate: expectResource", async t => {
   try {
-    await evaluate(
-      createContext(t.context.context, {
+    await t.context.context
+      .extend({
         expectResource: true
-      }),
-      () => 3
-    );
+      })
+      .evaluate(() => 3);
     t.fail("expected rejection");
   } catch (e) {
     t.pass();
@@ -168,10 +153,11 @@ test("evaluate: expectResource", async t => {
 
     const retries = n;
     try {
-      await evaluate(
-        createContext(t.context.context, { retries }),
-        <Service />
-      );
+      await t.context.context
+        .extend({
+          retries
+        })
+        .evaluate(<Service />);
     } catch (err) {
       // no-op: the service is going to fail, we're good with that
     }
@@ -195,12 +181,11 @@ test("service options (WithOptions)", async t => {
     myCustomOption: "foo"
   };
 
-  const context = createContext(t.context.context, {
+  const context = t.context.context.extend({
     otherOption: "bar",
     anotherOption: "again"
   });
-  const output = await evaluate(
-    context,
+  const output = await context.evaluate(
     <WithOptions myCustomOption="fun" anotherOption="forever">
       <Service />
     </WithOptions>
@@ -224,13 +209,12 @@ test("service options: as a function", async t => {
     myCustomOption: context.options.otherOption
   });
 
-  const output = await evaluate(
-    createContext(t.context.context, {
+  const output = await t.context.context
+    .extend({
       otherOption: "bar",
       anotherOption: "again"
-    }),
-    <Service attr="more" />
-  );
+    })
+    .evaluate(<Service attr="more" />);
 
   t.is(output, "more bar again");
 });
@@ -243,13 +227,11 @@ test("catch (createContext from context)", async t => {
   };
   const Service = () => <ThrowService />;
 
-  const context = createContext(t.context.context);
-  const output = await evaluate(
-    createContext(context, {
+  const output = await t.context.context
+    .extend({
       catch: err => <SuccessService />
-    }),
-    <Service />
-  );
+    })
+    .evaluate(<Service />);
 
   t.is(output, 10, "exception handler is passed down the service call chain");
 });
@@ -259,5 +241,5 @@ test("must throw when there is no catch", async t => {
     throw new Error("expected throw");
   };
 
-  await t.throws(evaluate(createContext(t.context.context), <Service />));
+  await t.throws(t.context.context.evaluate(<Service />));
 });

@@ -12,7 +12,7 @@ npm install --save webmiddle-service-arraymap
 ## Usage
 
 ```jsx
-import { PropTypes, evaluate, createContext } from 'webmiddle';
+import { PropTypes, rootContext } from 'webmiddle';
 import ArrayMap from 'webmiddle-service-arraymap';
 
 const MyService = () => (
@@ -28,7 +28,7 @@ const MyService = () => (
   />
 );
 
-evaluate(createContext(), <MyService />)
+rootContext.evaluate(<MyService />)
 .then(resource => {
   console.log(resource.name); // "myResources" 
   console.log(resource.contentType); // "application/json"

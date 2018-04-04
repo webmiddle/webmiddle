@@ -1,4 +1,4 @@
-import { PropTypes, evaluate, createContext } from "webmiddle";
+import { PropTypes } from "webmiddle";
 
 async function Parallel({ name, limit, children }, context) {
   const resources = {};
@@ -16,16 +16,16 @@ async function Parallel({ name, limit, children }, context) {
       await Promise.race(promises);
     }
 
-    const promise = evaluate(
-      createContext(context, {
+    const promise = context
+      .extend({
         expectResource: true
-      }),
-      child
-    ).then(result => {
-      promises.splice(promises.indexOf(promise), 1);
-      //console.log('fullfilled', promises.length);
-      resources[result.name] = result;
-    });
+      })
+      .evaluate(child)
+      .then(result => {
+        promises.splice(promises.indexOf(promise), 1);
+        //console.log('fullfilled', promises.length);
+        resources[result.name] = result;
+      });
     promises.push(promise);
     //console.log('new one', promises.length);
   }
