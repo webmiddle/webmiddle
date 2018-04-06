@@ -41,7 +41,7 @@ test("isResource -> true", t => {
   );
 });
 
-test("context extend", t => {
+test("context extend: options", t => {
   t.deepEqual(rootContext.options, {});
 
   t.deepEqual(rootContext.extend({ foo: "bar" }).options, { foo: "bar" });
@@ -49,6 +49,50 @@ test("context extend", t => {
   const parentContext = rootContext.extend({ foo: "bar" });
   const context = parentContext.extend({ test: "some" });
   t.deepEqual(context.options, { foo: "bar", test: "some" });
+});
+
+test("context extend: hierarchy", t => {
+  const baseContextPath = String(rootContext.children.length);
+  const baseContext = rootContext.extend();
+
+  const firstChildContext = baseContext.extend();
+  const secondChildContext = baseContext.extend();
+  const subFirstChildContext = firstChildContext.extend();
+
+  // every context should have its own callState
+  t.not(baseContext._callState, firstChildContext._callState);
+  t.not(firstChildContext._callState, secondChildContext._callState);
+  t.not(secondChildContext._callState, subFirstChildContext._callState);
+
+  // every context should have its own emitter
+  t.not(baseContext.emitter, firstChildContext.emitter);
+  t.not(firstChildContext.emitter, secondChildContext.emitter);
+  t.not(secondChildContext.emitter, subFirstChildContext.emitter);
+
+  // cookie manager should be shared
+  t.is(baseContext.cookieManager, firstChildContext.cookieManager);
+  t.is(firstChildContext.cookieManager, secondChildContext.cookieManager);
+  t.is(secondChildContext.cookieManager, subFirstChildContext.cookieManager);
+
+  // parent
+  t.is(baseContext, firstChildContext.parent);
+  t.is(baseContext, secondChildContext.parent);
+  t.is(firstChildContext, subFirstChildContext.parent);
+
+  // children
+  t.is(baseContext.children[0], firstChildContext);
+  t.is(baseContext.children[1], secondChildContext);
+  t.is(baseContext.children.length, 2);
+  t.is(firstChildContext.children[0], subFirstChildContext);
+  t.is(firstChildContext.children.length, 1);
+  t.is(subFirstChildContext.children.length, 0);
+
+  // path
+  t.is(rootContext.path, "");
+  t.is(baseContext.path, baseContextPath);
+  t.is(firstChildContext.path, baseContext.path + ".0");
+  t.is(secondChildContext.path, baseContext.path + ".1");
+  t.is(subFirstChildContext.path, firstChildContext.path + ".0");
 });
 
 test("callVirtual: when type is not a function", async t => {

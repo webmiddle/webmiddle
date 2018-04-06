@@ -20,6 +20,7 @@
     "arrow-body-style": 1,
     "eol-last": 0,
     "no-multi-assign": 1,
-    "import/prefer-default-export": 1
+    "import/prefer-default-export": 1,
+    "prefer-template": 0
   }
 }

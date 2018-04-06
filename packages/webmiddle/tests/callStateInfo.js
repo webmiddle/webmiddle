@@ -257,3 +257,55 @@ test('must emit "add" events with correct paths', async t => {
     }
   ]);
 });
+
+test('must emit "add" events that can be traced back to the original objects', async t => {
+  const Service = () => "yes";
+  const virtual = <Service a={10} b={20} />;
+
+  const context = t.context.context.extend({ debug: true });
+
+  const addData = [];
+  const contextPathData = [];
+  context.emitter.on("message", message => {
+    if (message.topic === "callStateInfo:add") {
+      addData.push(message.data);
+      contextPathData.push(message.contextPath);
+    }
+  });
+
+  const output = await context.evaluate(virtual);
+
+  for (let i = 0; i < addData.length; i++) {
+    // find the root context of the call state chain
+    const contextPath = contextPathData[i];
+    const contextPathParts = contextPath.split(".");
+    let callStateRootContext = rootContext;
+    contextPathParts.forEach(childIndex => {
+      callStateRootContext = callStateRootContext.children[childIndex];
+    });
+
+    // find the call state info
+    const callStateInfoPath = addData[i].path;
+    const callStateInfoPathParts = callStateInfoPath.split(".");
+    let callStateInfo =
+      callStateRootContext._callState[callStateInfoPathParts[0]]; // callStateInfo path is never empty
+    callStateInfoPathParts.slice(1).forEach(childIndex => {
+      callStateInfo = callStateInfo.children[childIndex];
+    });
+
+    t.is(callStateInfo, addData[i].info);
+    t.is(callStateInfo.path, addData[i].path);
+  }
+});
+
+test("context should have separate call state chain", async t => {
+  const baseContext = rootContext.extend({ debug: true });
+  const childContext = baseContext.extend();
+
+  const Service = () => "yes";
+  const virtual = <Service a={10} b={20} />;
+  const output = await childContext.evaluate(virtual);
+
+  t.is(baseContext._callState.length, 0);
+  t.not(childContext._callState.length, 0);
+});
