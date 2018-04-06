@@ -196,7 +196,7 @@ export default class Server {
       ...this.contextOptions,
       ...options
     });
-    if (onMessage) context.rootEmitter.on("message", onMessage);
+    if (onMessage) context.emitter.on("message", onMessage);
 
     return context.evaluate(<Service {...props} />);
   }

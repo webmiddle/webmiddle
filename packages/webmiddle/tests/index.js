@@ -2,10 +2,10 @@ import test from "ava";
 import {
   isResource,
   isVirtual,
-  callVirtual,
   rootContext,
   WithOptions
 } from "../src/index.js";
+import callVirtual from "../src/utils/callVirtual";
 
 test.beforeEach(t => {
   t.context.context = rootContext;

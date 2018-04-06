@@ -1,4 +1,5 @@
 import call from "./call";
+import evaluate from "./evaluate";
 
 // extracted from https://github.com/developit/propTypes README
 function validateProps(props, propTypes, service) {
@@ -31,7 +32,8 @@ async function callService(service, props, context, tries = 1) {
     // "await" needed to throw here in case of error
     return await call(
       newContext => {
-        return service(props, newContext);
+        const result = service(props, newContext);
+        return evaluate(newContext, result);
       },
       context,
       {
@@ -44,7 +46,7 @@ async function callService(service, props, context, tries = 1) {
     // Note: still use the old context in case of error
     // since the tries should show as a list in the callState
 
-    let retries = context.options.retries;
+    let { retries } = context.options;
     if (typeof retries === "function") retries = retries(err);
     retries = (await retries) || 0;
 
@@ -84,26 +86,19 @@ async function callService(service, props, context, tries = 1) {
 export default async function callVirtual(context, virtual) {
   const service = typeof virtual.type === "function" ? virtual.type : null;
 
-  // clone the context
-  context = { ...context };
-
   const props = {
     ...virtual.attributes,
     children: virtual.children
   };
-  // calculate new options:
-  // 1) context options
-  // 2) service options
-  // the final options are obtained by merging.
-  const serviceOptions = service && service.options ? service.options : {};
-  [serviceOptions].forEach(moreOptions => {
-    if (typeof moreOptions === "function")
-      moreOptions = moreOptions(props, context);
-    context.options = {
-      ...context.options,
-      ...(moreOptions || {})
-    };
-  });
+
+  // calculate new context with service options (if any)
+  if (service && service.options) {
+    context = context.extend(
+      typeof service.options === "function"
+        ? service.options(props, context)
+        : service.options
+    );
+  }
 
   if (service && service.propTypes) {
     validateProps(props, service.propTypes, service);
@@ -112,8 +107,7 @@ export default async function callVirtual(context, virtual) {
   let result;
   if (service) {
     const callServiceReturn = await callService(service, props, context);
-    result = callServiceReturn.result;
-    context = callServiceReturn.context;
+    ({ result, context } = callServiceReturn);
   } else {
     result = virtual;
   }
