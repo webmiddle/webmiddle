@@ -159,8 +159,6 @@ test("service returning virtual (virtual -> service -> virtual -> service)", asy
   const context = t.context.context.extend({ debug: true });
   const output = await context.evaluate(virtual);
 
-  console.log(JSON.stringify(context._callState, null, 2));
-
   t.deepEqual(context._callState, [
     {
       type: "virtual",
