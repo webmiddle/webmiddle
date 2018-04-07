@@ -17,10 +17,10 @@ const commandArguments = process.argv.slice(3);
 console.log("Executing", command, commandArguments);
 const childProcess = spawn(command, commandArguments);
 childProcess.stdout.on("data", data => {
-  console.log(data.toString());
+  console.log("\x1b[37m", data.toString()); // white
 });
 childProcess.stderr.on("data", data => {
-  console.log("\x1b[31m", data.toString());
+  console.log("\x1b[31m", data.toString()); // red
 });
 childProcess.on("exit", code => {
   //console.log(dir, 'child process exited with code ' + code.toString());
