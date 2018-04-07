@@ -61,7 +61,7 @@ export default function run(protocol) {
 
     const resource = await rootContext
       .extend({
-        retries: 2
+        networkRetries: 2
       })
       .evaluate(<Sum a={10} b={20} />);
     t.is(resource.contentType, "text/plain");
@@ -73,7 +73,7 @@ export default function run(protocol) {
 
     const resource = await rootContext
       .extend({
-        retries: 2,
+        networkRetries: 2,
         whatever: "you got it!"
       })
       .evaluate(<ReturnOption optionName="whatever" />);
@@ -87,7 +87,7 @@ export default function run(protocol) {
 
     const resource = await rootContext
       .extend({
-        retries: 2
+        networkRetries: 2
       })
       .evaluate(<ReturnOption optionName="base" />);
 

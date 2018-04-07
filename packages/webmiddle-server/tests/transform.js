@@ -408,8 +408,7 @@ test("callStateInfo: service", async t => {
       type: "service",
       value: function fn() {},
       options: {
-        props: { a: 0, b: { c: 1 } },
-        tries: 1
+        props: { a: 0, b: { c: 1 } }
       },
       children: []
     }),
@@ -427,8 +426,7 @@ test("callStateInfo: service", async t => {
             type: "object",
             value: undefined
           }
-        },
-        tries: 1
+        }
       },
       children: []
     }

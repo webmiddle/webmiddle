@@ -29,7 +29,7 @@ const server = new Server({
   "math/divide": ({ a, b }) => textResource(a / b))
 }, {
   port: 3000,
-  contextOptions: { retries: 2 }, // default context options
+  contextOptions: { networkRetries: 2 }, // default context options
 });
 server.start();
 ```

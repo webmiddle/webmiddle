@@ -51,14 +51,9 @@ content will be JSON-parsed, otherwise it will be kept as is.
 In case of **http error**, the service fails with an **HttpError
 object** containing the error status code.
 
-The service sets the `retries` option as the one set in the
-`networkRetries` context option (if any):
-
-```jsx
-HttpRequest.options = (props, context) => (pickDefaults({
-  retries: context.options.networkRetries,
-}, context.options));
-```
+The service uses the ErrorBoundary service to retry in case of
+errors.
+The amount of retries can be customized with the `networkRetries` context option.
 
 ## Properties
 

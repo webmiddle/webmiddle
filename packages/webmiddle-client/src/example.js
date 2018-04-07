@@ -11,7 +11,7 @@ const Multiply = client.service("multiply");
 
 rootContext
   .extend({
-    retries: 2
+    networkRetries: 2
   })
   .evaluate(<Multiply a={10} b={20} />)
   .then(result => {

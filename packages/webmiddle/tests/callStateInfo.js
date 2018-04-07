@@ -1,5 +1,5 @@
 import test from "ava";
-import { rootContext } from "../src/index";
+import { rootContext, ErrorBoundary } from "../src/index";
 
 test.beforeEach(t => {
   t.context.context = rootContext;
@@ -22,8 +22,7 @@ test("virtual -> service", async t => {
           type: "service",
           value: Service,
           options: {
-            props: { a: 10, b: 20, children: [] },
-            tries: 1
+            props: { a: 10, b: 20, children: [] }
           },
           children: [],
           path: "0.0",
@@ -36,115 +35,53 @@ test("virtual -> service", async t => {
   ]);
 });
 
-test("virtual -> service with retries", async t => {
-  let fails = 0;
-  const Service = () => {
-    if (fails === 0) {
-      fails += 1;
-      throw new Error("expected fail");
-    }
-    return "yes";
-  };
-  const virtual = <Service a={10} b={20} />;
-
-  const context = t.context.context.extend({
-    debug: true,
-    retries: 1
-  });
-  const output = await context.evaluate(virtual);
-
-  t.deepEqual(context._callState, [
-    {
-      type: "virtual",
-      value: virtual,
-      options: {},
-      children: [
-        {
-          type: "service",
-          value: Service,
-          options: {
-            props: { a: 10, b: 20, children: [] },
-            tries: 1
-          },
-          children: [],
-          path: "0.0"
-        },
-        {
-          type: "service",
-          value: Service,
-          options: {
-            props: { a: 10, b: 20, children: [] },
-            tries: 2
-          },
-          children: [],
-          path: "0.1",
-          result: output
-        }
-      ],
-      path: "0",
-      result: output
-    }
-  ]);
-});
-
-// the tries should show as a list
+// the tries and catch should show as a list
 test("virtual -> service with retries and final catch", async t => {
+  let tries = 0;
+  const retries = 3;
+
   const Service = () => {
+    tries++;
     throw new Error("expected fail");
   };
 
-  const catchExpr = () => "failsafe";
-  const virtual = <Service a={10} b={20} />;
+  const virtual = (
+    <ErrorBoundary retries={retries} handleCatch={() => "fallback"}>
+      <Service a={10} b={20} />
+    </ErrorBoundary>
+  );
 
   const context = t.context.context.extend({
-    debug: true,
-    retries: 1,
-    catch: catchExpr
+    debug: true
   });
+
   const output = await context.evaluate(virtual);
 
-  t.deepEqual(context._callState, [
-    {
-      type: "virtual",
-      value: virtual,
-      options: {},
-      children: [
-        {
-          type: "service",
-          value: Service,
-          options: {
-            props: { a: 10, b: 20, children: [] },
-            tries: 1
-          },
-          children: [],
-          path: "0.0"
-        },
-        {
-          type: "service",
-          value: Service,
-          options: {
-            props: { a: 10, b: 20, children: [] },
-            tries: 2
-          },
-          children: [],
-          path: "0.1"
-        },
-        {
-          type: "catch",
-          value: catchExpr,
-          options: {
-            service: Service,
-            props: { a: 10, b: 20, children: [] }
-          },
-          children: [],
-          path: "0.2",
-          result: "failsafe"
-        }
-      ],
-      path: "0",
-      result: output
-    }
-  ]);
+  const virtualCallStateInfo = context._callState[0];
+  t.is(virtualCallStateInfo.value, virtual);
+
+  const errorBoundaryCallStateInfo = virtualCallStateInfo.children[0];
+  t.is(errorBoundaryCallStateInfo.value, ErrorBoundary);
+
+  //console.log(JSON.stringify(errorBoundaryCallStateInfo.children.map(child => child.value.type.name), null, 2));
+
+  // the last child should be the Catch
+  const catchCallStateInfo =
+    errorBoundaryCallStateInfo.children[
+      errorBoundaryCallStateInfo.children.length - 1
+    ];
+  t.is(catchCallStateInfo.type, "virtual");
+  t.is(typeof catchCallStateInfo.value.type, "function");
+  t.is(catchCallStateInfo.value.type.name, "Catch");
+
+  // the previous childs should be the tries
+  errorBoundaryCallStateInfo.children.slice(0, -1).forEach(child => {
+    t.is(child.type, "virtual");
+    t.is(typeof child.value.type, "function");
+    t.is(child.value.type.name, "Try");
+  });
+
+  t.is(errorBoundaryCallStateInfo.children.length, tries + 1); // +1 for the catch
 });
 
 // the virtual immediately returned by a service should be evaluated recursively
@@ -169,8 +106,7 @@ test("service returning virtual (virtual -> service -> virtual -> service)", asy
           type: "service",
           value: Service,
           options: {
-            props: { a: 10, b: 20, children: [] },
-            tries: 1
+            props: { a: 10, b: 20, children: [] }
           },
           children: [
             {
@@ -182,8 +118,7 @@ test("service returning virtual (virtual -> service -> virtual -> service)", asy
                   type: "service",
                   value: SubService,
                   options: {
-                    props: { c: 30, children: [] },
-                    tries: 1
+                    props: { c: 30, children: [] }
                   },
                   children: [],
                   path: "0.0.0.0",
@@ -229,8 +164,7 @@ test('must emit "add" events with correct paths', async t => {
             type: "service",
             value: Service,
             options: {
-              props: { a: 10, b: 20, children: [] },
-              tries: 1
+              props: { a: 10, b: 20, children: [] }
             },
             children: [],
             path: "0.0",
@@ -247,8 +181,7 @@ test('must emit "add" events with correct paths', async t => {
         type: "service",
         value: Service,
         options: {
-          props: { a: 10, b: 20, children: [] },
-          tries: 1
+          props: { a: 10, b: 20, children: [] }
         },
         children: [],
         path: "0.0",

@@ -101,8 +101,7 @@ export function transformCallStateInfo(info) {
       return {
         props: mapValues(options.props, propValue =>
           transformValue(propValue, 0)
-        ),
-        tries: options.tries
+        )
       };
     }
 

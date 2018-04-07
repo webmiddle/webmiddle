@@ -1,6 +1,20 @@
-import { PropTypes, pickDefaults } from "webmiddle";
+import { PropTypes, ErrorBoundary } from "webmiddle";
 import HttpError from "webmiddle/dist/utils/HttpError";
 import puppeteer from "puppeteer";
+
+const giveupErrorCodes = [410];
+function isRetryable(err) {
+  return (
+    !(err instanceof Error && err.name === "HttpError") ||
+    giveupErrorCodes.indexOf(err.statusCode) === -1
+  );
+}
+
+function retries(context) {
+  return typeof context.options.networkRetries !== "undefined"
+    ? context.options.networkRetries
+    : -1; // unlimited retries
+}
 
 function pageSetCookies(page, context) {
   const allCookies = context.cookieManager.jar.toJSON().cookies;
@@ -22,7 +36,7 @@ function pageSetCookies(page, context) {
 function bodyToFormData(body) {
   if (typeof body !== "string") return body;
   const formData = {};
-  body.split("&").map(entry => {
+  body.split("&").forEach(entry => {
     const [name, value] = entry.split("=");
     formData[decodeURIComponent(name)] = decodeURIComponent(value);
   });
@@ -151,120 +165,127 @@ async function Browser(
   },
   context
 ) {
-  console.log("Browser", url);
+  return (
+    <ErrorBoundary isRetryable={isRetryable} retries={retries(context)}>
+      {async () => {
+        console.log("Browser", url);
 
-  method = method.toUpperCase();
-  httpHeaders = normalizeHttpHeaders(httpHeaders);
+        method = method.toUpperCase();
+        httpHeaders = normalizeHttpHeaders(httpHeaders);
 
-  if (method !== "GET" && !httpHeaders["content-type"]) {
-    // default content type
-    httpHeaders["content-type"] = "application/x-www-form-urlencoded";
-  }
-
-  let browser = null;
-  let page = null;
-  let onResponse = null;
-  try {
-    browser = await getBrowser();
-    page = await browser.newPage();
-
-    // track new cookies and store them into the jar
-    onResponse = response => {
-      const headers = response.headers();
-      Object.keys(headers).forEach(headerName => {
-        const headerValue = headers[headerName];
-        if (headerName.toLowerCase() === "set-cookie") {
-          const values = headerValue.split("\n");
-          values.forEach(value => {
-            const cookie = context.cookieManager.Cookie.parse(value, {
-              loose: true
-            });
-            context.cookieManager.jar.setCookieSync(cookie, response.url(), {});
-          });
+        if (method !== "GET" && !httpHeaders["content-type"]) {
+          // default content type
+          httpHeaders["content-type"] = "application/x-www-form-urlencoded";
         }
-      });
-    };
-    page.on("response", onResponse);
 
-    // TODO: check if all cookies are added, it might be that
-    // those not relevant to the page url are discarded
-    // (even though at this moment the page doesn't even have an url)
-    // Also check in case of redirects or XHR.
-    await pageSetCookies(page, context);
+        let browser = null;
+        let page = null;
+        let onResponse = null;
+        try {
+          browser = await getBrowser();
+          page = await browser.newPage();
 
-    let pageResponse = null;
-    let statusMessage;
-    try {
-      pageResponse = await pageGoto(page, url, {
-        method,
-        headers: httpHeaders,
-        body
-      });
-      statusMessage = "success";
-    } catch (err) {
-      console.error(err);
-      pageResponse = null;
-      statusMessage = err instanceof Error ? err.message : String(err);
-    }
+          // track new cookies and store them into the jar
+          onResponse = response => {
+            const headers = response.headers();
+            Object.keys(headers).forEach(headerName => {
+              const headerValue = headers[headerName];
+              if (headerName.toLowerCase() === "set-cookie") {
+                const values = headerValue.split("\n");
+                values.forEach(value => {
+                  const cookie = context.cookieManager.Cookie.parse(value, {
+                    loose: true
+                  });
+                  context.cookieManager.jar.setCookieSync(
+                    cookie,
+                    response.url(),
+                    {}
+                  );
+                });
+              }
+            });
+          };
+          page.on("response", onResponse);
 
-    if (
-      statusMessage !== "success" ||
-      !pageResponse ||
-      pageResponse.status() < 200 ||
-      pageResponse.status() > 299
-    ) {
-      throw new HttpError(
-        statusMessage,
-        pageResponse ? pageResponse.status() : null
-      );
-    }
+          // TODO: check if all cookies are added, it might be that
+          // those not relevant to the page url are discarded
+          // (even though at this moment the page doesn't even have an url)
+          // Also check in case of redirects or XHR.
+          await pageSetCookies(page, context);
 
-    // read content
-    contentType =
-      contentType || pageResponse.headers()["content-type"] || "text/html";
-    const contentIsHtml = contentType.match(/html/i) !== null;
-    let content;
-    if (contentIsHtml) {
-      if (waitFor) {
-        await page.waitForFunction(
-          `document.querySelector(${JSON.stringify(waitFor)})`,
-          {
-            polling: 500,
-            timeout: 10000
+          let pageResponse = null;
+          let statusMessage;
+          try {
+            pageResponse = await pageGoto(page, url, {
+              method,
+              headers: httpHeaders,
+              body
+            });
+            statusMessage = "success";
+          } catch (err) {
+            console.error(err);
+            pageResponse = null;
+            statusMessage = err instanceof Error ? err.message : String(err);
           }
-        );
-      }
-      content = await page.content();
-    } else {
-      if (waitFor) {
-        console.warn("wairFor ignored for non html resources:", contentType);
-      }
-      content = await pageResponse.text();
-    }
-    if (contentType === "application/json") {
-      content = JSON.parse(content);
-    }
 
-    return {
-      name,
-      contentType,
-      content
-    };
-  } finally {
-    if (page) {
-      page.removeListener("response", onResponse);
-      await page.close();
-    }
-  }
-}
+          if (
+            statusMessage !== "success" ||
+            !pageResponse ||
+            pageResponse.status() < 200 ||
+            pageResponse.status() > 299
+          ) {
+            throw new HttpError(
+              statusMessage,
+              pageResponse ? pageResponse.status() : null
+            );
+          }
 
-Browser.options = (props, context) =>
-  pickDefaults(
-    {
-      retries: context.options.networkRetries
-    },
-    context.options
+          // read content
+          contentType =
+            contentType ||
+            pageResponse.headers()["content-type"] ||
+            "text/html";
+          const contentIsHtml = contentType.match(/html/i) !== null;
+          let content;
+          if (contentIsHtml) {
+            if (waitFor) {
+              await page.waitForFunction(
+                `document.querySelector(${JSON.stringify(waitFor)})`,
+                {
+                  polling: 500,
+                  timeout: 10000
+                }
+              );
+            }
+            content = await page.content();
+          } else {
+            if (waitFor) {
+              console.warn(
+                "wairFor ignored for non html resources:",
+                contentType
+              );
+            }
+            content = await pageResponse.text();
+          }
+          if (contentType === "application/json") {
+            content = JSON.parse(content);
+          }
+
+          return {
+            name,
+            contentType,
+            content
+          };
+        } finally {
+          if (page) {
+            page.removeListener("response", onResponse);
+            await page.close();
+          }
+        }
+      }}
+    </ErrorBoundary>
   );
+}
 
 Browser.propTypes = {
   name: PropTypes.string.isRequired,

@@ -199,7 +199,7 @@ const Multiply = client.service("math/multiply");
 
 // execute it
 rootContext.extend({
-  retries: 2  
+  networkRetries: 2  
 }).evaluate(
   <Multiply
     a={10}

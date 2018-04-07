@@ -187,29 +187,6 @@ test("evaluate: expectResource", async t => {
   }
 });
 
-[0, 1, 2, 3].forEach(n =>
-  test(`retries ${n}`, async t => {
-    let tries = 0;
-    const Service = () => {
-      tries++;
-      return Promise.reject(`retries service always fails.`);
-    };
-
-    const retries = n;
-    try {
-      await t.context.context
-        .extend({
-          retries
-        })
-        .evaluate(<Service />);
-    } catch (err) {
-      // no-op: the service is going to fail, we're good with that
-    }
-
-    t.is(tries, retries + 1);
-  })
-);
-
 test("service options (WithOptions)", async t => {
   const Service = (props, context) => {
     return (
@@ -263,24 +240,7 @@ test("service options: as a function", async t => {
   t.is(output, "more bar again");
 });
 
-test("catch (createContext from context)", async t => {
-  const SuccessService = () => 10;
-
-  const ThrowService = () => {
-    return Promise.reject("this service always fails (to test catch)");
-  };
-  const Service = () => <ThrowService />;
-
-  const output = await t.context.context
-    .extend({
-      catch: err => <SuccessService />
-    })
-    .evaluate(<Service />);
-
-  t.is(output, 10, "exception handler is passed down the service call chain");
-});
-
-test("must throw when there is no catch", async t => {
+test("must throw when the service throws", async t => {
   const Service = () => {
     throw new Error("expected throw");
   };
