@@ -46,15 +46,6 @@ export default async function callVirtual(context, virtual) {
     children: virtual.children
   };
 
-  // calculate new context with service options (if any)
-  if (service && service.options) {
-    context = context.extend(
-      typeof service.options === "function"
-        ? service.options(props, context)
-        : service.options
-    );
-  }
-
   if (service && service.propTypes) {
     validateProps(props, service.propTypes, service);
   }

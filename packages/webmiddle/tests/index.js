@@ -187,7 +187,7 @@ test("evaluate: expectResource", async t => {
   }
 });
 
-test("service options (WithOptions)", async t => {
+test("WithOptions", async t => {
   const Service = (props, context) => {
     return (
       context.options.otherOption +
@@ -196,10 +196,6 @@ test("service options (WithOptions)", async t => {
       " " +
       context.options.anotherOption
     );
-  };
-  Service.options = {
-    otherOption: "some",
-    myCustomOption: "foo"
   };
 
   const context = t.context.context.extend({
@@ -212,32 +208,7 @@ test("service options (WithOptions)", async t => {
     </WithOptions>
   );
 
-  t.is(output, "some foo forever");
-});
-
-test("service options: as a function", async t => {
-  const Service = (props, context) => {
-    return (
-      context.options.otherOption +
-      " " +
-      context.options.myCustomOption +
-      " " +
-      context.options.anotherOption
-    );
-  };
-  Service.options = ({ attr }, context) => ({
-    otherOption: attr,
-    myCustomOption: context.options.otherOption
-  });
-
-  const output = await t.context.context
-    .extend({
-      otherOption: "bar",
-      anotherOption: "again"
-    })
-    .evaluate(<Service attr="more" />);
-
-  t.is(output, "more bar again");
+  t.is(output, "bar fun forever");
 });
 
 test("must throw when the service throws", async t => {
