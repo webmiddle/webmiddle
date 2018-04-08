@@ -259,8 +259,22 @@ test("cookies", async t => {
 
   v2 = Math.floor(Math.random() * 100) + 1;
   v1 = Math.floor(Math.random() * 100) + 1;
-  cookieK2.value = String(v2);
-  cookieK1.value = String(v1);
+
+  t.context.context.cookieManager.jar.setCookieSync(
+    t.context.context.cookieManager.Cookie.parse(`k2=${v2}; Path=/`, {
+      loose: true
+    }),
+    "https://httpbin.org",
+    {}
+  );
+
+  t.context.context.cookieManager.jar.setCookieSync(
+    t.context.context.cookieManager.Cookie.parse(`k1=${v1}; Path=/`, {
+      loose: true
+    }),
+    "https://httpbin.org",
+    {}
+  );
 
   const output = await t.context.context.evaluate(
     <HttpRequest
