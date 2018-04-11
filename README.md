@@ -6,13 +6,11 @@
 
 # webmiddle
 
-> Node.js framework for extracting and transforming web resources
+> Node.js framework for extracting, transforming and combining web resources from websites and web APIs.
 
-webmiddle is a Node.js framework for extracting, transforming and combining web resources from websites and web APIs.
+Webmiddle applications can range from simple web scrapers to complex web integration tools targeting JSON APIs, raw HTML pages, XML resources and so on.
 
-webmiddle applications can range from simple web scrapers to complex web integration tools targeting JSON APIs, raw HTML pages, XML resources and so on.
-
-webmiddle applications are written in a declarative, functional and modular way, by using their most evident aspect: **JSX services**.
+Webmiddle applications are written in a declarative, functional and modular way, by using their most evident aspect: **JSX services**.
 
 Each service executes one task, or controls the execution of other tasks, by composing other services.
 
