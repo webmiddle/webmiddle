@@ -11,17 +11,16 @@ npm install --save webmiddle-manager-cookie
 
 ## How it works
 
-Differently from all the other packages that we will see, this is the
-only one that is not a service.
+Differently from most of the other core packages, this isn't a service.
 
 It is a wrapper on top of the **[tough-cookie](https://github.com/salesforce/tough-cookie)** library and it acts as a
 cookie jar.
 
-It is **shared** among all the webmiddle instances and can be used by
-services such as HttpRequest and Browser to store and retrieve cookies.
+It is **shared** among all the contexts extending `rootContext` and by `rootContext` itself,
+and can be used by services such as HttpRequest and Browser to store and retrieve cookies.
 
 This package makes sure that cookies can be preserved and shared when
-using different services and different webmiddles.
+evaluating different services.
 
 ## Properties
 
