@@ -12,7 +12,7 @@ webmiddle is a Node.js framework for extracting, transforming and combining web 
 
 webmiddle applications can range from simple web scrapers to complex web integration tools targeting JSON APIs, raw HTML pages, XML resources and so on.
 
-webmiddle applications are written in a declarative, functional and modular way, by using their most evident aspect: **[JSX](https://facebook.github.io/jsx/) services**.
+webmiddle applications are written in a declarative, functional and modular way, by using their most evident aspect: **JSX services**.
 
 Each service executes one task, or controls the execution of other tasks, by composing other services.
 
@@ -68,8 +68,6 @@ npm install -g yo
 npm install -g generator-webmiddle
 yo webmiddle
 ```
-
--> [Learn more](https://webmiddle.github.io/docs/getting_started.html)
 
 ## Resource
 
@@ -131,8 +129,6 @@ Services are the building blocks of the webmiddle framework, they can be defined
 [Pipe](/packages/webmiddle-service-pipe), [Browser](/packages/webmiddle-service-browser) and [HtmlToJson](/packages/webmiddle-service-cheerio-to-json) are all core services, however there is no actual difference between a core service and a service that you may want to develop yourself.  
 
 This means that anyone can contribute by adding new services for doing the more disparate things!
-
--> [Learn more](https://webmiddle.github.io/docs/jsx_services.html)
 
 ## Context ##
 
