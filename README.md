@@ -6,72 +6,15 @@
 
 # webmiddle
 
-> Node.js JSX framework for modular web scraping and data integration 
+> Node.js framework for extracting and transforming web resources
 
-webmiddle is a Node.js framework for extracting, transforming and combining data from multiple websites and web APIs.
+webmiddle is a Node.js framework for extracting, transforming and combining web resources from websites and web APIs.
 
 webmiddle applications can range from simple web scrapers to complex web integration tools targeting JSON APIs, raw HTML pages, XML resources and so on.
 
 webmiddle applications are written in a declarative, functional and modular way, by using their most evident aspect: **[JSX](https://facebook.github.io/jsx/) services**.
 
-Each service executes one task, or controls the execution of other tasks, by composing together other services in a tree-like fashion.
-
-```jsx
-function Main(props) {
-  const { sites: siteNames } = props;
-  return (
-    <Pipe>
-      <Parallel name="articlesBySite">
-        {siteNames.map(siteName => {
-          const site = sites[siteName];
-          return (
-            <SiteMain
-              {...props}
-              site={site}
-              name={siteName}
-            />
-          );
-        })}
-      </Parallel>
-
-      {({ articlesBySite }) =>
-        <MergeArticles
-          name="articles"
-          articlesBySite={articlesBySite}
-        />
-      }
-    </Pipe>
-  );
-}
-```
-
-Each service can be registered with a **webmiddle**, which is similar to a WEB API: a collection of services, each with its own endpoint, that can be called to execute the service at that endpoint with the given parameters.
-
-A webmiddle exposes settings accessible by all of its services and can be easily turned into an actual REST API for remote access.
-
-Services registered with remote webmiddles can be used locally as if they were regular services, allowing seamless development of distributed applications.
-
-## Examples
-
-- [The site webmiddle for The New York Times](https://github.com/Maluen/webmiddle-site-nytimes)
-- [The site webmiddle for Fox News](https://github.com/Maluen/webmiddle-site-foxnews)
-- [webmiddle application for searching articles from news sites](https://github.com/Maluen/webmiddle-project-search-news)
-
-## Getting started
-
-You can use [Yeoman](http://yeoman.io/) to quickly scaffold a new project:
-
-```bash
-npm install -g yo
-npm install -g generator-webmiddle
-yo webmiddle
-```
-
--> [Learn more](https://webmiddle.github.io/docs/getting_started.html)
-
-## JSX services
-
-In terms of syntax, they are very similar to [react stateless functional components](https://medium.com/@housecor/react-stateless-functional-components-nine-wins-you-might-have-overlooked-997b0d933dbc#.91r5f1ish):
+Each service executes one task, or controls the execution of other tasks, by composing other services.
 
 ```jsx
 const FetchPageLinks = ({ url, query, waitFor }) =>
@@ -110,36 +53,75 @@ FetchPageLinks.propTypes = {
 };
 ```
 
-**Yes, you got this right, JSX for defining application logic!**
+## Examples
 
-Calling the previous service with
+- [The site webmiddle for The New York Times](https://github.com/Maluen/webmiddle-site-nytimes)
+- [The site webmiddle for Fox News](https://github.com/Maluen/webmiddle-site-foxnews)
+- [webmiddle application for searching articles from news sites](https://github.com/Maluen/webmiddle-project-search-news)
+
+## Getting started
+
+Use [Yeoman](http://yeoman.io/) to quickly scaffold a new project:
+
+```bash
+npm install -g yo
+npm install -g generator-webmiddle
+yo webmiddle
+```
+
+-> [Learn more](https://webmiddle.github.io/docs/getting_started.html)
+
+## Resource
+
+A resource is just a JSON object with the format `{ name, contentType, content }`.
+
+Example:
+
+```json
+{
+  "name": "result",
+  "contentType": "text/plain",
+  "content": "Hello!"
+}
+```
+
+## Service
+
+In terms of syntax, they are very similar to [react stateless functional components](https://medium.com/@housecor/react-stateless-functional-components-nine-wins-you-might-have-overlooked-997b0d933dbc#.91r5f1ish):
+
+Evaluating the previous `FetchPageLinks` service as
 
 ```jsx
 <FetchPageLinks
+  name="hackernews"
   url="https://news.ycombinator.com/"
   query="javascript"
 />
 ```
 
-Will give an output like the following
+Will return a resource like the following
 
 ```json
 {
-  "root": {
-    "anchors": [
-      {
-        "anchor": {
-          "url": "http://nearley.js.org/",
-          "text": "Nearley – parser toolkit for JavaScript"
+  "name": "hackernews",
+  "contentType": "application/json",
+  "content": {
+    "root": {
+      "anchors": [
+        {
+          "anchor": {
+            "url": "http://nearley.js.org/",
+            "text": "Nearley – parser toolkit for JavaScript"
+          }
+        },
+        {
+          "anchor": {
+            "url": "https://sekao.net/blog/industry.html",
+            "text": "ClojureScript is the most-used functional language that compiles to JavaScript"
+          }
         }
-      },
-      {
-        "anchor": {
-          "url": "https://sekao.net/blog/industry.html",
-          "text": "ClojureScript is the most-used functional language that compiles to JavaScript"
-        }
-      }
-    ]
+      ]
+    }
   }
 }
 ```
@@ -152,9 +134,43 @@ This means that anyone can contribute by adding new services for doing the more 
 
 -> [Learn more](https://webmiddle.github.io/docs/jsx_services.html)
 
+## Context ##
+
+Along with services, context is the other main concept of any webmiddle application.
+
+A context contains options that are accessible by any service, regardless of the actual props used to call the service. This is useful when there is the need to share common options among services, without the burden of having to manually pass them as props down all the service tree.
+
+The context is also what allows service evaluation. The webmiddle framework provides a rootContext which can be extended to add futher options.
+
+Services get the context that is being used to evaluate them as second parameter.
+
+**Example:**
+
+```javascript
+import { rootContext } from "webmiddle";
+
+// service returning a text resource
+// with the value of the requested context option
+const ReturnOption = ({ optionName }, context) => ({
+  name: "result",
+  contentType: "text/plain",
+  content: context.options[optionName],
+});
+
+rootContext.extend({
+  apiKey: "s3cr3t"
+}).evaluate(
+  <ReturnOption
+    optionName="apiKey"
+  />
+).then(resource => {
+  console.log(resource.content); // "s3cr3t"
+});
+```
+
 ## Remote execution
 
-webmiddle services can be turned into REST APIs by using the `webmiddle-server` package, allowing remote access via HTTP or WebSocket.
+Services can be turned into REST APIs by using the `webmiddle-server` package, allowing remote access via HTTP or WebSocket.
 
 Suppose you have the following services:
 
@@ -211,6 +227,14 @@ rootContext.extend({
   console.log((err && err.stack) || err);
 });
 ```
+
+## Debugging
+
+JSX services makes the use of regular debugging tools more difficult; at the same time, the tree-like structure of service calls that this creates, and the `webmiddle-server`, makes the development of specific debugging tools easy.
+
+The webmiddle evaluation model keeps track of the executed services and creates a call tree that can be inspected by using [webmiddle-devtools](https://github.com/webmiddle/webmiddle-devtools).
+
+The tool also allows to remotely execute services with a graphical interface.
 
 ## Core features
 
