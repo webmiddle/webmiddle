@@ -230,7 +230,7 @@ rootContext.extend({
 
 ## Debugging
 
-JSX services makes the use of regular debugging tools more difficult; at the same time, the tree-like structure of service calls that this creates, and the `webmiddle-server`, makes the development of specific debugging tools easy.
+JSX services make the use of regular debugging tools more difficult; at the same time, the tree-like structure of service calls that this creates, and the `webmiddle-server`, makes the development of specific debugging tools easy.
 
 The webmiddle evaluation model keeps track of the executed services and creates a call tree that can be inspected by using [webmiddle-devtools](https://github.com/webmiddle/webmiddle-devtools).
 
@@ -252,9 +252,9 @@ Features currently provided via the core packages:
 
 ## Open source ecosystem
 
-Create your own services and webmiddles and share them with the community as node modules!
+Create your own services and share them with the community as node modules!
 
-One of the main philosophies of the framework is **reuse**, by creating an ecosystem where webmiddles for websites, services, converters and so on can be published as separate npm modules, so that they can be used in other projects.
+One of the main philosophies of the framework is **reuse**, by creating an ecosystem where general-purpose services and services for specific websites can be published as separate npm modules, to be usable in other projects.
 
 **NOTE**: If you think that a service / feature is so common and general that it should be in the core, [open an issue](https://github.com/webmiddle/webmiddle/issues/new) or just do a pull request!
 
