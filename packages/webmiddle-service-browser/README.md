@@ -1,6 +1,6 @@
 # webmiddle-service-browser
 
-> Similar to the HttpRequest service, but it uses the headless browser [PhantomJS](http://phantomjs.org/) to fetch html pages.
+> Similar to the HttpRequest service, but it uses [Headless Chrome](https://developers.google.com/web/updates/2017/04/headless-chrome) to fetch html pages.
 
 ## Install
 
