@@ -230,7 +230,7 @@ JSX services make the use of regular debugging tools more difficult; at the same
 
 The webmiddle evaluation model keeps track of the executed services and creates a call tree that can be inspected by using [webmiddle-devtools](https://github.com/webmiddle/webmiddle-devtools).
 
-The tool also allows to remotely execute services with a graphical interface.
+The tool also allows to remotely execute services, making it an useful asset to integrate on one's own development workflow.
 
 ## Core features
 
