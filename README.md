@@ -241,7 +241,7 @@ Features currently provided via the core packages:
 - **[Headless Chrome](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-browser)** requests, for SPAs and pages using client-side generated content.
 - **[Cookie JAR](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-manager-cookie)**, for sharing cookies among different services and webmiddle objects.
 - **[Caching](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-resume)**, for resuming work in case of crash.
-- **Error handling**, via customizable retries and catch options.
+- **[Error handling](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle#errorboundary)**, via customizable retries and catch options.
 - **[Data conversion](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-cheerio-to-virtual)** from/to multiple formats.
   - Currently HTML/XML/JSON to JSON.
   - New formats can be easily added by targeting the apposite "virtual" intermediate format.
