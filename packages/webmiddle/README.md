@@ -71,6 +71,15 @@ rootContext.evaluate(
 });
 ```
 
+### Properties
+
+Name                   | Description
+-----------------------|------------------------------------------------------
+retries (optional)     | The number of retries, defaults to zero. Use a negative number for unlimited retries.
+isRetryable (optional) | Function that given the error returns a boolean stating if a retry should be attempted. Defaults to a function that always return `true`.
+handleCatch (optional) | Function called in case no further retries can be attempted. Gets the error as parameter and must return the value to use as fallback. If this property is not specified, then the error will be thrown instead.
+children               | Array containing a single child that should be evaluated.
+
 ## WithOptions
 
 A service that evaluates its **only** child by extending the current context with the new given options.
@@ -98,6 +107,13 @@ rootContext.extend({
   console.log(resource.content); // "bar"
 });
 ```
+
+### Properties
+
+Name                   | Description
+-----------------------|------------------------------------------------------
+children               | Array containing a single child that should be evaluated.
+...options             | All the other passed properties are used as the new context options.
 
 ### PropTypes
 
