@@ -246,8 +246,7 @@ The tool also allows to remotely execute services, making it an useful asset to 
 
 ## Core packages
 
-<p align="center">
-<table>
+<table align="center">
   <thead>
     <tr>
       <td><b>Name</b></td>
@@ -257,67 +256,66 @@ The tool also allows to remotely execute services, making it an useful asset to 
   <tbody>
     <tr>
       <td>webmiddle</td>
-      <td><a href="https://www.npmjs.com/package/webmiddle"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle.svg?maxAge=2592000"></a></td>
+      <td><a href="https://badge.fury.io/js/webmiddle"><img src="https://badge.fury.io/js/webmiddle.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
       <td>webmiddle-manager-cookie</td>
-      <td><a href="https://www.npmjs.com/package/webmiddle-manager-cookie"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-manager-cookie.svg?maxAge=2592000"></a></td>
+      <td><a href="https://badge.fury.io/js/webmiddle-manager-cookie"><img src="https://badge.fury.io/js/webmiddle-manager-cookie.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
       <td>webmiddle-service-pipe</td>
-      <td><a href="https://www.npmjs.com/package/webmiddle-service-pipe"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-pipe.svg?maxAge=2592000"></a></td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-pipe"><img src="https://badge.fury.io/js/webmiddle-service-pipe.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
       <td>webmiddle-service-parallel</td>
-      <td><a href="https://www.npmjs.com/package/webmiddle-service-parallel"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-parallel.svg?maxAge=2592000"></a></td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-parallel"><img src="https://badge.fury.io/js/webmiddle-service-parallel.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
       <td>webmiddle-service-arraymap</td>
-      <td><a href="https://www.npmjs.com/package/webmiddle-service-arraymap"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-arraymap.svg?maxAge=2592000"></a></td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-arraymap"><img src="https://badge.fury.io/js/webmiddle-service-arraymap.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
       <td>webmiddle-service-resume</td>
-      <td><a href="https://www.npmjs.com/package/webmiddle-service-resume"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-resume.svg?maxAge=2592000"></a></td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-resume"><img src="https://badge.fury.io/js/webmiddle-service-resume.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
       <td>webmiddle-service-http-request</td>
-      <td><a href="https://www.npmjs.com/package/webmiddle-service-http-request"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-http-request.svg?maxAge=2592000"></a></td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-http-request"><img src="https://badge.fury.io/js/webmiddle-service-http-request.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
       <td>webmiddle-service-browser</td>
-      <td><a href="https://www.npmjs.com/package/webmiddle-service-browser"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-browser.svg?maxAge=2592000"></a></td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-browser"><img src="https://badge.fury.io/js/webmiddle-service-browser.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
       <td>webmiddle-service-cheerio-to-virtual</td>
-      <td><a href="https://www.npmjs.com/package/webmiddle-service-cheerio-to-virtual"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-cheerio-to-virtual.svg?maxAge=2592000"></a></td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-cheerio-to-virtual"><img src="https://badge.fury.io/js/webmiddle-service-cheerio-to-virtual.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
       <td>webmiddle-service-jsonselect-to-virtual</td>
-      <td><a href="https://www.npmjs.com/package/webmiddle-service-jsonselect-to-virtual"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-jsonselect-to-virtual.svg?maxAge=2592000"></a></td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-jsonselect-to-virtual"><img src="https://badge.fury.io/js/webmiddle-service-jsonselect-to-virtual.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
       <td>webmiddle-service-virtual-to-json</td>
-      <td><a href="https://www.npmjs.com/package/webmiddle-service-virtual-to-json"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-virtual-to-json.svg?maxAge=2592000"></a></td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-virtual-to-json"><img src="https://badge.fury.io/js/webmiddle-service-virtual-to-json.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
       <td>webmiddle-service-cheerio-to-json</td>
-      <td><a href="https://www.npmjs.com/package/webmiddle-service-cheerio-to-json"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-cheerio-to-json.svg?maxAge=2592000"></a></td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-cheerio-to-json"><img src="https://badge.fury.io/js/webmiddle-service-cheerio-to-json.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
       <td>webmiddle-service-jsonselect-to-json</td>
-      <td><a href="https://www.npmjs.com/package/webmiddle-service-jsonselect-to-json"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-jsonselect-to-json.svg?maxAge=2592000"></a></td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-jsonselect-to-json"><img src="https://badge.fury.io/js/webmiddle-service-jsonselect-to-json.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
       <td>webmiddle-server</td>
-      <td><a href="https://www.npmjs.com/package/webmiddle-server"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-server.svg?maxAge=2592000"></a></td>
+      <td><a href="https://badge.fury.io/js/webmiddle-server"><img src="https://badge.fury.io/js/webmiddle-server.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
       <td>webmiddle-client</td>
-      <td><a href="https://www.npmjs.com/package/webmiddle-client"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-client.svg?maxAge=2592000"></a></td>
+      <td><a href="https://badge.fury.io/js/webmiddle-client"><img src="https://badge.fury.io/js/webmiddle-client.svg" alt="npm version" height="18"></a></td>
     </tr>
   </tbody>
 </table>
-</p>
 
 ## Open source ecosystem
 
