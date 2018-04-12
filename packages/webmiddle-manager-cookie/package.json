@@ -53,5 +53,6 @@
   "license": "MIT",
   "dependencies": {
     "tough-cookie": "^2.3.4"
-  }
+  },
+  "gitHead": "fe1f6ba457ae73946bc6bc07c143edaf525f831f"
 }

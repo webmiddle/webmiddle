@@ -58,5 +58,6 @@
     "proptypes": "^1.0.0",
     "virtual-element": "^1.2.0",
     "webmiddle-manager-cookie": "^0.3.0"
-  }
+  },
+  "gitHead": "fe1f6ba457ae73946bc6bc07c143edaf525f831f"
 }
