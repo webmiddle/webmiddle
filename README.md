@@ -14,10 +14,12 @@ Webmiddle applications are written in a declarative, functional and modular way,
 
 Each service executes one task, or controls the execution of other tasks, by composing other services.
 
+[Try it live](https://repl.it/@Maluen/Webmiddle)
+
 ```jsx
-const FetchPageLinks = ({ url, query, waitFor }) =>
+const FetchPageLinks = ({ url, query, waitFor }) => (
   <Pipe>
-    <Browser
+    <HttpRequest
       name="rawHtml"
       contentType="text/html"
       url={url}
@@ -138,7 +140,7 @@ Will return a resource like the following
 
 Services are the building blocks of the webmiddle framework, they can be defined and composed to perform all the web data integration tasks.
 
-[Pipe](/packages/webmiddle-service-pipe), [Browser](/packages/webmiddle-service-browser) and [HtmlToJson](/packages/webmiddle-service-cheerio-to-json) are all core services, however there is no actual difference between a core service and a service that you may want to develop yourself.  
+[Pipe](/packages/webmiddle-service-pipe), [HttpRequest](/packages/webmiddle-service-http-request) and [HtmlToJson](/packages/webmiddle-service-cheerio-to-json) are all core services, however there is no actual difference between a core service and a service that you may want to develop yourself.  
 
 This means that anyone can contribute by adding new services for doing the more disparate things!
 
@@ -152,7 +154,7 @@ The context is also what allows service evaluation. The webmiddle framework prov
 
 Services get the context that is being used to evaluate them as second parameter.
 
-**Example:**
+**Example** ([Try it live](https://repl.it/@Maluen/WebmiddleContext))
 
 ```javascript
 import { rootContext } from "webmiddle";
