@@ -75,13 +75,15 @@ Features currently provided via the core packages:
 
 ## Getting started
 
-Use [Yeoman](http://yeoman.io/) to quickly scaffold a new project:
+Use [Yeoman](http://yeoman.io/) to quickly scaffold a new webmiddle application:
 
 ```bash
 npm install -g yo
 npm install -g generator-webmiddle
 yo webmiddle
 ```
+
+See [generator-webmiddle](https://github.com/webmiddle/generator-webmiddle) for more info.
 
 ## Resource
 
