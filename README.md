@@ -51,6 +51,20 @@ FetchPageLinks.propTypes = {
 };
 ```
 
+## Features
+
+Features currently provided via the core packages:
+
+- **[Concurrency](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-parallel)**, for executing multiple asynchronous services at the same time.
+- **[HTTP](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-http-request)** requests.
+- **[Headless Chrome](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-browser)** requests, for SPAs and pages using client-side generated content.
+- **[Cookie JAR](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-manager-cookie)**, for sharing cookies among different services and webmiddle objects.
+- **[Caching](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-resume)**, for resuming work in case of crash.
+- **[Error handling](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle#errorboundary)**, via customizable retries and catch options.
+- **[Resource conversion](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-cheerio-to-virtual)** from/to multiple formats.
+  - Currently HTML/XML/JSON to JSON.
+  - New formats can be easily added by targeting the apposite "virtual" intermediate format.
+
 ## Examples
 
 - [The site webmiddle for The New York Times](https://github.com/Maluen/webmiddle-site-nytimes)
@@ -230,19 +244,80 @@ The webmiddle evaluation model keeps track of the executed services and creates 
 
 The tool also allows to remotely execute services, making it an useful asset to integrate on one's own development workflow.
 
-## Core features
+## Core packages
 
-Features currently provided via the core packages:
-
-- **[Concurrency](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-parallel)**, for executing multiple asynchronous services at the same time.
-- **[HTTP](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-http-request)** requests.
-- **[Headless Chrome](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-browser)** requests, for SPAs and pages using client-side generated content.
-- **[Cookie JAR](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-manager-cookie)**, for sharing cookies among different services and webmiddle objects.
-- **[Caching](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-resume)**, for resuming work in case of crash.
-- **[Error handling](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle#errorboundary)**, via customizable retries and catch options.
-- **[Data conversion](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-cheerio-to-virtual)** from/to multiple formats.
-  - Currently HTML/XML/JSON to JSON.
-  - New formats can be easily added by targeting the apposite "virtual" intermediate format.
+<p align="center">
+<table>
+  <thead>
+    <tr>
+      <td><b>Name</b></td>
+      <td><b>Description</b></td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>webmiddle</td>
+      <td><a href="https://www.npmjs.com/package/webmiddle"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle.svg?maxAge=2592000"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-manager-cookie</td>
+      <td><a href="https://www.npmjs.com/package/webmiddle-manager-cookie"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-manager-cookie.svg?maxAge=2592000"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-pipe</td>
+      <td><a href="https://www.npmjs.com/package/webmiddle-service-pipe"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-pipe.svg?maxAge=2592000"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-parallel</td>
+      <td><a href="https://www.npmjs.com/package/webmiddle-service-parallel"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-parallel.svg?maxAge=2592000"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-arraymap</td>
+      <td><a href="https://www.npmjs.com/package/webmiddle-service-arraymap"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-arraymap.svg?maxAge=2592000"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-resume</td>
+      <td><a href="https://www.npmjs.com/package/webmiddle-service-resume"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-resume.svg?maxAge=2592000"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-http-request</td>
+      <td><a href="https://www.npmjs.com/package/webmiddle-service-http-request"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-http-request.svg?maxAge=2592000"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-browser</td>
+      <td><a href="https://www.npmjs.com/package/webmiddle-service-browser"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-browser.svg?maxAge=2592000"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-cheerio-to-virtual</td>
+      <td><a href="https://www.npmjs.com/package/webmiddle-service-cheerio-to-virtual"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-cheerio-to-virtual.svg?maxAge=2592000"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-jsonselect-to-virtual</td>
+      <td><a href="https://www.npmjs.com/package/webmiddle-service-jsonselect-to-virtual"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-jsonselect-to-virtual.svg?maxAge=2592000"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-virtual-to-json</td>
+      <td><a href="https://www.npmjs.com/package/webmiddle-service-virtual-to-json"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-virtual-to-json.svg?maxAge=2592000"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-cheerio-to-json</td>
+      <td><a href="https://www.npmjs.com/package/webmiddle-service-cheerio-to-json"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-cheerio-to-json.svg?maxAge=2592000"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-jsonselect-to-json</td>
+      <td><a href="https://www.npmjs.com/package/webmiddle-service-jsonselect-to-json"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-service-jsonselect-to-json.svg?maxAge=2592000"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-server</td>
+      <td><a href="https://www.npmjs.com/package/webmiddle-server"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-server.svg?maxAge=2592000"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-client</td>
+      <td><a href="https://www.npmjs.com/package/webmiddle-client"><img alt="npm" src="https://img.shields.io/npm/v/webmiddle-client.svg?maxAge=2592000"></a></td>
+    </tr>
+  </tbody>
+</table>
+</p>
 
 ## Open source ecosystem
 
