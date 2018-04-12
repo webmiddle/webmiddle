@@ -6,13 +6,11 @@
 
 # webmiddle
 
-> Node.js framework for extracting and transforming web resources
+> Node.js framework for extracting, transforming and combining web resources from websites and web APIs.
 
-webmiddle is a Node.js framework for extracting, transforming and combining web resources from websites and web APIs.
+Webmiddle applications can range from simple web scrapers to complex web integration tools targeting JSON APIs, raw HTML pages, XML resources and so on.
 
-webmiddle applications can range from simple web scrapers to complex web integration tools targeting JSON APIs, raw HTML pages, XML resources and so on.
-
-webmiddle applications are written in a declarative, functional and modular way, by using their most evident aspect: **JSX services**.
+Webmiddle applications are written in a declarative, functional and modular way, by using their most evident aspect: **JSX services**.
 
 Each service executes one task, or controls the execution of other tasks, by composing other services.
 
@@ -52,6 +50,20 @@ FetchPageLinks.propTypes = {
   waitFor: PropTypes.string,
 };
 ```
+
+## Features
+
+Features currently provided via the core packages:
+
+- **[Concurrency](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-parallel)**, for executing multiple asynchronous services at the same time.
+- **[HTTP](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-http-request)** requests.
+- **[Headless Chrome](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-browser)** requests, for SPAs and pages using client-side generated content.
+- **[Cookie JAR](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-manager-cookie)**, for sharing cookies among different services and webmiddle objects.
+- **[Caching](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-resume)**, for resuming work in case of crash.
+- **[Error handling](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle#errorboundary)**, via customizable retries and catch options.
+- **[Resource conversion](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-cheerio-to-virtual)** from/to multiple formats.
+  - Currently HTML/XML/JSON to JSON.
+  - New formats can be easily added by targeting the apposite "virtual" intermediate format.
 
 ## Examples
 
@@ -232,38 +244,86 @@ The webmiddle evaluation model keeps track of the executed services and creates 
 
 The tool also allows to remotely execute services, making it an useful asset to integrate on one's own development workflow.
 
-## Core features
+## Core packages
 
-Features currently provided via the core packages:
-
-- **[Concurrency](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-parallel)**, for executing multiple asynchronous services at the same time.
-- **[HTTP](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-http-request)** requests.
-- **[Headless Chrome](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-browser)** requests, for SPAs and pages using client-side generated content.
-- **[Cookie JAR](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-manager-cookie)**, for sharing cookies among different services and webmiddle objects.
-- **[Caching](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-resume)**, for resuming work in case of crash.
-- **[Error handling](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle#errorboundary)**, via customizable retries and catch options.
-- **[Data conversion](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-cheerio-to-virtual)** from/to multiple formats.
-  - Currently HTML/XML/JSON to JSON.
-  - New formats can be easily added by targeting the apposite "virtual" intermediate format.
+<table align="center">
+  <thead>
+    <tr>
+      <td><b>Name</b></td>
+      <td><b>Description</b></td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>webmiddle</td>
+      <td><a href="https://badge.fury.io/js/webmiddle"><img src="https://badge.fury.io/js/webmiddle.svg" alt="npm version" height="18"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-manager-cookie</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-manager-cookie"><img src="https://badge.fury.io/js/webmiddle-manager-cookie.svg" alt="npm version" height="18"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-pipe</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-pipe"><img src="https://badge.fury.io/js/webmiddle-service-pipe.svg" alt="npm version" height="18"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-parallel</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-parallel"><img src="https://badge.fury.io/js/webmiddle-service-parallel.svg" alt="npm version" height="18"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-arraymap</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-arraymap"><img src="https://badge.fury.io/js/webmiddle-service-arraymap.svg" alt="npm version" height="18"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-resume</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-resume"><img src="https://badge.fury.io/js/webmiddle-service-resume.svg" alt="npm version" height="18"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-http-request</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-http-request"><img src="https://badge.fury.io/js/webmiddle-service-http-request.svg" alt="npm version" height="18"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-browser</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-browser"><img src="https://badge.fury.io/js/webmiddle-service-browser.svg" alt="npm version" height="18"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-cheerio-to-virtual</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-cheerio-to-virtual"><img src="https://badge.fury.io/js/webmiddle-service-cheerio-to-virtual.svg" alt="npm version" height="18"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-jsonselect-to-virtual</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-jsonselect-to-virtual"><img src="https://badge.fury.io/js/webmiddle-service-jsonselect-to-virtual.svg" alt="npm version" height="18"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-virtual-to-json</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-virtual-to-json"><img src="https://badge.fury.io/js/webmiddle-service-virtual-to-json.svg" alt="npm version" height="18"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-cheerio-to-json</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-cheerio-to-json"><img src="https://badge.fury.io/js/webmiddle-service-cheerio-to-json.svg" alt="npm version" height="18"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-service-jsonselect-to-json</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-service-jsonselect-to-json"><img src="https://badge.fury.io/js/webmiddle-service-jsonselect-to-json.svg" alt="npm version" height="18"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-server</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-server"><img src="https://badge.fury.io/js/webmiddle-server.svg" alt="npm version" height="18"></a></td>
+    </tr>
+    <tr>
+      <td>webmiddle-client</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-client"><img src="https://badge.fury.io/js/webmiddle-client.svg" alt="npm version" height="18"></a></td>
+    </tr>
+  </tbody>
+</table>
 
 ## Open source ecosystem
 
-Create your own services and share them with the community as node modules!
+Create your own services and publish them to npm!
 
 One of the main philosophies of the framework is **reuse**, by creating an ecosystem where general-purpose services and services for specific websites can be published as separate npm modules, to be usable in other projects.
 
 **NOTE**: If you think that a service / feature is so common and general that it should be in the core, [open an issue](https://github.com/webmiddle/webmiddle/issues/new) or just do a pull request!
-
-## Future improvements
-
-Here is a list of important features that are still missing and that should be in the core in the future:
-- Proxy support
-- HTTP/OAuth Authentication
-- Redirects management
-- Advanced logging and debugging
-- Easy form submissions
-- Access to queried server headers
-- Delays and timeouts
 
 ## Contributing
 
