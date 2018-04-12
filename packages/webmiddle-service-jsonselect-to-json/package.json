@@ -1,6 +1,6 @@
 {
   "name": "webmiddle-service-jsonselect-to-json",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -52,9 +52,9 @@
   "repository": "webmiddle/webmiddle",
   "license": "MIT",
   "dependencies": {
-    "webmiddle": "^0.2.0",
-    "webmiddle-service-pipe": "^0.2.0",
-    "webmiddle-service-jsonselect-to-virtual": "^0.2.0",
-    "webmiddle-service-virtual-to-json": "^0.2.0"
+    "webmiddle": "^0.3.0",
+    "webmiddle-service-jsonselect-to-virtual": "^0.3.0",
+    "webmiddle-service-pipe": "^0.3.0",
+    "webmiddle-service-virtual-to-json": "^0.3.0"
   }
 }
