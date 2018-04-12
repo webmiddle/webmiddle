@@ -319,22 +319,11 @@ The tool also allows to remotely execute services, making it an useful asset to 
 
 ## Open source ecosystem
 
-Create your own services and share them with the community as node modules!
+Create your own services and publish them to npm!
 
 One of the main philosophies of the framework is **reuse**, by creating an ecosystem where general-purpose services and services for specific websites can be published as separate npm modules, to be usable in other projects.
 
 **NOTE**: If you think that a service / feature is so common and general that it should be in the core, [open an issue](https://github.com/webmiddle/webmiddle/issues/new) or just do a pull request!
-
-## Future improvements
-
-Here is a list of important features that are still missing and that should be in the core in the future:
-- Proxy support
-- HTTP/OAuth Authentication
-- Redirects management
-- Advanced logging and debugging
-- Easy form submissions
-- Access to queried server headers
-- Delays and timeouts
 
 ## Contributing
 
