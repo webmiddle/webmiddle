@@ -38,7 +38,7 @@ test("main", async t => {
     serviceExecuted = true;
     return {
       name: "resource",
-      contentType: "text/json",
+      contentType: "text/plain",
       content: {
         foo: "bar"
       }
@@ -54,7 +54,7 @@ test("main", async t => {
 
   t.is(serviceExecuted, true, "service executed the first time");
   t.is(output.name, "resource", "name");
-  t.is(output.contentType, "text/json", "contentType");
+  t.is(output.contentType, "text/plain", "contentType");
   t.deepEqual(
     output.content,
     {
@@ -72,7 +72,7 @@ test("main", async t => {
 
   t.is(serviceExecuted, false, "service resumed the second time");
   t.is(secondOutput.name, "resource", "name");
-  t.is(secondOutput.contentType, "text/json", "contentType");
+  t.is(secondOutput.contentType, "text/plain", "contentType");
   t.deepEqual(
     secondOutput.content,
     {

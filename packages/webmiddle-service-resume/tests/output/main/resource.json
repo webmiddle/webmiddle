@@ -1,1 +1,1 @@
-{"name":"resource","contentType":"text/json","content":{"foo":"bar"}}
+{"name":"resource","contentType":"text/plain","content":{"foo":"bar"}}
