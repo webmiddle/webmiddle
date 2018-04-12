@@ -55,6 +55,5 @@
     "cheerio": "^1.0.0-rc.2",
     "lodash.every": "^4.4.0",
     "webmiddle": "^0.3.0"
-  },
-  "gitHead": "fe1f6ba457ae73946bc6bc07c143edaf525f831f"
+  }
 }

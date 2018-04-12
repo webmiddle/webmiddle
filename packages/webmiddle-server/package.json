@@ -62,6 +62,5 @@
   },
   "devDependencies": {
     "superagent": "^3.5.2"
-  },
-  "gitHead": "fe1f6ba457ae73946bc6bc07c143edaf525f831f"
+  }
 }
