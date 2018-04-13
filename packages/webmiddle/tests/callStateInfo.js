@@ -5,7 +5,7 @@ test.beforeEach(t => {
   t.context.context = rootContext;
 });
 
-test("virtual -> service", async t => {
+test("virtual (service)", async t => {
   const Service = () => "yes";
   const virtual = <Service a={10} b={20} />;
 
@@ -17,18 +17,7 @@ test("virtual -> service", async t => {
       type: "virtual",
       value: virtual,
       options: {},
-      children: [
-        {
-          type: "service",
-          value: Service,
-          options: {
-            props: { a: 10, b: 20, children: [] }
-          },
-          children: [],
-          path: "0.0",
-          result: output
-        }
-      ],
+      children: [],
       path: "0",
       result: output
     }
@@ -36,7 +25,7 @@ test("virtual -> service", async t => {
 });
 
 // the tries and catch should show as a list
-test("virtual -> service with retries and final catch", async t => {
+test("virtual (service) with retries and final catch", async t => {
   let tries = 0;
   const retries = 3;
 
@@ -57,11 +46,10 @@ test("virtual -> service with retries and final catch", async t => {
 
   const output = await context.evaluate(virtual);
 
-  const virtualCallStateInfo = context._callState[0];
-  t.is(virtualCallStateInfo.value, virtual);
-
-  const errorBoundaryCallStateInfo = virtualCallStateInfo.children[0];
-  t.is(errorBoundaryCallStateInfo.value, ErrorBoundary);
+  const errorBoundaryCallStateInfo = context._callState[0];
+  t.is(errorBoundaryCallStateInfo.type, "virtual");
+  t.is(typeof errorBoundaryCallStateInfo.value.type, "function");
+  t.is(errorBoundaryCallStateInfo.value.type.name, "ErrorBoundary");
 
   //console.log(JSON.stringify(errorBoundaryCallStateInfo.children.map(child => child.value.type.name), null, 2));
 
@@ -86,7 +74,7 @@ test("virtual -> service with retries and final catch", async t => {
 
 // the virtual immediately returned by a service should be evaluated recursively
 // (i.e. the virtual callState should be a children of the service callState)
-test("service returning virtual (virtual -> service -> virtual -> service)", async t => {
+test("service returning virtual (virtual (service) -> virtual (service)", async t => {
   const SubService = () => "more yes!";
   const subVirtual = <SubService c={30} />;
 
@@ -103,32 +91,10 @@ test("service returning virtual (virtual -> service -> virtual -> service)", asy
       options: {},
       children: [
         {
-          type: "service",
-          value: Service,
-          options: {
-            props: { a: 10, b: 20, children: [] }
-          },
-          children: [
-            {
-              type: "virtual",
-              value: subVirtual,
-              options: {},
-              children: [
-                {
-                  type: "service",
-                  value: SubService,
-                  options: {
-                    props: { c: 30, children: [] }
-                  },
-                  children: [],
-                  path: "0.0.0.0",
-                  result: output
-                }
-              ],
-              path: "0.0.0",
-              result: output
-            }
-          ],
+          type: "virtual",
+          value: subVirtual,
+          options: {},
+          children: [],
           path: "0.0",
           result: output
         }
@@ -159,32 +125,8 @@ test('must emit "add" events with correct paths', async t => {
         type: "virtual",
         value: virtual,
         options: {},
-        children: [
-          {
-            type: "service",
-            value: Service,
-            options: {
-              props: { a: 10, b: 20, children: [] }
-            },
-            children: [],
-            path: "0.0",
-            result: output
-          }
-        ],
-        path: "0",
-        result: output
-      }
-    },
-    {
-      path: "0.0",
-      info: {
-        type: "service",
-        value: Service,
-        options: {
-          props: { a: 10, b: 20, children: [] }
-        },
         children: [],
-        path: "0.0",
+        path: "0",
         result: output
       }
     }

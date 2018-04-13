@@ -96,15 +96,6 @@ export function transformCallStateInfo(info) {
   }
 
   function transformInfoOptions(type, options) {
-    if (type === "service") {
-      // props, tries
-      return {
-        props: mapValues(options.props, propValue =>
-          transformValue(propValue, 0)
-        )
-      };
-    }
-
     return mapValues(options, optionValue => transformValue(optionValue));
   }
 

@@ -402,37 +402,6 @@ test("resource (recursion = 2, depth = 2)", async t => {
   );
 });
 
-test("callStateInfo: service", async t => {
-  t.deepEqual(
-    transformCallStateInfo({
-      type: "service",
-      value: function fn() {},
-      options: {
-        props: { a: 0, b: { c: 1 } }
-      },
-      children: []
-    }),
-    {
-      type: "service",
-      value: {
-        type: "function",
-        name: "fn",
-        value: undefined
-      },
-      options: {
-        props: {
-          a: { type: "number", value: 0 },
-          b: {
-            type: "object",
-            value: undefined
-          }
-        }
-      },
-      children: []
-    }
-  );
-});
-
 test("callStateInfo: virtual", async t => {
   const Service = () => {};
 

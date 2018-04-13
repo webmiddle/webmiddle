@@ -24,18 +24,8 @@ function validateProps(props, propTypes, service) {
 }
 
 function callService(service, props, context) {
-  return call(
-    newContext => {
-      const result = service(props, newContext);
-      return evaluate(newContext, result);
-    },
-    context,
-    {
-      type: "service",
-      value: service,
-      options: { props }
-    }
-  );
+  const result = service(props, context);
+  return evaluate(context, result);
 }
 
 export default async function callVirtual(context, virtual) {
@@ -52,8 +42,7 @@ export default async function callVirtual(context, virtual) {
 
   let result;
   if (service) {
-    const callServiceReturn = await callService(service, props, context);
-    ({ result, context } = callServiceReturn);
+    result = await callService(service, props, context);
   } else {
     result = virtual;
   }
