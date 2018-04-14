@@ -59,5 +59,5 @@ ErrorBoundary.propTypes = {
   children: PropTypes.array.isRequired,
   retries: PropTypes.number,
   isRetryable: PropTypes.func,
-  handleCatch: PropTypes.func
+  handleCatch: PropTypes.any
 };
