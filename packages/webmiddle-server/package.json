@@ -51,6 +51,9 @@
   },
   "repository": "webmiddle/webmiddle",
   "license": "MIT",
+  "peerDependencies": {
+    "webmiddle": "^0.3.0"
+  },
   "dependencies": {
     "body-parser": "^1.18.2",
     "cors": "^2.8.1",
