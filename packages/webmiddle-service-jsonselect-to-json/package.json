@@ -51,10 +51,15 @@
   },
   "repository": "webmiddle/webmiddle",
   "license": "MIT",
+  "peerDependencies": {
+    "webmiddle": "^0.3.0"
+  },
   "dependencies": {
-    "webmiddle": "^0.3.0",
     "webmiddle-service-jsonselect-to-virtual": "^0.3.0",
     "webmiddle-service-pipe": "^0.3.0",
     "webmiddle-service-virtual-to-json": "^0.3.0"
+  },
+  "devDependencies": {
+    "webmiddle": "^0.3.0"
   }
 }

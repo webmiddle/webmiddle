@@ -51,8 +51,13 @@
   },
   "repository": "webmiddle/webmiddle",
   "license": "MIT",
+  "peerDependencies": {
+    "webmiddle": "^0.3.0"
+  },
   "dependencies": {
-    "puppeteer": "^1.2.0",
+    "puppeteer": "^1.2.0"
+  },
+  "devDependencies": {
     "webmiddle": "^0.3.0"
   }
 }

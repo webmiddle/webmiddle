@@ -51,7 +51,10 @@
   },
   "repository": "webmiddle/webmiddle",
   "license": "MIT",
-  "dependencies": {
+  "peerDependencies": {
+    "webmiddle": "^0.3.0"
+  },
+  "devDependencies": {
     "webmiddle": "^0.3.0"
   }
 }
