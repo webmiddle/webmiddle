@@ -260,18 +260,16 @@ test("waitFor", async t => {
   t.pass();
 });
 
-test("cookies", async t => {
-  // save to jar
-
-  let v2 = Math.floor(Math.random() * 100) + 1;
-  let v1 = Math.floor(Math.random() * 100) + 1;
+test("cookies: save to jar", async t => {
+  const v1 = 10;
+  const v2 = 20;
 
   await t.context.context.evaluate(
     <Browser
       name="virtual"
       contentType="application/json"
       method="GET"
-      url={`https://httpbin.org/cookies/set?k2=${v2}&k1=${v1}`}
+      url={`https://httpbin.org/cookies/set?a1=${v1}&a2=${v2}`}
     />
   );
 
@@ -279,19 +277,19 @@ test("cookies", async t => {
     "https://httpbin.org"
   );
 
-  const cookieK2 = cookies.find(c => c.key === "k2");
-  t.is(cookieK2.value, String(v2));
+  const cookieA1 = cookies.find(c => c.key === "a1");
+  t.is(cookieA1.value, String(v1));
 
-  const cookieK1 = cookies.find(c => c.key === "k1");
-  t.is(cookieK1.value, String(v1));
+  const cookieA2 = cookies.find(c => c.key === "a2");
+  t.is(cookieA2.value, String(v2));
+});
 
-  // read from jar
-
-  v2 = Math.floor(Math.random() * 100) + 1;
-  v1 = Math.floor(Math.random() * 100) + 1;
+test("cookies: read from jar", async t => {
+  const v1 = 30;
+  const v2 = 40;
 
   t.context.context.cookieManager.jar.setCookieSync(
-    t.context.context.cookieManager.Cookie.parse(`k2=${v2}; Path=/`, {
+    t.context.context.cookieManager.Cookie.parse(`b1=${v1}; Path=/`, {
       loose: true
     }),
     "https://httpbin.org",
@@ -299,7 +297,7 @@ test("cookies", async t => {
   );
 
   t.context.context.cookieManager.jar.setCookieSync(
-    t.context.context.cookieManager.Cookie.parse(`k1=${v1}; Path=/`, {
+    t.context.context.cookieManager.Cookie.parse(`b2=${v2}; Path=/`, {
       loose: true
     }),
     "https://httpbin.org",
@@ -317,8 +315,8 @@ test("cookies", async t => {
 
   const json = output.content;
   t.deepEqual(json.cookies, {
-    k2: String(v2),
-    k1: String(v1)
+    b1: String(v1),
+    b2: String(v2)
   });
 });
 
