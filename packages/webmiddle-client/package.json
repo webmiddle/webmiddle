@@ -51,14 +51,17 @@
   },
   "repository": "webmiddle/webmiddle",
   "license": "MIT",
+  "peerDependencies": {
+    "webmiddle": "^0.3.0"
+  },
   "dependencies": {
     "lodash": "^4.17.4",
     "superagent": "^3.5.2",
     "uuid": "^3.0.1",
-    "webmiddle": "^0.3.0",
     "ws": "^5.1.1"
   },
   "devDependencies": {
+    "webmiddle": "^0.3.0",
     "webmiddle-server": "^0.3.0"
   }
 }
