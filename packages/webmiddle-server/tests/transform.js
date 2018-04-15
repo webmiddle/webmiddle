@@ -403,7 +403,7 @@ test("resource (recursion = 2, depth = 2)", async t => {
 });
 
 test("callStateInfo: virtual", async t => {
-  const Service = () => {};
+  const Service = () => "yes";
 
   console.log(
     JSON.stringify(
@@ -411,7 +411,8 @@ test("callStateInfo: virtual", async t => {
         type: "virtual",
         value: <Service a={1} />,
         options: {},
-        children: []
+        children: [],
+        result: "yes"
       })
     )
   );
@@ -421,7 +422,8 @@ test("callStateInfo: virtual", async t => {
       type: "virtual",
       value: <Service a={1} />,
       options: {},
-      children: []
+      children: [],
+      result: "yes"
     }),
     {
       type: "virtual",
@@ -444,7 +446,11 @@ test("callStateInfo: virtual", async t => {
         }
       },
       options: {},
-      children: []
+      children: [],
+      result: {
+        type: "string",
+        value: "yes"
+      }
     }
   );
 });

@@ -104,6 +104,7 @@ export function transformCallStateInfo(info) {
     type: info.type,
     value: transformInfoValue(info.type, info.value),
     options: transformInfoOptions(info.type, info.options),
+    result: transformValue(info.result, 0),
     children: info.children.map(child => transformValue(child, 0))
   };
 }

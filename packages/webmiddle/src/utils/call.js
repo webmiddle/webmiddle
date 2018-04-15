@@ -75,5 +75,11 @@ export default async function call(fn, context, info) {
     newContext.emitter.removeListener("internal", handleMessage);
   }
 
+  // result is ready => notify
+  emitBubble(context, "message", "callStateInfo:update", {
+    info: callStateInfo,
+    path: callStateInfo.path
+  });
+
   return { result: callStateInfo.result, context: newContext };
 }

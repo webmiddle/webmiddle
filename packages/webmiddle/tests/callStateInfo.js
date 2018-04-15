@@ -173,6 +173,26 @@ test('must emit "add" events that can be traced back to the original objects', a
   }
 });
 
+test('must emit "update" events with correct results', async t => {
+  const Service = () => "yes";
+  const virtual = <Service a={10} b={20} />;
+
+  const context = t.context.context.extend({ debug: true });
+
+  const updateResults = [];
+  context.emitter.on("message", message => {
+    if (message.topic === "callStateInfo:update") {
+      if (typeof message.data.info.result !== "undefined") {
+        updateResults.push(message.data.info.result);
+      }
+    }
+  });
+
+  const output = await context.evaluate(virtual);
+
+  t.deepEqual(updateResults, [output]);
+});
+
 test("context should have separate call state chain", async t => {
   const baseContext = rootContext.extend({ debug: true });
   const childContext = baseContext.extend();
