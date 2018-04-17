@@ -314,10 +314,8 @@ test("cookies: read from jar", async t => {
   );
 
   const json = output.content;
-  t.deepEqual(json.cookies, {
-    b1: String(v1),
-    b2: String(v2)
-  });
+  t.deepEqual(json.cookies.b1, String(v1));
+  t.deepEqual(json.cookies.b2, String(v2));
 });
 
 test("Should not throw when status code is between 200 and 299", async t => {
