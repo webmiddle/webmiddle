@@ -1,5 +1,10 @@
+// HACK: transpile JSX by using the src webmiddle object
+// instead that the compiled one obtained by the default require('webmiddle')
+import webmiddle from "../src/index.js";
+global.webmiddle = webmiddle;
+
 import test from "ava";
-import { isVirtual, rootContext, WithOptions } from "../src/index.js";
+import { rootContext, WithOptions } from "../src/index.js";
 import callVirtual from "../src/utils/callVirtual";
 
 test.beforeEach(t => {
@@ -7,18 +12,26 @@ test.beforeEach(t => {
 });
 
 test("h -> isVirtual", t => {
-  t.true(
-    isVirtual(
-      <some foo="bar">
-        <other />
-      </some>
-    )
+  const virtual = (
+    <some foo="bar">
+      <other />
+    </some>
   );
+
+  t.true(t.context.context.isVirtual(virtual));
 });
 
 test("isVirtual -> true", t => {
   t.true(
-    isVirtual({
+    t.context.context.isVirtual(
+      t.context.context.createVirtual("element", {}, [])
+    )
+  );
+});
+
+test("isVirtual -> false (plain object)", t => {
+  t.false(
+    t.context.context.isVirtual({
       type: "element",
       attributes: {},
       children: []

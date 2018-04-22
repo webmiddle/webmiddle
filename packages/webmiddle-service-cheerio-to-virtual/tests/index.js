@@ -144,7 +144,7 @@ test("must default to null in case of evaluation exception", async t => {
     </CheerioToVirtual>
   );
 
-  t.deepEqual(output.content, {
+  t.deepEqual(JSON.parse(JSON.stringify(output.content)), {
     type: "root",
     attributes: {},
     children: [
@@ -164,7 +164,7 @@ test("undefined should be converted to null", async t => {
     </CheerioToVirtual>
   );
 
-  t.deepEqual(output.content, {
+  t.deepEqual(JSON.parse(JSON.stringify(output.content)), {
     type: "root",
     attributes: {},
     children: [
@@ -194,7 +194,7 @@ test("condition", async t => {
     </CheerioToVirtual>
   );
 
-  t.deepEqual(output.content, {
+  t.deepEqual(JSON.parse(JSON.stringify(output.content)), {
     type: "root",
     attributes: {},
     children: [
@@ -232,7 +232,7 @@ test("helpers: elMap + elAttr", async t => {
     </CheerioToVirtual>
   );
 
-  t.deepEqual(output.content, {
+  t.deepEqual(JSON.parse(JSON.stringify(output.content)), {
     type: "root",
     attributes: {},
     children: [
@@ -271,7 +271,7 @@ test("helpers: elPipe + elMap + elText + elJoin", async t => {
     </CheerioToVirtual>
   );
 
-  t.deepEqual(output.content, {
+  t.deepEqual(JSON.parse(JSON.stringify(output.content)), {
     type: "root",
     attributes: {},
     children: [
@@ -302,7 +302,7 @@ test("fullconversion", async t => {
     <CheerioToVirtual name="virtual" from={xmlResource} fullConversion />
   );
 
-  t.deepEqual(output.content, virtualResource);
+  t.deepEqual(JSON.parse(JSON.stringify(output.content)), virtualResource);
 });
 
 test("fullConversion: children must be ignored", async t => {
@@ -312,5 +312,5 @@ test("fullConversion: children must be ignored", async t => {
     </CheerioToVirtual>
   );
 
-  t.deepEqual(output.content, virtualResource);
+  t.deepEqual(JSON.parse(JSON.stringify(output.content)), virtualResource);
 });

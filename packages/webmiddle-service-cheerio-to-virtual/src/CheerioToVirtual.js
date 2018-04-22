@@ -1,4 +1,4 @@
-import { PropTypes, isVirtual } from "webmiddle";
+import { PropTypes } from "webmiddle";
 import cheerio from "cheerio";
 import isDomNode from "./isDomNode";
 
@@ -21,11 +21,11 @@ async function processVirtual(virtual, sourceEl, source, context) {
     el = el.filter((i, currDomEl) => condition(source(currDomEl)));
   }
 
-  return {
-    type: virtual.type,
-    attributes: {},
-    children: await processArray(virtual.children, el, source, context)
-  };
+  return context.createVirtual(
+    virtual.type,
+    {},
+    await processArray(virtual.children, el, source, context)
+  );
 }
 
 async function processArray(array, sourceEl, source, context) {
@@ -45,11 +45,7 @@ async function processObject(obj, sourceEl, source, context) {
 
   for (const prop of Object.keys(obj)) {
     const resultItem = await process(obj[prop], sourceEl, source, context);
-    result.push({
-      type: prop,
-      attributes: {},
-      children: [resultItem]
-    });
+    result.push(context.createVirtual(prop, {}, [resultItem]));
   }
 
   return result;
@@ -59,11 +55,11 @@ async function processDomNode(domNode, sourceEl, source, context) {
   let result;
 
   if (domNode.type === "tag" || domNode.type === "root") {
-    result = {
-      type: domNode.name,
-      attributes: domNode.attribs,
-      children: await processArray(domNode.children, sourceEl, source, context)
-    };
+    result = context.createVirtual(
+      domNode.name,
+      domNode.attribs,
+      await processArray(domNode.children, sourceEl, source, context)
+    );
   } else {
     result = domNode.data;
   }
@@ -90,7 +86,7 @@ async function process(value, sourceEl, source, context) {
     result = null;
   }
 
-  if (isVirtual(result)) {
+  if (context.isVirtual(result)) {
     // virtual type is not a function,
     // otherwise it would have been evaluated
     result = await processVirtual(result, sourceEl, source, context);
@@ -144,11 +140,7 @@ async function CheerioToVirtual(
     );
   }
 
-  const target = {
-    type: "root",
-    attributes: {},
-    children: targetChildren
-  };
+  const target = context.createVirtual("root", {}, targetChildren);
 
   return context.createResource(
     name,

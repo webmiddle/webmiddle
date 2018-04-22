@@ -1,4 +1,4 @@
-import { PropTypes, isVirtual } from "webmiddle";
+import { PropTypes } from "webmiddle";
 import JSONSelect from "JSONSelect";
 
 // Note: virtual.type must be a string
@@ -20,11 +20,11 @@ async function processVirtual(virtual, sourceEl, source, context) {
     el = el.filter(condition);
   }
 
-  return {
-    type: virtual.type,
-    attributes: {},
-    children: await processArray(virtual.children, el, source, context)
-  };
+  return context.createVirtual(
+    virtual.type,
+    {},
+    await processArray(virtual.children, el, source, context)
+  );
 }
 
 async function processArray(array, sourceEl, source, context) {
@@ -44,11 +44,7 @@ async function processObject(obj, sourceEl, source, context) {
 
   for (const prop of Object.keys(obj)) {
     const resultItem = await process(obj[prop], sourceEl, source, context);
-    result.push({
-      type: prop,
-      attributes: {},
-      children: [resultItem]
-    });
+    result.push(context.createVirtual(prop, {}, [resultItem]));
   }
 
   return result;
@@ -69,7 +65,7 @@ async function process(value, sourceEl, source, context) {
     result = null;
   }
 
-  if (isVirtual(result)) {
+  if (context.isVirtual(result)) {
     // virtual type is not a function,
     // otherwise it would have been evaluated
     result = await processVirtual(result, sourceEl, source, context);
@@ -104,11 +100,7 @@ async function JSONSelectToVirtual(
     targetChildren = await processArray(children, [source], source, context);
   }
 
-  const target = {
-    type: "root",
-    attributes: {},
-    children: targetChildren
-  };
+  const target = context.createVirtual("root", {}, targetChildren);
 
   return context.createResource(
     name,

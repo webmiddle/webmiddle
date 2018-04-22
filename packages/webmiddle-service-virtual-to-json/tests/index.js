@@ -11,108 +11,32 @@ const virtualResource = rootContext.createResource(
     children: [
       [
         [
-          {
-            type: "id",
-            attributes: {},
-            children: ["978-0641723445"]
-          },
-          {
-            type: "cat",
-            attributes: {},
-            children: [["book", "hardcover"]]
-          },
-          {
-            type: "name",
-            attributes: {},
-            children: ["The Lightning Thief"]
-          },
-          {
-            type: "author",
-            attributes: {},
-            children: ["Rick Riordan"]
-          },
-          {
-            type: "series_t",
-            attributes: {},
-            children: ["Percy Jackson and the Olympians"]
-          },
-          {
-            type: "sequence_i",
-            attributes: {},
-            children: [1]
-          },
-          {
-            type: "genre_s",
-            attributes: {},
-            children: ["fantasy"]
-          },
-          {
-            type: "inStock",
-            attributes: {},
-            children: [true]
-          },
-          {
-            type: "price",
-            attributes: {},
-            children: [12.5]
-          },
-          {
-            type: "pages_i",
-            attributes: {},
-            children: [384]
-          }
+          rootContext.createVirtual("id", {}, ["978-0641723445"]),
+          rootContext.createVirtual("cat", {}, [["book", "hardcover"]]),
+          rootContext.createVirtual("name", {}, ["The Lightning Thief"]),
+          rootContext.createVirtual("author", {}, ["Rick Riordan"]),
+          rootContext.createVirtual("series_t", {}, [
+            "Percy Jackson and the Olympians"
+          ]),
+          rootContext.createVirtual("sequence_i", {}, [1]),
+          rootContext.createVirtual("genre_s", {}, ["fantasy"]),
+          rootContext.createVirtual("inStock", {}, [true]),
+          rootContext.createVirtual("price", {}, [12.5]),
+          rootContext.createVirtual("pages_i", {}, [384])
         ],
         [
-          {
-            type: "id",
-            attributes: {},
-            children: ["978-1423103349"]
-          },
-          {
-            type: "cat",
-            attributes: {},
-            children: [["book", "paperback"]]
-          },
-          {
-            type: "name",
-            attributes: {},
-            children: ["The Sea of Monsters"]
-          },
-          {
-            type: "author",
-            attributes: {},
-            children: ["Rick Riordan"]
-          },
-          {
-            type: "series_t",
-            attributes: {},
-            children: ["Percy Jackson and the Olympians"]
-          },
-          {
-            type: "sequence_i",
-            attributes: {},
-            children: [2]
-          },
-          {
-            type: "genre_s",
-            attributes: {},
-            children: ["fantasy"]
-          },
-          {
-            type: "inStock",
-            attributes: {},
-            children: [true]
-          },
-          {
-            type: "price",
-            attributes: {},
-            children: [6.49]
-          },
-          {
-            type: "pages_i",
-            attributes: {},
-            children: [304]
-          }
+          rootContext.createVirtual("id", {}, ["978-1423103349"]),
+          rootContext.createVirtual("cat", {}, [["book", "paperback"]]),
+          rootContext.createVirtual("name", {}, ["The Sea of Monsters"]),
+          rootContext.createVirtual("author", {}, ["Rick Riordan"]),
+          rootContext.createVirtual("series_t", {}, [
+            "Percy Jackson and the Olympians"
+          ]),
+          rootContext.createVirtual("sequence_i", {}, [2]),
+          rootContext.createVirtual("genre_s", {}, ["fantasy"]),
+          rootContext.createVirtual("inStock", {}, [true]),
+          rootContext.createVirtual("price", {}, [6.49]),
+          rootContext.createVirtual("pages_i", {}, [304])
         ]
       ]
     ]
@@ -128,7 +52,7 @@ test("fullConversion", async t => {
     <VirtualToJson name="virtual" from={virtualResource} fullConversion />
   );
 
-  t.deepEqual(output.content, {
+  t.deepEqual(JSON.parse(JSON.stringify(output.content)), {
     root: [
       {
         id: "978-0641723445",

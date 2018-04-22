@@ -5,7 +5,7 @@
     }
   }], "stage-3"],
   "plugins": [
-    ["transform-react-jsx", { "pragma": "require('webmiddle').default.h" }],
+    ["transform-react-jsx", { "pragma": "(global.webmiddle || require('webmiddle').default).h" }],
     ["transform-runtime", { "polyfill": false, "regenerator": true }]
   ],
   "env": {

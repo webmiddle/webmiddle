@@ -1,4 +1,3 @@
-import isVirtual from "./isVirtual";
 import callVirtual from "./callVirtual";
 import call from "./call";
 
@@ -27,7 +26,7 @@ export default async function evaluate(context, value) {
     return evaluate(context, promiseResult);
   }
 
-  if (isVirtual(result)) {
+  if (context.isVirtual(result)) {
     context.log("evaluate virtual", result);
     let resultEvaluated = false;
     ({ result } = await call(

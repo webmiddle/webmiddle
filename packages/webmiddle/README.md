@@ -50,6 +50,21 @@ console.log(rootContext.isResource(resource)); // true
 console.log(rootContext.isResource("<html></html>")); // false
 ```
 
+### rootContext.isVirtual
+
+A function that returns `true` if the given value is a **JSX virtual element**
+
+Example:
+
+```jsx
+import { rootContext } from 'webmiddle';
+
+const Service = () => {};
+
+console.log(rootContext.isVirtual(<Service />)); // true
+console.log(rootContext.isVirtual(Service)); // false
+```
+
 ## ErrorBoundary
 
 A service used for error handling, evaluates its **only** child by wrapping it in a `try...catch` and allowing for retries and catch handling.
@@ -149,19 +164,4 @@ Multiply.propTypes = {
   a: PropTypes.number.isRequired,
   b: PropTypes.number.isRequired,
 };
-```
-
-### isVirtual
-
-A function that returns `true` if the given value is a **JSX virtual element**
-
-Example:
-
-```jsx
-import { isVirtual } from 'webmiddle';
-
-const Service = () => {};
-
-console.log(isVirtual(<Service />)); // true
-console.log(isVirtual(Service)); // false
 ```

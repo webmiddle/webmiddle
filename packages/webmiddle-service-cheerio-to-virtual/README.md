@@ -226,11 +226,9 @@ async function processObject(obj, sourceEl, source, context) {
     const resultItem = await process(
       obj[prop], sourceEl, source, context
     );
-    result.push({
-      type: prop,
-      attributes: {},
-      children: [resultItem],
-    });
+    result.push(
+      context.createVirtual(prop, {}, [resultItem])
+    );
   }
 
   return result;

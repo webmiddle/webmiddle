@@ -1,3 +1,8 @@
+// HACK: transpile JSX by using the src webmiddle object
+// instead that the compiled one obtained by the default require('webmiddle')
+import webmiddle from "../src/index.js";
+global.webmiddle = webmiddle;
+
 import test from "ava";
 import { rootContext, ErrorBoundary } from "../src/index";
 

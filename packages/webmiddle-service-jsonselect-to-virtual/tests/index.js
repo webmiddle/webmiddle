@@ -167,7 +167,7 @@ test("must default to null in case of evaluation exception", async t => {
     </JSONSelectToVirtual>
   );
 
-  t.deepEqual(output.content, {
+  t.deepEqual(JSON.parse(JSON.stringify(output.content)), {
     type: "root",
     attributes: {},
     children: [
@@ -187,7 +187,7 @@ test("undefined should be converted to null", async t => {
     </JSONSelectToVirtual>
   );
 
-  t.deepEqual(output.content, {
+  t.deepEqual(JSON.parse(JSON.stringify(output.content)), {
     type: "root",
     attributes: {},
     children: [
@@ -214,7 +214,7 @@ test("fullconversion", async t => {
     <JSONSelectToVirtual name="virtual" from={jsonResource} fullConversion />
   );
 
-  t.deepEqual(output.content, virtualResource);
+  t.deepEqual(JSON.parse(JSON.stringify(output.content)), virtualResource);
 });
 
 test("fullConversion: children must be ignored", async t => {
@@ -224,7 +224,7 @@ test("fullConversion: children must be ignored", async t => {
     </JSONSelectToVirtual>
   );
 
-  t.deepEqual(output.content, virtualResource);
+  t.deepEqual(JSON.parse(JSON.stringify(output.content)), virtualResource);
 });
 
 test("condition", async t => {
@@ -236,7 +236,7 @@ test("condition", async t => {
     </JSONSelectToVirtual>
   );
 
-  t.deepEqual(resource.content, {
+  t.deepEqual(JSON.parse(JSON.stringify(resource.content)), {
     type: "root",
     attributes: {},
     children: [
@@ -266,7 +266,7 @@ test("elGet", async t => {
     </JSONSelectToVirtual>
   );
 
-  t.deepEqual(resource.content, {
+  t.deepEqual(JSON.parse(JSON.stringify(resource.content)), {
     type: "root",
     attributes: {},
     children: [
@@ -286,7 +286,7 @@ test("elGet: selector", async t => {
     </JSONSelectToVirtual>
   );
 
-  t.deepEqual(resource.content, {
+  t.deepEqual(JSON.parse(JSON.stringify(resource.content)), {
     type: "root",
     attributes: {},
     children: [
@@ -311,7 +311,7 @@ test("elJoin", async t => {
     </JSONSelectToVirtual>
   );
 
-  t.deepEqual(resource.content, {
+  t.deepEqual(JSON.parse(JSON.stringify(resource.content)), {
     type: "root",
     attributes: {},
     children: [
@@ -331,7 +331,7 @@ test("elMap", async t => {
     </JSONSelectToVirtual>
   );
 
-  t.deepEqual(resource.content, {
+  t.deepEqual(JSON.parse(JSON.stringify(resource.content)), {
     type: "root",
     attributes: {},
     children: [
@@ -366,7 +366,7 @@ test("elPipe", async t => {
     </JSONSelectToVirtual>
   );
 
-  t.deepEqual(resource.content, {
+  t.deepEqual(JSON.parse(JSON.stringify(resource.content)), {
     type: "root",
     attributes: {},
     children: [

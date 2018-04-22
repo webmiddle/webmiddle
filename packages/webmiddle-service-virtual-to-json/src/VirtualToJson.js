@@ -1,4 +1,4 @@
-import { PropTypes, isVirtual } from "webmiddle";
+import { PropTypes } from "webmiddle";
 import values from "lodash.values";
 
 async function processVirtual(virtual, context) {
@@ -69,7 +69,7 @@ async function processArray(array, result = {}, context) {
 async function process(value, context) {
   let result = value;
 
-  if (isVirtual(result)) {
+  if (context.isVirtual(result)) {
     result = {
       type: "prop",
       prop: result.type,
