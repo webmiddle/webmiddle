@@ -3,10 +3,10 @@ import CheerioToVirtual from "../src/index.js";
 import { elAttr, elJoin, elMap, elPipe, elText } from "../src/helpers";
 import { rootContext } from "webmiddle";
 
-const xmlResource = {
-  name: "xmlResource",
-  contentType: "text/xml",
-  content: `
+const xmlResource = rootContext.createResource(
+  "xmlResource",
+  "text/xml",
+  `
     <bookstore>
       <book category="COOKING">
         <title lang="en">Everyday Italian</title>
@@ -22,7 +22,7 @@ const xmlResource = {
       </book>
     </bookstore>
   `
-};
+);
 
 const virtualResource = {
   type: "root",

@@ -1,4 +1,4 @@
-import { rootContext, isResource } from "webmiddle";
+import { rootContext } from "webmiddle";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
@@ -71,7 +71,7 @@ export default class Server {
                 props,
                 options
               );
-              if (isResource(output)) {
+              if (rootContext.isResource(output)) {
                 res.json(output);
               } else {
                 res.json(this._wrapInResource(output));
@@ -139,7 +139,7 @@ export default class Server {
           );
 
           let jsonOutput;
-          if (isResource(output)) {
+          if (rootContext.isResource(output)) {
             jsonOutput = output;
           } else {
             jsonOutput = this._wrapInResource(output);
@@ -173,20 +173,20 @@ export default class Server {
   // wrap the output into a resource anyway, since we always want to send json
   // (to handle things like numeric content and to simplify the client job)
   _wrapInResource(output) {
-    return {
-      name: "wrappedContent",
-      contentType: "x-webmiddle-any",
-      content: output
-    };
+    return rootContext.createResource(
+      "wrappedContent",
+      "x-webmiddle-any",
+      output
+    );
   }
 
   async _handleService(path, props, options, onMessage) {
     if (!path) {
-      return {
-        name: "services",
-        contentType: "application/json",
-        content: this._getAllServicePaths()
-      };
+      return rootContext.createResource(
+        "services",
+        "application/json",
+        this._getAllServicePaths()
+      );
     }
 
     const Service = this.serviceRoutes[path];

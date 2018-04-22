@@ -4,10 +4,10 @@ import { rootContext } from "webmiddle";
 
 const { elMap, elText } = helpers;
 
-const xmlResource = {
-  name: "xmlResource",
-  contentType: "text/xml",
-  content: `
+const xmlResource = rootContext.createResource(
+  "xmlResource",
+  "text/xml",
+  `
     <bookstore>
       <book category="COOKING">
         <title lang="en">Everyday Italian</title>
@@ -23,7 +23,7 @@ const xmlResource = {
       </book>
     </bookstore>
   `
-};
+);
 
 test("must return a json resource", async t => {
   const output = await rootContext.evaluate(

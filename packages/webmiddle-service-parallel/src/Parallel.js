@@ -31,7 +31,7 @@ async function Parallel({ name, limit, children }, context) {
   }
 
   await Promise.all(promises);
-  return { name, contentType: "application/json", content: resources };
+  return context.createResource(name, "application/json", resources);
 }
 
 Parallel.propTypes = {

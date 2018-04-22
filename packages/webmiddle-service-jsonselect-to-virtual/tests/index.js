@@ -4,10 +4,10 @@ import { rootContext } from "webmiddle";
 
 const { elGet, elJoin, elMap, elPipe } = helpers;
 
-const jsonResource = {
-  name: "jsonResource",
-  contentType: "application/json",
-  content: [
+const jsonResource = rootContext.createResource(
+  "jsonResource",
+  "application/json",
+  [
     {
       id: "978-0641723445",
       cat: ["book", "hardcover"],
@@ -33,7 +33,7 @@ const jsonResource = {
       pages_i: 304
     }
   ]
-};
+);
 
 const virtualResource = {
   type: "root",

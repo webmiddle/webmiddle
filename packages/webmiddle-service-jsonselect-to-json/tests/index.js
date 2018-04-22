@@ -2,10 +2,10 @@ import test from "ava";
 import JSONSelectToJson from "../src/index.js";
 import { rootContext } from "webmiddle";
 
-const jsonResource = {
-  name: "jsonResource",
-  contentType: "application/json",
-  content: [
+const jsonResource = rootContext.createResource(
+  "jsonResource",
+  "application/json",
+  [
     {
       id: "978-0641723445",
       cat: ["book", "hardcover"],
@@ -31,7 +31,7 @@ const jsonResource = {
       pages_i: 304
     }
   ]
-};
+);
 
 test.beforeEach(t => {
   t.context.context = rootContext;

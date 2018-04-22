@@ -10,24 +10,27 @@ export default function run(protocol) {
 
   const server = new Server(
     {
-      "math/sum": ({ a, b }) => ({
-        name: "result",
-        contentType: "text/plain",
-        // without Number() a + b would be a string concatenation in GET requests!
-        content: String(Number(a) + Number(b))
-      }),
+      "math/sum": ({ a, b }) =>
+        rootContext.createResource(
+          "result",
+          "text/plain",
+          // without Number() a + b would be a string concatenation in GET requests!
+          String(Number(a) + Number(b))
+        ),
 
-      "math/multiply": ({ a, b }) => ({
-        name: "result",
-        contentType: "text/plain",
-        content: String(Number(a) * Number(b))
-      }),
+      "math/multiply": ({ a, b }) =>
+        rootContext.createResource(
+          "result",
+          "text/plain",
+          String(Number(a) * Number(b))
+        ),
 
-      "math/divide": ({ a, b }) => ({
-        name: "result",
-        contentType: "text/plain",
-        content: String(Number(a) / Number(b))
-      }),
+      "math/divide": ({ a, b }) =>
+        rootContext.createResource(
+          "result",
+          "text/plain",
+          String(Number(a) / Number(b))
+        ),
 
       returnOption: ({ optionName }, context) => context.options[optionName]
     },

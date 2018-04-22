@@ -1,6 +1,7 @@
 import EventEmitter from "events";
 import CookieManager from "webmiddle-manager-cookie";
 import evaluate from "./evaluate";
+import { createResource, isResource } from "./resource";
 
 // Note: this should be called AFTER the context has been pushed
 // to the parent children array
@@ -35,13 +36,14 @@ export default function createContext(...args) {
   }
 
   const callState = [];
-  return {
+  const context = {
     _isContext: true,
     _callState: callState,
     parent: null,
     children: [],
     path: "",
     emitter: new EventEmitter(),
+    resources: [],
 
     cookieManager: new CookieManager(),
     extend(options) {
@@ -50,9 +52,17 @@ export default function createContext(...args) {
     evaluate(value) {
       return evaluate(this, value);
     },
+    createResource(...args) {
+      return createResource(this, ...args);
+    },
+    isResource(...args) {
+      return isResource(...args);
+    },
     log(...args) {
       if (this.options.verbose) console.log(...args);
     },
     options
   };
+  context.rootContext = context;
+  return context;
 }

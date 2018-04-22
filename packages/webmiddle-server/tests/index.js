@@ -3,6 +3,7 @@ import WebSocket from "ws";
 import uuid from "uuid";
 import test from "ava";
 import Server from "../src";
+import { rootContext } from "webmiddle";
 
 const PORT = 3000;
 
@@ -68,24 +69,27 @@ function requestWebsocket(path, body = {}, onProgress) {
 
 const server = new Server(
   {
-    "math/sum": ({ a, b }) => ({
-      name: "result",
-      contentType: "text/plain",
-      // without Number() a + b would be a string concatenation in GET requests!
-      content: String(Number(a) + Number(b))
-    }),
+    "math/sum": ({ a, b }) =>
+      rootContext.createResource(
+        "result",
+        "text/plain",
+        // without Number() a + b would be a string concatenation in GET requests!
+        String(Number(a) + Number(b))
+      ),
 
-    "math/multiply": ({ a, b }) => ({
-      name: "result",
-      contentType: "text/plain",
-      content: String(Number(a) * Number(b))
-    }),
+    "math/multiply": ({ a, b }) =>
+      rootContext.createResource(
+        "result",
+        "text/plain",
+        String(Number(a) * Number(b))
+      ),
 
-    "math/divide": ({ a, b }) => ({
-      name: "result",
-      contentType: "text/plain",
-      content: String(Number(a) / Number(b))
-    }),
+    "math/divide": ({ a, b }) =>
+      rootContext.createResource(
+        "result",
+        "text/plain",
+        String(Number(a) / Number(b))
+      ),
 
     returnOption: ({ optionName }, context) => context.options[optionName]
   },
@@ -98,11 +102,9 @@ server.start();
 
 test("Execute service via GET", async t => {
   const resource = await requestExpress("GET", "/services/math/sum?a=5&b=10");
-  t.deepEqual(resource, {
-    name: "result",
-    contentType: "text/plain",
-    content: "15"
-  });
+  t.is(resource.name, "result");
+  t.is(resource.contentType, "text/plain");
+  t.is(resource.content, "15");
 });
 
 test("Execute service via POST", async t => {
@@ -112,11 +114,9 @@ test("Execute service via POST", async t => {
       b: 5
     }
   });
-  t.deepEqual(resource, {
-    name: "result",
-    contentType: "text/plain",
-    content: "100"
-  });
+  t.is(resource.name, "result");
+  t.is(resource.contentType, "text/plain");
+  t.is(resource.content, "100");
 });
 
 test("Execute service via WEBSOCKET", async t => {
@@ -126,11 +126,9 @@ test("Execute service via WEBSOCKET", async t => {
       b: 5
     }
   });
-  t.deepEqual(resource, {
-    name: "result",
-    contentType: "text/plain",
-    content: "100"
-  });
+  t.is(resource.name, "result");
+  t.is(resource.contentType, "text/plain");
+  t.is(resource.content, "100");
 });
 
 test("Must throw when executing a non existing service via GET", async t => {
@@ -221,18 +219,25 @@ test("Get progress when executing a service via WEBSOCKET", async t => {
 
 test("Get service paths", async t => {
   const resource = await requestExpress("GET", "/services/");
-  t.deepEqual(resource, {
-    name: "services",
-    contentType: "application/json",
-    content: ["math/sum", "math/multiply", "math/divide", "returnOption"]
-  });
+
+  t.is(resource.name, "services");
+  t.is(resource.contentType, "application/json");
+  t.deepEqual(resource.content, [
+    "math/sum",
+    "math/multiply",
+    "math/divide",
+    "returnOption"
+  ]);
 });
 
 test("Get service paths via WEBSOCKET", async t => {
   const resource = await requestWebsocket("/services/");
-  t.deepEqual(resource, {
-    name: "services",
-    contentType: "application/json",
-    content: ["math/sum", "math/multiply", "math/divide", "returnOption"]
-  });
+  t.is(resource.name, "services");
+  t.is(resource.contentType, "application/json");
+  t.deepEqual(resource.content, [
+    "math/sum",
+    "math/multiply",
+    "math/divide",
+    "returnOption"
+  ]);
 });

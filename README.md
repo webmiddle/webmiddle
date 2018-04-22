@@ -79,12 +79,13 @@ See [webmiddle-starter-app](https://github.com/webmiddle/webmiddle-starter-app) 
 
 ## Resource
 
-A resource is just a JSON object with the format `{ name, contentType, content }`.
+A resource is an object with the format `{ id, name, contentType, content }`.
 
 Example:
 
 ```json
 {
+  "id": "0",
   "name": "result",
   "contentType": "text/plain",
   "content": "Hello!"
@@ -109,6 +110,7 @@ Will return a resource like the following
 
 ```json
 {
+  "id": "0",
   "name": "hackernews",
   "contentType": "application/json",
   "content": {
@@ -155,11 +157,11 @@ import { rootContext } from "webmiddle";
 
 // service returning a text resource
 // with the value of the requested context option
-const ReturnOption = ({ optionName }, context) => ({
-  name: "result",
-  contentType: "text/plain",
-  content: context.options[optionName],
-});
+const ReturnOption = ({ optionName }, context) => context.createResource(
+  "result",
+  "text/plain",
+  context.options[optionName],
+);
 
 rootContext.extend({
   apiKey: "s3cr3t"
@@ -179,14 +181,15 @@ Services can be turned into REST APIs by using the `webmiddle-server` package, a
 Suppose you have the following services:
 
 ```javascript
-const textResource = (content, name = "result") => ({
+import { rootContext } from "webmiddle";
+
+const textResource = (content, name = "result") => rootContext.createResource(
   name,
-  contentType: "text/plain",
-  content:
-    typeof content !== "undefined" && content !== null
-      ? String(content)
-      : content
-});
+  "text/plain",
+  typeof content !== "undefined" && content !== null
+    ? String(content)
+    : content
+);
 
 const Multiply = ({ a, b }) => textResource(a * b);
 const Divide = ({ a, b }) => textResource(a / b);

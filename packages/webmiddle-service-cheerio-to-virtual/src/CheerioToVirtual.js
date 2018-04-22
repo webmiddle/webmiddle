@@ -150,11 +150,11 @@ async function CheerioToVirtual(
     children: targetChildren
   };
 
-  return {
+  return context.createResource(
     name,
-    contentType: "application/x-webmiddle-virtual",
-    content: target
-  };
+    "application/x-webmiddle-virtual",
+    target
+  );
 }
 
 CheerioToVirtual.propTypes = {

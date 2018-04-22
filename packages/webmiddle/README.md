@@ -35,6 +35,21 @@ rootContext.evaluate(...);
 firstChildContext.evaluate(...);
 ```
 
+### rootContext.isResource
+
+A function that returns `true` if the given value is a `resource`.
+
+Example:
+
+```jsx
+import { rootContext } from 'webmiddle';
+
+const resource = rootContext.createResource("rawHtml", "text/html", "<html></html>");
+console.log(rootContext.isResource(resource)); // true
+
+console.log(rootContext.isResource("<html></html>")); // false
+```
+
 ## ErrorBoundary
 
 A service used for error handling, evaluates its **only** child by wrapping it in a `try...catch` and allowing for retries and catch handling.
@@ -46,11 +61,11 @@ Example:
 ```jsx
 import { rootContext, ErrorBoundary } from 'webmiddle';
 
-const FallbackService = () => ({
-  name: "result",
-  contentType: "text/plain",
-  content: "fallback"
-});
+const FallbackService = (props, context) => context.createResource(
+  "result",
+  "text/plain",
+  "fallback"
+);
 
 const ThrowService = () => throw new Error('expected fail');
 
@@ -87,11 +102,11 @@ A service that evaluates its **only** child by extending the current context wit
 ```jsx
 import { rootContext, WithOptions } from 'webmiddle';
 
-const ReturnOption = ({ optionName }, context) => ({
-  name: "result",
-  contentType: "text/plain",
-  content: context.options[optionName],
-});
+const ReturnOption = ({ optionName }, context) => context.createResource(
+  "result",
+  "text/plain",
+  context.options[optionName],
+);
 
 const Service = () => (
   <WithOptions foo="bar">
@@ -124,11 +139,11 @@ Example:
 ```jsx
 import { PropTypes } from 'webmiddle';
 
-const Multiply = ({ a, b }) => ({
-  name: 'result',
-  contentType: 'text/plain',
-  content: String(a * b)
-});
+const Multiply = ({ a, b }, context) => context.createResource(
+  'result',
+  'text/plain',
+  String(a * b)
+);
 
 Multiply.propTypes = {
   a: PropTypes.number.isRequired,
@@ -149,22 +164,4 @@ const Service = () => {};
 
 console.log(isVirtual(<Service />)); // true
 console.log(isVirtual(Service)); // false
-```
-
-## isResource
-
-A function that returns `true` if the given value is a `resource`.
-
-Example:
-
-```jsx
-import { isResource } from 'webmiddle';
-
-console.log(isResource({
-  name: "rawHtml",
-  contentType: "text/html",
-  content: "<html></html>"
-})); // true
-
-console.log(isResource("<html></html>")); // false
 ```

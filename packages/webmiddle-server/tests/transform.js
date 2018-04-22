@@ -1,5 +1,6 @@
 import test from "ava";
 import { transformValue, transformCallStateInfo } from "../src/utils/transform";
+import { rootContext } from "webmiddle";
 
 test("number", async t => {
   t.deepEqual(transformValue(10), {
@@ -304,102 +305,86 @@ test("virtual (recursion = 2, depth = 2)", async t => {
 });
 
 test("resource (recursion = 0, depth = 1)", async t => {
-  t.deepEqual(
-    transformValue(
-      {
-        name: "result",
-        contentType: "application/json",
-        content: { a: 0, b: 1 }
-      },
-      0
-    ),
-    {
-      type: "resource",
-      value: {
-        name: "result",
-        contentType: "application/json",
-        content: {
-          type: "object",
-          value: undefined
-        }
+  const resource = rootContext.createResource("result", "application/json", {
+    a: 0,
+    b: 1
+  });
+
+  t.deepEqual(transformValue(resource, 0), {
+    type: "resource",
+    value: {
+      id: resource.id,
+      name: resource.name,
+      contentType: resource.contentType,
+      content: {
+        type: "object",
+        value: undefined
       }
     }
-  );
+  });
 });
 
 test("resource (recursion = 1, depth = 1)", async t => {
+  const resource = rootContext.createResource("result", "application/json", {
+    a: 0,
+    b: 1
+  });
+
   // same as recursion = 0
-  t.deepEqual(
-    transformValue(
-      {
-        name: "result",
-        contentType: "application/json",
-        content: { a: 0, b: 1 }
-      },
-      1
-    ),
-    {
-      type: "resource",
-      value: {
-        name: "result",
-        contentType: "application/json",
-        content: {
-          type: "object",
-          value: undefined
-        }
+  t.deepEqual(transformValue(resource, 1), {
+    type: "resource",
+    value: {
+      id: resource.id,
+      name: resource.name,
+      contentType: resource.contentType,
+      content: {
+        type: "object",
+        value: undefined
       }
     }
-  );
+  });
 });
 
 test("resource (recursion = 1, depth = 2)", async t => {
+  const resource = rootContext.createResource("result", "application/json", {
+    a: 0,
+    b: { c: 1 }
+  });
+
   // same as depth = 1
-  t.deepEqual(
-    transformValue(
-      {
-        name: "result",
-        contentType: "application/json",
-        content: { a: 0, b: { c: 1 } }
-      },
-      1
-    ),
-    {
-      type: "resource",
-      value: {
-        name: "result",
-        contentType: "application/json",
-        content: {
-          type: "object",
-          value: undefined
-        }
+  t.deepEqual(transformValue(resource, 1), {
+    type: "resource",
+    value: {
+      id: resource.id,
+      name: resource.name,
+      contentType: resource.contentType,
+      content: {
+        type: "object",
+        value: undefined
       }
     }
-  );
+  });
 });
 
 test("resource (recursion = 2, depth = 2)", async t => {
+  const resource = rootContext.createResource("result", "application/json", {
+    a: 0,
+    b: { c: 1 }
+  });
+
   // same as recursion = 1
-  t.deepEqual(
-    transformValue(
-      {
-        name: "result",
-        contentType: "application/json",
-        content: { a: 0, b: { c: 1 } }
-      },
-      1
-    ),
-    {
-      type: "resource",
-      value: {
-        name: "result",
-        contentType: "application/json",
-        content: {
-          type: "object",
-          value: undefined
-        }
+  t.deepEqual(transformValue(resource, 1), {
+    type: "resource",
+    value: {
+      id: resource.id,
+      name: resource.name,
+      contentType: resource.contentType,
+      content: {
+        type: "object",
+        value: undefined
       }
     }
-  );
+  });
 });
 
 test("callStateInfo: virtual", async t => {

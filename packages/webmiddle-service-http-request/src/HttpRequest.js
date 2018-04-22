@@ -94,14 +94,15 @@ function HttpRequest(
                   response.statusCode <= 299
                 ) {
                   contentType = contentType || response.headers["content-type"];
-                  resolve({
-                    name,
-                    contentType,
-                    content:
+                  resolve(
+                    context.createResource(
+                      name,
+                      contentType,
                       contentType === "application/json"
                         ? JSON.parse(content)
                         : content
-                  });
+                    )
+                  );
                 } else {
                   reject(
                     new HttpError(

@@ -36,13 +36,9 @@ test("main", async t => {
 
   const Service = () => {
     serviceExecuted = true;
-    return {
-      name: "resource",
-      contentType: "text/plain",
-      content: {
-        foo: "bar"
-      }
-    };
+    return t.context.context.createResource("resource", "text/plain", {
+      foo: "bar"
+    });
   };
 
   serviceExecuted = false;

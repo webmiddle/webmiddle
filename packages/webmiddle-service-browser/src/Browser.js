@@ -271,11 +271,7 @@ async function Browser(
             content = JSON.parse(content);
           }
 
-          return {
-            name,
-            contentType,
-            content
-          };
+          return context.createResource(name, contentType, content);
         } finally {
           if (page) {
             page.removeListener("response", onResponse);

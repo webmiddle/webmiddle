@@ -2,10 +2,10 @@ import test from "ava";
 import VirtualToJson from "../src/index.js";
 import { rootContext } from "webmiddle";
 
-const virtualResource = {
-  name: "virtualResource",
-  contentType: "application/x-webmiddle-virtual",
-  content: {
+const virtualResource = rootContext.createResource(
+  "virtualResource",
+  "application/x-webmiddle-virtual",
+  {
     type: "root",
     attributes: {},
     children: [
@@ -117,7 +117,7 @@ const virtualResource = {
       ]
     ]
   }
-};
+);
 
 test.beforeEach(t => {
   t.context.context = rootContext;

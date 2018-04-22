@@ -95,11 +95,7 @@ async function VirtualToJson({ name, from }, context) {
 
   const target = await processVirtual(source, context);
 
-  return {
-    name,
-    contentType: "application/json",
-    content: target
-  };
+  return context.createResource(name, "application/json", target);
 }
 
 VirtualToJson.propTypes = {

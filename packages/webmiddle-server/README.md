@@ -14,15 +14,15 @@ Given some routes that map paths to services, create a server listening on port 
 
 ```jsx
 import Server from "webmiddle-server";
+import { rootContext } from "webmiddle";
 
-const textResource = (content, name = "result") => ({
+const textResource = (content, name = "result") => rootContext.createResource(
   name,
-  contentType: "text/plain",
-  content:
-    typeof content !== "undefined" && content !== null
-      ? String(content)
-      : content
-});
+  "text/plain",
+  typeof content !== "undefined" && content !== null
+    ? String(content)
+    : content
+);
 
 const server = new Server({
   "math/multiply": ({ a, b }) => textResource(a * b),

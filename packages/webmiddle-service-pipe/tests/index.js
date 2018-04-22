@@ -7,16 +7,14 @@ test.beforeEach(t => {
 });
 
 test("main", async t => {
-  const FirstService = () => ({
-    name: "firstResource",
-    contentType: "text/plain",
-    content: "10"
-  });
-  const SecondService = ({ num }) => ({
-    name: "secondResource",
-    contentType: "text/plain",
-    content: (num * 10).toString()
-  });
+  const FirstService = () =>
+    t.context.context.createResource("firstResource", "text/plain", "10");
+  const SecondService = ({ num }) =>
+    t.context.context.createResource(
+      "secondResource",
+      "text/plain",
+      (num * 10).toString()
+    );
 
   const output = await t.context.context.evaluate(
     <Pipe>

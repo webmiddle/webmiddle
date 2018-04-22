@@ -11,32 +11,26 @@ test("main", async t => {
     <ArrayMap
       name="resources"
       array={[1, 2]}
-      callback={(num, index) => ({
-        name: `resource ${index}`,
-        contentType: "text/plain",
-        content: `${num} ${index}`
-      })}
+      callback={(num, index) =>
+        rootContext.createResource(
+          `resource ${index}`,
+          "text/plain",
+          `${num} ${index}`
+        )
+      }
     />
   );
 
   t.is(output.name, "resources", "name");
   t.is(output.contentType, "application/json", "contentType");
-  t.deepEqual(
-    output.content,
-    [
-      {
-        name: "resource 0",
-        contentType: "text/plain",
-        content: "1 0"
-      },
-      {
-        name: "resource 1",
-        contentType: "text/plain",
-        content: "2 1"
-      }
-    ],
-    "content"
-  );
+
+  t.is(output.content[0].name, "resource 0");
+  t.is(output.content[0].contentType, "text/plain");
+  t.is(output.content[0].content, "1 0");
+
+  t.is(output.content[1].name, "resource 1");
+  t.is(output.content[1].contentType, "text/plain");
+  t.is(output.content[1].content, "2 1");
 });
 
 test("expect resource", async t => {
@@ -57,7 +51,7 @@ test("limit", async t => {
   let current = 0;
   let overLimit = false;
 
-  const Service = () => {
+  const Service = (props, context) => {
     current++;
     //console.log('exec', current);
     if (current > limit) {
@@ -67,11 +61,7 @@ test("limit", async t => {
       setTimeout(() => {
         current--;
         //console.log('done', current);
-        resolve({
-          name: "whatever",
-          contentType: "text/plain",
-          content: "whatever"
-        });
+        resolve(context.createResource("whatever", "text/plain", "whatever"));
       }, 100);
     });
   };

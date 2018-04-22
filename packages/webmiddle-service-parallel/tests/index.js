@@ -21,11 +21,9 @@ test("main", async t => {
       firstStart = Date.now();
       setTimeout(() => {
         firstEnd = Date.now();
-        resolve({
-          name: "firstResource",
-          contentType: "text/plain",
-          content: "1"
-        });
+        resolve(
+          t.context.context.createResource("firstResource", "text/plain", "1")
+        );
       }, 100);
     });
   const SecondService = () =>
@@ -33,11 +31,9 @@ test("main", async t => {
       secondStart = Date.now();
       setTimeout(() => {
         secondEnd = Date.now();
-        resolve({
-          name: "secondResource",
-          contentType: "text/plain",
-          content: "2"
-        });
+        resolve(
+          t.context.context.createResource("secondResource", "text/plain", "2")
+        );
       }, 100);
     });
 
@@ -50,22 +46,14 @@ test("main", async t => {
 
   t.is(output.name, "resources", "name");
   t.is(output.contentType, "application/json", "contentType");
-  t.deepEqual(
-    output.content,
-    {
-      firstResource: {
-        name: "firstResource",
-        contentType: "text/plain",
-        content: "1"
-      },
-      secondResource: {
-        name: "secondResource",
-        contentType: "text/plain",
-        content: "2"
-      }
-    },
-    "content"
-  );
+
+  t.is(output.content.firstResource.name, "firstResource");
+  t.is(output.content.firstResource.contentType, "text/plain");
+  t.is(output.content.firstResource.content, "1");
+
+  t.is(output.content.secondResource.name, "secondResource");
+  t.is(output.content.secondResource.contentType, "text/plain");
+  t.is(output.content.secondResource.content, "2");
 
   t.true(
     firstStart < secondEnd && secondStart < firstEnd,
@@ -103,11 +91,9 @@ test("limit", async t => {
       setTimeout(() => {
         current--;
         //console.log('done', current);
-        resolve({
-          name: "whatever",
-          contentType: "text/plain",
-          content: "whatever"
-        });
+        resolve(
+          t.context.context.createResource("whatever", "text/plain", "whatever")
+        );
       }, 100);
     });
   };

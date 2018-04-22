@@ -1,10 +1,5 @@
 import test from "ava";
-import {
-  isResource,
-  isVirtual,
-  rootContext,
-  WithOptions
-} from "../src/index.js";
+import { isVirtual, rootContext, WithOptions } from "../src/index.js";
 import callVirtual from "../src/utils/callVirtual";
 
 test.beforeEach(t => {
@@ -33,7 +28,16 @@ test("isVirtual -> true", t => {
 
 test("isResource -> true", t => {
   t.true(
-    isResource({
+    t.context.context.isResource(
+      t.context.context.createResource("some", "text/html", "<div></div>")
+    )
+  );
+});
+
+test("isResource -> false (plain object)", t => {
+  t.false(
+    t.context.context.isResource({
+      id: "0",
       name: "some",
       contentType: "text/html",
       content: "<div></div>"
@@ -127,11 +131,8 @@ test("callVirtual: service must be called correctly", async t => {
 
 test("callVirtual: resource overrides", async t => {
   // bottom to parent
-  const Service = async () => ({
-    name: "some",
-    contentType: "text/html",
-    content: "<div></div>"
-  });
+  const Service = async () =>
+    t.context.context.createResource("some", "text/html", "<div></div>");
   const TopService = () => <Service name="rawtext" contentType="text/plain" />;
 
   const output = await t.context.context.evaluate(<TopService name="other" />);

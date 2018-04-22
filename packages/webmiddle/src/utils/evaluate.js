@@ -1,5 +1,4 @@
 import isVirtual from "./isVirtual";
-import isResource from "./isResource";
 import callVirtual from "./callVirtual";
 import call from "./call";
 
@@ -44,7 +43,7 @@ export default async function evaluate(context, value) {
 
         if (virtualResult !== result) {
           result = await evaluate(context, virtualResult);
-          if (isResource(result)) {
+          if (context.isResource(result)) {
             // resource overrides by top virtual
             ["name", "contentType"].forEach(p => {
               if (typeof topVirtual.attributes[p] !== "undefined") {
@@ -67,7 +66,7 @@ export default async function evaluate(context, value) {
     if (resultEvaluated) return result;
   }
 
-  if (!isResource(result) && context.options.expectResource) {
+  if (!context.isResource(result) && context.options.expectResource) {
     throw new Error(
       `Expected a resource from ${JSON.stringify(value)}, got ${JSON.stringify(
         result
