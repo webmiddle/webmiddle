@@ -4,7 +4,7 @@ import webmiddle from "../src/index.js";
 global.webmiddle = webmiddle;
 
 import test from "ava";
-import { rootContext, WithOptions } from "../src/index.js";
+import { rootContext, isResource, WithOptions } from "../src/index.js";
 import callVirtual from "../src/utils/callVirtual";
 
 test.beforeEach(t => {
@@ -41,7 +41,7 @@ test("isVirtual -> false (plain object)", t => {
 
 test("isResource -> true", t => {
   t.true(
-    t.context.context.isResource(
+    isResource(
       t.context.context.createResource("some", "text/html", "<div></div>")
     )
   );
@@ -49,7 +49,7 @@ test("isResource -> true", t => {
 
 test("isResource -> false (plain object)", t => {
   t.false(
-    t.context.context.isResource({
+    isResource({
       id: "0",
       name: "some",
       contentType: "text/html",

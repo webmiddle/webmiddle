@@ -1,5 +1,6 @@
 import callVirtual from "./callVirtual";
 import call from "./call";
+import { isResource } from "./resource";
 
 // check if target is the actual NaN value:
 // NaN is the only value that is not equal to itself.
@@ -42,7 +43,7 @@ export default async function evaluate(context, value) {
 
         if (virtualResult !== result) {
           result = await evaluate(context, virtualResult);
-          if (context.isResource(result)) {
+          if (isResource(result)) {
             // resource overrides by top virtual
             ["name", "contentType"].forEach(p => {
               if (typeof topVirtual.attributes[p] !== "undefined") {
@@ -65,7 +66,7 @@ export default async function evaluate(context, value) {
     if (resultEvaluated) return result;
   }
 
-  if (!context.isResource(result) && context.options.expectResource) {
+  if (!isResource(result) && context.options.expectResource) {
     throw new Error(
       `Expected a resource from ${JSON.stringify(value)}, got ${JSON.stringify(
         result

@@ -1,7 +1,7 @@
 import EventEmitter from "events";
 import CookieManager from "webmiddle-manager-cookie";
 import evaluate from "./evaluate";
-import { createResource, isResource } from "./resource";
+import { createResource } from "./resource";
 import { createVirtual, isVirtual } from "./virtual";
 
 // Note: this should be called AFTER the context has been pushed
@@ -55,9 +55,6 @@ export default function createContext(...args) {
     },
     createResource(...args) {
       return createResource(this, ...args);
-    },
-    isResource(...args) {
-      return isResource(...args);
     },
     createVirtual(...args) {
       return createVirtual(this, ...args);

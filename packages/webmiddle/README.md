@@ -35,19 +35,19 @@ rootContext.evaluate(...);
 firstChildContext.evaluate(...);
 ```
 
-### rootContext.isResource
+### isResource
 
 A function that returns `true` if the given value is a `resource`.
 
 Example:
 
 ```jsx
-import { rootContext } from 'webmiddle';
+import { rootContext, isResource } from 'webmiddle';
 
 const resource = rootContext.createResource("rawHtml", "text/html", "<html></html>");
-console.log(rootContext.isResource(resource)); // true
+console.log(isResource(resource)); // true
 
-console.log(rootContext.isResource("<html></html>")); // false
+console.log(isResource("<html></html>")); // false
 ```
 
 ### rootContext.isVirtual

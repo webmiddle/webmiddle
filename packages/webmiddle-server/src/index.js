@@ -1,4 +1,4 @@
-import { rootContext } from "webmiddle";
+import { rootContext, isResource } from "webmiddle";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
@@ -71,7 +71,7 @@ export default class Server {
                 props,
                 options
               );
-              if (rootContext.isResource(output)) {
+              if (isResource(output)) {
                 res.json(output);
               } else {
                 res.json(this._wrapInResource(output));
@@ -139,7 +139,7 @@ export default class Server {
           );
 
           let jsonOutput;
-          if (rootContext.isResource(output)) {
+          if (isResource(output)) {
             jsonOutput = output;
           } else {
             jsonOutput = this._wrapInResource(output);
