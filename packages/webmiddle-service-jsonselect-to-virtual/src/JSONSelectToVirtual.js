@@ -1,4 +1,4 @@
-import { PropTypes } from "webmiddle";
+import { PropTypes, isVirtual } from "webmiddle";
 import JSONSelect from "JSONSelect";
 
 // Note: virtual.type must be a string
@@ -65,7 +65,7 @@ async function process(value, sourceEl, source, context) {
     result = null;
   }
 
-  if (context.isVirtual(result)) {
+  if (isVirtual(result)) {
     // virtual type is not a function,
     // otherwise it would have been evaluated
     result = await processVirtual(result, sourceEl, source, context);

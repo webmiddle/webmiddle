@@ -4,7 +4,12 @@ import webmiddle from "../src/index.js";
 global.webmiddle = webmiddle;
 
 import test from "ava";
-import { rootContext, isResource, WithOptions } from "../src/index.js";
+import {
+  rootContext,
+  isResource,
+  isVirtual,
+  WithOptions
+} from "../src/index.js";
 import callVirtual from "../src/utils/callVirtual";
 
 test.beforeEach(t => {
@@ -18,20 +23,16 @@ test("h -> isVirtual", t => {
     </some>
   );
 
-  t.true(t.context.context.isVirtual(virtual));
+  t.true(isVirtual(virtual));
 });
 
 test("isVirtual -> true", t => {
-  t.true(
-    t.context.context.isVirtual(
-      t.context.context.createVirtual("element", {}, [])
-    )
-  );
+  t.true(isVirtual(t.context.context.createVirtual("element", {}, [])));
 });
 
 test("isVirtual -> false (plain object)", t => {
   t.false(
-    t.context.context.isVirtual({
+    isVirtual({
       type: "element",
       attributes: {},
       children: []

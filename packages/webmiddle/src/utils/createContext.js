@@ -2,7 +2,7 @@ import EventEmitter from "events";
 import CookieManager from "webmiddle-manager-cookie";
 import evaluate from "./evaluate";
 import { createResource } from "./resource";
-import { createVirtual, isVirtual } from "./virtual";
+import { createVirtual } from "./virtual";
 
 // Note: this should be called AFTER the context has been pushed
 // to the parent children array
@@ -58,9 +58,6 @@ export default function createContext(...args) {
     },
     createVirtual(...args) {
       return createVirtual(this, ...args);
-    },
-    isVirtual(...args) {
-      return isVirtual(...args);
     },
     log(...args) {
       if (this.options.verbose) console.log(...args);

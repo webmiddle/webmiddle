@@ -1,6 +1,7 @@
 import callVirtual from "./callVirtual";
 import call from "./call";
 import { isResource } from "./resource";
+import { isVirtual } from "./virtual";
 
 // check if target is the actual NaN value:
 // NaN is the only value that is not equal to itself.
@@ -27,7 +28,7 @@ export default async function evaluate(context, value) {
     return evaluate(context, promiseResult);
   }
 
-  if (context.isVirtual(result)) {
+  if (isVirtual(result)) {
     context.log("evaluate virtual", result);
     let resultEvaluated = false;
     ({ result } = await call(

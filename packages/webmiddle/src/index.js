@@ -2,11 +2,13 @@ import virtualElement from "virtual-element";
 import PropTypes from "proptypes";
 import createContext from "./utils/createContext";
 import { isResource } from "./utils/resource";
+import { isVirtual } from "./utils/virtual";
 import WithOptions from "./utils/WithOptions";
 import ErrorBoundary from "./utils/ErrorBoundary";
 
 export { PropTypes };
 export { isResource };
+export { isVirtual };
 export { WithOptions };
 export { ErrorBoundary };
 

@@ -1,5 +1,5 @@
 import mapValues from "lodash/mapValues";
-import { rootContext, isResource } from "webmiddle";
+import { isResource, isVirtual } from "webmiddle";
 
 const DEFAULT_RECURSION = 1;
 
@@ -66,7 +66,7 @@ function transformPlainObject(obj, recursion = DEFAULT_RECURSION) {
 }
 
 export function transformValue(value, recursion = DEFAULT_RECURSION) {
-  if (rootContext.isVirtual(value)) return transformVirtual(value, recursion);
+  if (isVirtual(value)) return transformVirtual(value, recursion);
   if (isResource(value)) return transformResource(value, recursion);
   if (typeof value === "function") return transformFunction(value, recursion);
   if (Array.isArray(value)) return transformArray(value, recursion);
