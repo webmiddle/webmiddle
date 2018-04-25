@@ -11,7 +11,7 @@ npm install --save webmiddle-service-virtual-to-json
 ## Usage
 
 ```jsx
-import { PropTypes, rootContext } from 'webmiddle';
+import { PropTypes, rootContext, isResource } from 'webmiddle';
 import VirtualToJson from 'webmiddle-service-virtual-to-json';
 
 const virtual = { /*...*/ }; // given an existing virtual resource
@@ -25,6 +25,7 @@ const MyService = () => (
 
 rootContext.evaluate(<MyService />)
 .then(resource => {
+  console.log(isResource(resource)); // true
   console.log(resource.contentType); // "application/json"
 });
 ```

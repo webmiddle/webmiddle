@@ -13,7 +13,7 @@ npm install --save webmiddle-service-cheerio-to-virtual
 ## Usage
 
 ```jsx
-import { PropTypes, rootContext } from 'webmiddle';
+import { PropTypes, rootContext, isResource } from 'webmiddle';
 import Pipe from 'webmiddle-service-pipe';
 import HttpRequest from 'webmiddle-service-http-request';
 import CheerioToVirtual, { helpers } from 'webmiddle-service-cheerio-to-virtual';
@@ -49,6 +49,7 @@ const MyService = ({ query }) => (
 
 rootContext.evaluate(<MyService query="javascript" />)
 .then(resource => {
+  console.log(isResource(resource)); // true
   console.log(resource.contentType); // "application/x-webmiddle-virtual"
   console.log(resource.content); // { type, attributes, children }
 });

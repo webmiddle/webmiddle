@@ -9,8 +9,9 @@ async function Resume({ savePath, children }, context) {
   if (!filename.endsWith(".json")) filename += ".json";
 
   if (await fileExists(filename)) {
-    const data = await readFile(filename);
-    return JSON.parse(data);
+    const fileContent = await readFile(filename);
+    const data = JSON.parse(fileContent);
+    return context.createResource(data.name, data.contentType, data.content);
   }
   // not exists
   const resource = await context

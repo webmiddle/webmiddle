@@ -132,6 +132,7 @@ test("callVirtual: service must be called correctly", async t => {
   );
 
   const output = await callVirtual(t.context.context, virtual);
+
   t.deepEqual(
     output.result.args,
     {
@@ -140,6 +141,7 @@ test("callVirtual: service must be called correctly", async t => {
     "attributes"
   );
 
+  t.true(isVirtual(output.result.children[0]));
   t.is(output.result.children[0].type, "element", "children");
 });
 
@@ -151,6 +153,7 @@ test("callVirtual: resource overrides", async t => {
 
   const output = await t.context.context.evaluate(<TopService name="other" />);
 
+  t.true(isResource(output));
   t.is(output.name, "other", "name");
   t.is(output.contentType, "text/plain", "contentType");
   t.is(output.content, "<div></div>", "content");

@@ -1,6 +1,6 @@
 import test from "ava";
 import JSONSelectToJson from "../src/index.js";
-import { rootContext } from "webmiddle";
+import { rootContext, isResource } from "webmiddle";
 
 const jsonResource = rootContext.createResource(
   "jsonResource",
@@ -44,6 +44,7 @@ test("must return a json resource", async t => {
     </JSONSelectToJson>
   );
 
+  t.true(isResource(output));
   t.is(output.name, "virtual", "name");
   t.is(output.contentType, "application/json", "contentType");
 

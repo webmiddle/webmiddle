@@ -1,6 +1,6 @@
 import test from "ava";
 import CheerioToJson, { helpers } from "../src/index.js";
-import { rootContext } from "webmiddle";
+import { rootContext, isResource } from "webmiddle";
 
 const { elMap, elText } = helpers;
 
@@ -34,6 +34,7 @@ test("must return a json resource", async t => {
     </CheerioToJson>
   );
 
+  t.true(isResource(output));
   t.is(output.name, "virtual", "name");
   t.is(output.contentType, "application/json", "contentType");
 

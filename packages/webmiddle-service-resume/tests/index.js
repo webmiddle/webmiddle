@@ -1,6 +1,6 @@
 import test from "ava";
 import Resume from "../src/index.js";
-import { rootContext } from "webmiddle";
+import { rootContext, isResource } from "webmiddle";
 import path from "path";
 import fs from "fs";
 
@@ -49,6 +49,7 @@ test("main", async t => {
   );
 
   t.is(serviceExecuted, true, "service executed the first time");
+  t.true(isResource(output));
   t.is(output.name, "resource", "name");
   t.is(output.contentType, "text/plain", "contentType");
   t.deepEqual(
@@ -67,6 +68,7 @@ test("main", async t => {
   );
 
   t.is(serviceExecuted, false, "service resumed the second time");
+  t.true(isResource(secondOutput));
   t.is(secondOutput.name, "resource", "name");
   t.is(secondOutput.contentType, "text/plain", "contentType");
   t.deepEqual(

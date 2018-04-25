@@ -11,7 +11,7 @@ npm install --save webmiddle-service-jsonselect-to-virtual
 ## Usage
 
 ```jsx
-import { PropTypes, rootContext } from 'webmiddle';
+import { PropTypes, rootContext, isResource } from 'webmiddle';
 import Pipe from 'webmiddle-service-pipe';
 import HttpRequest from 'webmiddle-service-http-request';
 import JSONSelectToVirtual, { helpers } from 'webmiddle-service-jsonselect-to-virtual';
@@ -68,6 +68,7 @@ rootContext.evaluate(
     pageNumber={0}
   />
 ).then(resource => {
+  console.log(isResource(output)); // true
   console.log(resource.contentType); // "application/x-webmiddle-virtual"
   console.log(resource.content); // { type, attributes, children }
 });

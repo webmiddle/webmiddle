@@ -1,6 +1,6 @@
 import test from "ava";
 import Pipe from "../src/index.js";
-import { rootContext } from "webmiddle";
+import { rootContext, isResource } from "webmiddle";
 
 test.beforeEach(t => {
   t.context.context = rootContext;
@@ -29,6 +29,7 @@ test("main", async t => {
     </Pipe>
   );
 
+  t.true(isResource(output));
   t.is(output.name, "secondResource", "must return the last resource");
   t.is(output.content, "100", "must pipe resources through listed services");
 });

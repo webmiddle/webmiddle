@@ -1,6 +1,6 @@
 import test from "ava";
 import Browser from "../src/index.js";
-import { rootContext } from "webmiddle";
+import { rootContext, isResource } from "webmiddle";
 
 test.beforeEach(t => {
   t.context.context = rootContext.extend({
@@ -22,6 +22,7 @@ test("GET https page", async t => {
     />
   );
 
+  t.true(isResource(output));
   const json = output.content;
   t.deepEqual(json.args, {
     number: number.toString(), // NOTE: type is lost with query data
@@ -36,6 +37,7 @@ test("GET xml document (infer resource contentType)", async t => {
     <Browser name="virtual" method="GET" url={`https://httpbin.org/xml`} />
   );
 
+  t.true(isResource(output));
   t.is(output.contentType, "application/xml");
 });
 
@@ -52,6 +54,7 @@ test("GET non-html document: should ignore waitFor", async t => {
     />
   );
 
+  t.true(isResource(output));
   t.is(output.contentType, "application/xml");
 });
 
@@ -70,6 +73,7 @@ test("POST https page: form data as string (no content type header)", async t =>
     />
   );
 
+  t.true(isResource(output));
   const json = output.content;
   t.deepEqual(json.form, {
     number: number.toString(), // NOTE: type is lost with form data
@@ -92,6 +96,7 @@ test("POST https page: form data as string (no content type header, case insensi
     />
   );
 
+  t.true(isResource(output));
   const json = output.content;
   t.deepEqual(json.form, {
     number: number.toString(), // NOTE: type is lost with form data
@@ -115,6 +120,7 @@ test("POST https page: form data as object (no content type header)", async t =>
     />
   );
 
+  t.true(isResource(output));
   const json = output.content;
   t.deepEqual(json.form, {
     number: number.toString(), // NOTE: type is lost with form data
@@ -141,6 +147,7 @@ test("POST https page: form data as object (with content type header)", async t 
     />
   );
 
+  t.true(isResource(output));
   const json = output.content;
   t.deepEqual(json.form, {
     number: number.toString(), // NOTE: type is lost with form data
@@ -167,6 +174,7 @@ test("POST https page: json data as string", async t => {
     />
   );
 
+  t.true(isResource(output));
   const json = output.content;
   t.deepEqual(json.json, {
     number,
@@ -193,6 +201,7 @@ test("POST https page: json data as string (case insensitive headers)", async t 
     />
   );
 
+  t.true(isResource(output));
   const json = output.content;
   t.deepEqual(json.json, {
     number,
@@ -219,6 +228,7 @@ test("POST https page: json data as object", async t => {
     />
   );
 
+  t.true(isResource(output));
   const json = output.content;
   t.deepEqual(json.json, {
     number,
@@ -242,6 +252,7 @@ test("httpHeaders", async t => {
   // Note: uppercase letters inside a word are converted to lowercase by the server
   // e.g: My-CuStoM => My-Custom
 
+  t.true(isResource(output));
   const json = output.content;
   t.is(json.headers["My-Custom-Webmiddle-Header"], "Browser service test");
 });
@@ -313,6 +324,7 @@ test("cookies: read from jar", async t => {
     />
   );
 
+  t.true(isResource(output));
   const json = output.content;
   t.deepEqual(json.cookies.b1, String(v1));
   t.deepEqual(json.cookies.b2, String(v2));

@@ -1,6 +1,6 @@
 import test from "ava";
 import JSONSelectToVirtual, { helpers } from "../src/index.js";
-import { rootContext } from "webmiddle";
+import { rootContext, isResource, isVirtual } from "webmiddle";
 
 const { elGet, elJoin, elMap, elPipe } = helpers;
 
@@ -35,118 +35,46 @@ const jsonResource = rootContext.createResource(
   ]
 );
 
-const virtualResource = {
-  type: "root",
-  attributes: {},
-  children: [
-    [
+const virtualResource = rootContext.createResource(
+  "virtualResource",
+  "x-webmiddle-virtual",
+  {
+    type: "root",
+    attributes: {},
+    children: [
       [
-        {
-          type: "id",
-          attributes: {},
-          children: ["978-0641723445"]
-        },
-        {
-          type: "cat",
-          attributes: {},
-          children: [["book", "hardcover"]]
-        },
-        {
-          type: "name",
-          attributes: {},
-          children: ["The Lightning Thief"]
-        },
-        {
-          type: "author",
-          attributes: {},
-          children: ["Rick Riordan"]
-        },
-        {
-          type: "series_t",
-          attributes: {},
-          children: ["Percy Jackson and the Olympians"]
-        },
-        {
-          type: "sequence_i",
-          attributes: {},
-          children: [1]
-        },
-        {
-          type: "genre_s",
-          attributes: {},
-          children: ["fantasy"]
-        },
-        {
-          type: "inStock",
-          attributes: {},
-          children: [true]
-        },
-        {
-          type: "price",
-          attributes: {},
-          children: [12.5]
-        },
-        {
-          type: "pages_i",
-          attributes: {},
-          children: [384]
-        }
-      ],
-      [
-        {
-          type: "id",
-          attributes: {},
-          children: ["978-1423103349"]
-        },
-        {
-          type: "cat",
-          attributes: {},
-          children: [["book", "paperback"]]
-        },
-        {
-          type: "name",
-          attributes: {},
-          children: ["The Sea of Monsters"]
-        },
-        {
-          type: "author",
-          attributes: {},
-          children: ["Rick Riordan"]
-        },
-        {
-          type: "series_t",
-          attributes: {},
-          children: ["Percy Jackson and the Olympians"]
-        },
-        {
-          type: "sequence_i",
-          attributes: {},
-          children: [2]
-        },
-        {
-          type: "genre_s",
-          attributes: {},
-          children: ["fantasy"]
-        },
-        {
-          type: "inStock",
-          attributes: {},
-          children: [true]
-        },
-        {
-          type: "price",
-          attributes: {},
-          children: [6.49]
-        },
-        {
-          type: "pages_i",
-          attributes: {},
-          children: [304]
-        }
+        [
+          rootContext.createVirtual("id", {}, ["978-0641723445"]),
+          rootContext.createVirtual("cat", {}, [["book", "hardcover"]]),
+          rootContext.createVirtual("name", {}, ["The Lightning Thief"]),
+          rootContext.createVirtual("author", {}, ["Rick Riordan"]),
+          rootContext.createVirtual("series_t", {}, [
+            "Percy Jackson and the Olympians"
+          ]),
+          rootContext.createVirtual("sequence_i", {}, [1]),
+          rootContext.createVirtual("genre_s", {}, ["fantasy"]),
+          rootContext.createVirtual("inStock", {}, [true]),
+          rootContext.createVirtual("price", {}, [12.5]),
+          rootContext.createVirtual("pages_i", {}, [384])
+        ],
+        [
+          rootContext.createVirtual("id", {}, ["978-1423103349"]),
+          rootContext.createVirtual("cat", {}, [["book", "paperback"]]),
+          rootContext.createVirtual("name", {}, ["The Sea of Monsters"]),
+          rootContext.createVirtual("author", {}, ["Rick Riordan"]),
+          rootContext.createVirtual("series_t", {}, [
+            "Percy Jackson and the Olympians"
+          ]),
+          rootContext.createVirtual("sequence_i", {}, [2]),
+          rootContext.createVirtual("genre_s", {}, ["fantasy"]),
+          rootContext.createVirtual("inStock", {}, [true]),
+          rootContext.createVirtual("price", {}, [6.49]),
+          rootContext.createVirtual("pages_i", {}, [304])
+        ]
       ]
     ]
-  ]
-};
+  }
+);
 
 test.beforeEach(t => {
   t.context.context = rootContext;
@@ -167,6 +95,9 @@ test("must default to null in case of evaluation exception", async t => {
     </JSONSelectToVirtual>
   );
 
+  t.true(isResource(output));
+  t.true(isVirtual(output.content));
+  t.true(isVirtual(output.content.children[0]));
   t.deepEqual(JSON.parse(JSON.stringify(output.content)), {
     type: "root",
     attributes: {},
@@ -187,6 +118,9 @@ test("undefined should be converted to null", async t => {
     </JSONSelectToVirtual>
   );
 
+  t.true(isResource(output));
+  t.true(isVirtual(output.content));
+  t.true(isVirtual(output.content.children[0]));
   t.deepEqual(JSON.parse(JSON.stringify(output.content)), {
     type: "root",
     attributes: {},
@@ -205,8 +139,10 @@ test("must return a virtual resource", async t => {
     <JSONSelectToVirtual name="virtual" from={jsonResource} fullConversion />
   );
 
+  t.true(isResource(output));
   t.is(output.name, "virtual", "name");
   t.is(output.contentType, "application/x-webmiddle-virtual", "contentType");
+  t.true(isVirtual(output.content));
 });
 
 test("fullconversion", async t => {
@@ -214,7 +150,12 @@ test("fullconversion", async t => {
     <JSONSelectToVirtual name="virtual" from={jsonResource} fullConversion />
   );
 
-  t.deepEqual(JSON.parse(JSON.stringify(output.content)), virtualResource);
+  t.true(isResource(output));
+  t.true(isVirtual(output.content));
+  t.deepEqual(
+    JSON.parse(JSON.stringify(output.content)),
+    JSON.parse(JSON.stringify(virtualResource.content))
+  );
 });
 
 test("fullConversion: children must be ignored", async t => {
@@ -224,7 +165,12 @@ test("fullConversion: children must be ignored", async t => {
     </JSONSelectToVirtual>
   );
 
-  t.deepEqual(JSON.parse(JSON.stringify(output.content)), virtualResource);
+  t.true(isResource(output));
+  t.true(isVirtual(output.content));
+  t.deepEqual(
+    JSON.parse(JSON.stringify(output.content)),
+    JSON.parse(JSON.stringify(virtualResource.content))
+  );
 });
 
 test("condition", async t => {
@@ -236,6 +182,9 @@ test("condition", async t => {
     </JSONSelectToVirtual>
   );
 
+  t.true(isResource(resource));
+  t.true(isVirtual(resource.content));
+  t.true(isVirtual(resource.content.children[0]));
   t.deepEqual(JSON.parse(JSON.stringify(resource.content)), {
     type: "root",
     attributes: {},
@@ -266,6 +215,9 @@ test("elGet", async t => {
     </JSONSelectToVirtual>
   );
 
+  t.true(isResource(resource));
+  t.true(isVirtual(resource.content));
+  t.true(isVirtual(resource.content.children[0]));
   t.deepEqual(JSON.parse(JSON.stringify(resource.content)), {
     type: "root",
     attributes: {},
@@ -286,6 +238,9 @@ test("elGet: selector", async t => {
     </JSONSelectToVirtual>
   );
 
+  t.true(isResource(resource));
+  t.true(isVirtual(resource.content));
+  t.true(isVirtual(resource.content.children[0]));
   t.deepEqual(JSON.parse(JSON.stringify(resource.content)), {
     type: "root",
     attributes: {},
@@ -311,6 +266,9 @@ test("elJoin", async t => {
     </JSONSelectToVirtual>
   );
 
+  t.true(isResource(resource));
+  t.true(isVirtual(resource.content));
+  t.true(isVirtual(resource.content.children[0]));
   t.deepEqual(JSON.parse(JSON.stringify(resource.content)), {
     type: "root",
     attributes: {},
@@ -331,6 +289,9 @@ test("elMap", async t => {
     </JSONSelectToVirtual>
   );
 
+  t.true(isResource(resource));
+  t.true(isVirtual(resource.content));
+  t.true(isVirtual(resource.content.children[0]));
   t.deepEqual(JSON.parse(JSON.stringify(resource.content)), {
     type: "root",
     attributes: {},
@@ -366,6 +327,9 @@ test("elPipe", async t => {
     </JSONSelectToVirtual>
   );
 
+  t.true(isResource(resource));
+  t.true(isVirtual(resource.content));
+  t.true(isVirtual(resource.content.children[0]));
   t.deepEqual(JSON.parse(JSON.stringify(resource.content)), {
     type: "root",
     attributes: {},

@@ -1,6 +1,6 @@
 import test from "ava";
 import ArrayMap from "../src/index.js";
-import { rootContext } from "webmiddle";
+import { rootContext, isResource } from "webmiddle";
 
 function range(num) {
   return [...Array(num).keys()];
@@ -21,13 +21,16 @@ test("main", async t => {
     />
   );
 
+  t.true(isResource(output));
   t.is(output.name, "resources", "name");
   t.is(output.contentType, "application/json", "contentType");
 
+  t.true(isResource(output.content[0]));
   t.is(output.content[0].name, "resource 0");
   t.is(output.content[0].contentType, "text/plain");
   t.is(output.content[0].content, "1 0");
 
+  t.true(isResource(output.content[1]));
   t.is(output.content[1].name, "resource 1");
   t.is(output.content[1].contentType, "text/plain");
   t.is(output.content[1].content, "2 1");

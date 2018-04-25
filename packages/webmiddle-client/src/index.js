@@ -81,8 +81,8 @@ export default class Client {
   async requestServicePaths() {
     if (!this.requestServicePathsPromise) {
       this.requestServicePathsPromise = Promise.resolve().then(async () => {
-        const jsonResource = await this.requestServer("/services/");
-        return jsonResource.content;
+        const responseBody = await this.requestServer("/services/");
+        return responseBody.content;
       });
     }
     return this.requestServicePathsPromise;
@@ -91,11 +91,17 @@ export default class Client {
   service(path) {
     if (!this.services[path]) {
       const httpPath = path;
-      const Service = (props, context) =>
-        this.requestServer(`/services/${httpPath}`, {
+      const Service = async (props, context) => {
+        const responseBody = await this.requestServer(`/services/${httpPath}`, {
           props,
           options: context.options
         });
+        return context.createResource(
+          responseBody.name,
+          responseBody.contentType,
+          responseBody.content
+        );
+      };
       this.services[path] = Service;
     }
     return this.services[path];

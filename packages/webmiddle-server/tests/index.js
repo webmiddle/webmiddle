@@ -3,7 +3,7 @@ import WebSocket from "ws";
 import uuid from "uuid";
 import test from "ava";
 import Server from "../src";
-import { rootContext } from "webmiddle";
+import { rootContext, isResource } from "webmiddle";
 
 const PORT = 3000;
 
@@ -102,6 +102,8 @@ server.start();
 
 test("Execute service via GET", async t => {
   const resource = await requestExpress("GET", "/services/math/sum?a=5&b=10");
+
+  t.false(isResource(resource)); // not an actual Resource object
   t.is(resource.name, "result");
   t.is(resource.contentType, "text/plain");
   t.is(resource.content, "15");
@@ -114,6 +116,8 @@ test("Execute service via POST", async t => {
       b: 5
     }
   });
+
+  t.false(isResource(resource)); // not an actual Resource object
   t.is(resource.name, "result");
   t.is(resource.contentType, "text/plain");
   t.is(resource.content, "100");
@@ -126,6 +130,8 @@ test("Execute service via WEBSOCKET", async t => {
       b: 5
     }
   });
+
+  t.false(isResource(resource)); // not an actual Resource object
   t.is(resource.name, "result");
   t.is(resource.contentType, "text/plain");
   t.is(resource.content, "100");
@@ -151,6 +157,8 @@ test("Default context options via POST", async t => {
       optionName: "base"
     }
   });
+
+  t.false(isResource(resource)); // not an actual Resource object
   t.is(resource.contentType, "x-webmiddle-any");
   t.is(resource.content, "default option");
 });
@@ -161,6 +169,8 @@ test("Default context options via WEBSOCKET", async t => {
       optionName: "base"
     }
   });
+
+  t.false(isResource(resource)); // not an actual Resource object
   t.is(resource.contentType, "x-webmiddle-any");
   t.is(resource.content, "default option");
 });
@@ -174,6 +184,8 @@ test("Pass context options to service via POST", async t => {
       custom: 5
     }
   });
+
+  t.false(isResource(resource)); // not an actual Resource object
   t.is(resource.contentType, "x-webmiddle-any");
   t.is(resource.content, 5);
 });
@@ -187,6 +199,8 @@ test("Pass context options to service via WEBSOCKET", async t => {
       custom: 5
     }
   });
+
+  t.false(isResource(resource)); // not an actual Resource object
   t.is(resource.contentType, "x-webmiddle-any");
   t.is(resource.content, 5);
 });
@@ -220,6 +234,7 @@ test("Get progress when executing a service via WEBSOCKET", async t => {
 test("Get service paths", async t => {
   const resource = await requestExpress("GET", "/services/");
 
+  t.false(isResource(resource)); // not an actual Resource object
   t.is(resource.name, "services");
   t.is(resource.contentType, "application/json");
   t.deepEqual(resource.content, [
@@ -232,6 +247,8 @@ test("Get service paths", async t => {
 
 test("Get service paths via WEBSOCKET", async t => {
   const resource = await requestWebsocket("/services/");
+
+  t.false(isResource(resource)); // not an actual Resource object
   t.is(resource.name, "services");
   t.is(resource.contentType, "application/json");
   t.deepEqual(resource.content, [

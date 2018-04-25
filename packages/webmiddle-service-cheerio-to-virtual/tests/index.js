@@ -1,7 +1,7 @@
 import test from "ava";
 import CheerioToVirtual from "../src/index.js";
 import { elAttr, elJoin, elMap, elPipe, elText } from "../src/helpers";
-import { rootContext } from "webmiddle";
+import { rootContext, isResource, isVirtual } from "webmiddle";
 
 const xmlResource = rootContext.createResource(
   "xmlResource",
@@ -24,99 +24,67 @@ const xmlResource = rootContext.createResource(
   `
 );
 
-const virtualResource = {
-  type: "root",
-  attributes: {},
-  children: [
-    {
-      type: "root",
-      attributes: {},
-      children: [
-        "\n    ",
-        {
-          type: "bookstore",
-          attributes: {},
-          children: [
-            "\n      ",
-            {
-              type: "book",
-              attributes: {
-                category: "COOKING"
+const virtualResource = rootContext.createResource(
+  "virtualResource",
+  "x-webmiddle-virtual",
+  rootContext.createVirtual("root", {}, [
+    rootContext.createVirtual("root", {}, [
+      "\n    ",
+      rootContext.createVirtual("bookstore", {}, [
+        "\n      ",
+        rootContext.createVirtual(
+          "book",
+          {
+            category: "COOKING"
+          },
+          [
+            "\n        ",
+            rootContext.createVirtual(
+              "title",
+              {
+                lang: "en"
               },
-              children: [
-                "\n        ",
-                {
-                  type: "title",
-                  attributes: {
-                    lang: "en"
-                  },
-                  children: ["Everyday Italian"]
-                },
-                "\n        ",
-                {
-                  type: "author",
-                  attributes: {},
-                  children: ["Giada De Laurentiis"]
-                },
-                "\n        ",
-                {
-                  type: "year",
-                  attributes: {},
-                  children: ["2005"]
-                },
-                "\n        ",
-                {
-                  type: "price",
-                  attributes: {},
-                  children: ["30.00"]
-                },
-                "\n      "
-              ]
-            },
-            "\n      ",
-            {
-              type: "book",
-              attributes: {
-                category: "CHILDREN"
-              },
-              children: [
-                "\n        ",
-                {
-                  type: "title",
-                  attributes: {
-                    lang: "en"
-                  },
-                  children: ["Harry Potter"]
-                },
-                "\n        ",
-                {
-                  type: "author",
-                  attributes: {},
-                  children: ["J K. Rowling"]
-                },
-                "\n        ",
-                {
-                  type: "year",
-                  attributes: {},
-                  children: ["2005"]
-                },
-                "\n        ",
-                {
-                  type: "price",
-                  attributes: {},
-                  children: ["29.99"]
-                },
-                "\n      "
-              ]
-            },
-            "\n    "
+              ["Everyday Italian"]
+            ),
+            "\n        ",
+            rootContext.createVirtual("author", {}, ["Giada De Laurentiis"]),
+            "\n        ",
+            rootContext.createVirtual("year", {}, ["2005"]),
+            "\n        ",
+            rootContext.createVirtual("price", {}, ["30.00"]),
+            "\n      "
           ]
-        },
-        "\n  "
-      ]
-    }
-  ]
-};
+        ),
+        "\n      ",
+        rootContext.createVirtual(
+          "book",
+          {
+            category: "CHILDREN"
+          },
+          [
+            "\n        ",
+            rootContext.createVirtual(
+              "title",
+              {
+                lang: "en"
+              },
+              ["Harry Potter"]
+            ),
+            "\n        ",
+            rootContext.createVirtual("author", {}, ["J K. Rowling"]),
+            "\n        ",
+            rootContext.createVirtual("year", {}, ["2005"]),
+            "\n        ",
+            rootContext.createVirtual("price", {}, ["29.99"]),
+            "\n      "
+          ]
+        ),
+        "\n    "
+      ]),
+      "\n  "
+    ])
+  ])
+);
 
 test("must throw if neither fullConversion and children are specified", async t => {
   await t.throws(
@@ -129,8 +97,10 @@ test("must return virtual resource", async t => {
     <CheerioToVirtual name="virtual" from={xmlResource} fullConversion />
   );
 
+  t.true(isResource(output));
   t.is(output.name, "virtual", "name");
   t.is(output.contentType, "application/x-webmiddle-virtual", "contentType");
+  t.true(isVirtual(output.content));
 });
 
 test("must default to null in case of evaluation exception", async t => {
@@ -144,6 +114,9 @@ test("must default to null in case of evaluation exception", async t => {
     </CheerioToVirtual>
   );
 
+  t.true(isResource(output));
+  t.true(isVirtual(output.content));
+  t.true(isVirtual(output.content.children[0]));
   t.deepEqual(JSON.parse(JSON.stringify(output.content)), {
     type: "root",
     attributes: {},
@@ -164,6 +137,9 @@ test("undefined should be converted to null", async t => {
     </CheerioToVirtual>
   );
 
+  t.true(isResource(output));
+  t.true(isVirtual(output.content));
+  t.true(isVirtual(output.content.children[0]));
   t.deepEqual(JSON.parse(JSON.stringify(output.content)), {
     type: "root",
     attributes: {},
@@ -194,6 +170,10 @@ test("condition", async t => {
     </CheerioToVirtual>
   );
 
+  t.true(isResource(output));
+  t.true(isVirtual(output.content));
+  t.true(isVirtual(output.content.children[0]));
+  t.true(isVirtual(output.content.children[0].children[0]));
   t.deepEqual(JSON.parse(JSON.stringify(output.content)), {
     type: "root",
     attributes: {},
@@ -232,6 +212,9 @@ test("helpers: elMap + elAttr", async t => {
     </CheerioToVirtual>
   );
 
+  t.true(isResource(output));
+  t.true(isVirtual(output.content));
+  t.true(isVirtual(output.content.children[0]));
   t.deepEqual(JSON.parse(JSON.stringify(output.content)), {
     type: "root",
     attributes: {},
@@ -271,6 +254,9 @@ test("helpers: elPipe + elMap + elText + elJoin", async t => {
     </CheerioToVirtual>
   );
 
+  t.true(isResource(output));
+  t.true(isVirtual(output.content));
+  t.true(isVirtual(output.content.children[0]));
   t.deepEqual(JSON.parse(JSON.stringify(output.content)), {
     type: "root",
     attributes: {},
@@ -302,7 +288,12 @@ test("fullconversion", async t => {
     <CheerioToVirtual name="virtual" from={xmlResource} fullConversion />
   );
 
-  t.deepEqual(JSON.parse(JSON.stringify(output.content)), virtualResource);
+  t.true(isResource(output));
+  t.true(isVirtual(output.content));
+  t.deepEqual(
+    JSON.parse(JSON.stringify(output.content)),
+    JSON.parse(JSON.stringify(virtualResource.content))
+  );
 });
 
 test("fullConversion: children must be ignored", async t => {
@@ -312,5 +303,10 @@ test("fullConversion: children must be ignored", async t => {
     </CheerioToVirtual>
   );
 
-  t.deepEqual(JSON.parse(JSON.stringify(output.content)), virtualResource);
+  t.true(isResource(output));
+  t.true(isVirtual(output.content));
+  t.deepEqual(
+    JSON.parse(JSON.stringify(output.content)),
+    JSON.parse(JSON.stringify(virtualResource.content))
+  );
 });

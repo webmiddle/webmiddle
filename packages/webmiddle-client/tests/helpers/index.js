@@ -1,5 +1,5 @@
 import test from "ava";
-import { rootContext } from "webmiddle";
+import { rootContext, isResource } from "webmiddle";
 import Server from "webmiddle-server";
 import Client from "../../src";
 
@@ -64,9 +64,12 @@ export default function run(protocol) {
 
     const resource = await rootContext
       .extend({
-        networkRetries: 2
+        networkRetries: 2,
+        expectResource: true
       })
       .evaluate(<Sum a={10} b={20} />);
+
+    t.true(isResource(resource));
     t.is(resource.contentType, "text/plain");
     t.is(resource.content, "30");
   });
@@ -77,10 +80,12 @@ export default function run(protocol) {
     const resource = await rootContext
       .extend({
         networkRetries: 2,
+        expectResource: false, // the content is wrapped into a Resource later by the service (TODO: change this?)
         whatever: "you got it!"
       })
       .evaluate(<ReturnOption optionName="whatever" />);
 
+    t.true(isResource(resource));
     t.is(resource.contentType, "x-webmiddle-any");
     t.is(resource.content, "you got it!");
   });
@@ -90,10 +95,12 @@ export default function run(protocol) {
 
     const resource = await rootContext
       .extend({
-        networkRetries: 2
+        networkRetries: 2,
+        expectResource: false // the content is wrapped into a Resource later by the service (TODO: change this?)
       })
       .evaluate(<ReturnOption optionName="base" />);
 
+    t.true(isResource(resource));
     t.is(resource.contentType, "x-webmiddle-any");
     t.is(resource.content, "default option");
   });

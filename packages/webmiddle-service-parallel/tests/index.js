@@ -1,6 +1,6 @@
 import test from "ava";
 import Parallel from "../src/index.js";
-import { rootContext } from "webmiddle";
+import { rootContext, isResource } from "webmiddle";
 
 function range(num) {
   return [...Array(num).keys()];
@@ -44,13 +44,16 @@ test("main", async t => {
     </Parallel>
   );
 
+  t.true(isResource(output));
   t.is(output.name, "resources", "name");
   t.is(output.contentType, "application/json", "contentType");
 
+  t.true(isResource(output.content.firstResource));
   t.is(output.content.firstResource.name, "firstResource");
   t.is(output.content.firstResource.contentType, "text/plain");
   t.is(output.content.firstResource.content, "1");
 
+  t.true(isResource(output.content.secondResource));
   t.is(output.content.secondResource.name, "secondResource");
   t.is(output.content.secondResource.contentType, "text/plain");
   t.is(output.content.secondResource.content, "2");
