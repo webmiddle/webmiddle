@@ -59,6 +59,51 @@ test("isResource -> false (plain object)", t => {
   );
 });
 
+test("createVirtual: created virtual must have given fields", t => {
+  const virtual = t.context.context.createVirtual("some", { foo: "bar" }, [
+    "other"
+  ]);
+
+  t.is(virtual.type, "some");
+  t.deepEqual(virtual.attributes, { foo: "bar" });
+  t.deepEqual(virtual.children, ["other"]);
+});
+
+test("createResource: created resource must have given fields", t => {
+  const resource = t.context.context.createResource(
+    "some",
+    "text/html",
+    "<div></div>"
+  );
+  t.is(resource.name, "some");
+  t.is(resource.contentType, "text/html");
+  t.is(resource.content, "<div></div>");
+});
+
+test("createResource: created resource must have an id", t => {
+  const resource = t.context.context.createResource(
+    "some",
+    "text/html",
+    "<div></div>"
+  );
+  t.truthy(resource.id);
+});
+
+test("createResource: must add the resource to the resources array", t => {
+  const resource = t.context.context.createResource(
+    "some",
+    "text/html",
+    "<div></div>"
+  );
+  t.truthy(
+    t.context.context.resources.find(aResource => aResource.id === resource.id)
+  );
+});
+
+test("context: resources array must be shared among contexts", t => {
+  t.is(t.context.context.extend().resources, t.context.context.resources);
+});
+
 test("context extend: options", t => {
   t.deepEqual(rootContext.options, {});
 
