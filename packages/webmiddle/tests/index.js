@@ -100,6 +100,160 @@ test("createResource: must add the resource to the resources array", t => {
   );
 });
 
+test("createResource: must create JsonResource when using application/json contentType", t => {
+  const resource = t.context.context.createResource(
+    "some",
+    "application/json",
+    "{}"
+  );
+
+  t.is(resource.constructor.name, "JsonResource");
+});
+
+test("createResource: must create WebmiddleTypeResource when using x-webmiddle-type contentType", t => {
+  const resource = t.context.context.createResource(
+    "some",
+    "x-webmiddle-type",
+    "{}"
+  );
+
+  t.is(resource.constructor.name, "WebmiddleTypeResource");
+});
+
+test("createResource: must create (default) Resource when using other contentType", t => {
+  const resource = t.context.context.createResource(
+    "some",
+    "nonexisting",
+    "foo"
+  );
+
+  t.is(resource.constructor.name, "Resource");
+});
+
+test("stringify and parse resource: default Resource", t => {
+  const resource = t.context.context.createResource(
+    "some",
+    "nonexisting",
+    "foo"
+  );
+
+  const stringifiedResource = t.context.context.stringifyResource(resource);
+  const parsedResource = t.context.context.parseResource(stringifiedResource);
+
+  t.true(isResource(parsedResource));
+  t.not(parsedResource.id, resource.id); // IDs must be different
+  t.is(parsedResource.name, resource.name);
+  t.is(parsedResource.contentType, resource.contentType);
+  t.is(parsedResource.content, resource.content);
+});
+
+test("stringify and parse resource: JsonResource", t => {
+  const content = {
+    foo: [
+      "some",
+      true,
+      {
+        test: "more"
+      }
+    ]
+  };
+
+  const resource = t.context.context.createResource(
+    "some",
+    "application/json",
+    content
+  );
+
+  const stringifiedResource = t.context.context.stringifyResource(resource);
+  const parsedResource = t.context.context.parseResource(stringifiedResource);
+
+  t.true(isResource(parsedResource));
+  t.not(parsedResource.id, resource.id); // IDs must be different
+  t.is(parsedResource.name, resource.name);
+  t.is(parsedResource.contentType, resource.contentType);
+  t.deepEqual(parsedResource.content, resource.content);
+});
+
+test("stringify and parse resource: WebmiddleTypeResource", t => {
+  const content = [
+    t.context.context.createResource("a", "application/json", {}),
+    t.context.context.createVirtual("b", { foo: { some: "bar" } }, [
+      {
+        foo: "some",
+        bar: "more"
+      },
+      t.context.context.createResource(
+        "d",
+        "x-webmiddle-type",
+        t.context.context.createVirtual("e", { some: "more" }, ["foo"])
+      )
+    ])
+  ];
+
+  const resource = t.context.context.createResource(
+    "some",
+    "x-webmiddle-type",
+    content
+  );
+
+  const stringifiedResource = t.context.context.stringifyResource(resource);
+  const parsedResource = t.context.context.parseResource(stringifiedResource);
+
+  t.true(isResource(parsedResource));
+  t.not(parsedResource.id, resource.id); // IDs must be different
+  t.truthy(parsedResource.id);
+  t.is(parsedResource.name, resource.name);
+  t.is(parsedResource.contentType, resource.contentType);
+
+  t.true(isResource(parsedResource.content[0]));
+  t.not(parsedResource.content[0].id, resource.content[0].id); // IDs must be different
+  t.truthy(parsedResource.content[0].id);
+  t.is(parsedResource.content[0].name, resource.content[0].name);
+  t.is(parsedResource.content[0].contentType, resource.content[0].contentType);
+  t.deepEqual(parsedResource.content[0].content, resource.content[0].content);
+
+  t.true(isVirtual(parsedResource.content[1]));
+  t.is(parsedResource.content[1].type, resource.content[1].type);
+  t.deepEqual(
+    parsedResource.content[1].attributes,
+    resource.content[1].attributes
+  );
+
+  t.deepEqual(
+    parsedResource.content[1].children[0],
+    resource.content[1].children[0]
+  );
+
+  t.true(isResource(parsedResource.content[1].children[1]));
+  t.not(
+    parsedResource.content[1].children[1].id,
+    resource.content[1].children[1].id
+  ); // IDs must be different
+  t.truthy(parsedResource.content[1].children[1].id);
+  t.is(
+    parsedResource.content[1].children[1].name,
+    resource.content[1].children[1].name
+  );
+  t.is(
+    parsedResource.content[1].children[1].contentType,
+    resource.content[1].children[1].contentType
+  );
+
+  t.true(isVirtual(parsedResource.content[1].children[1].content));
+  t.is(
+    parsedResource.content[1].children[1].content.type,
+    parsedResource.content[1].children[1].content.type
+  );
+  t.deepEqual(
+    parsedResource.content[1].children[1].content.attributes,
+    parsedResource.content[1].children[1].content.attributes
+  );
+  t.deepEqual(
+    parsedResource.content[1].children[1].content.children,
+    parsedResource.content[1].children[1].content.children
+  );
+});
+
 test("context: resources array must be shared among contexts", t => {
   t.is(t.context.context.extend().resources, t.context.context.resources);
 });
