@@ -56,7 +56,7 @@
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
-    "lodash.every": "^4.4.0"
+    "lodash.every": "^4.6.0"
   },
   "devDependencies": {
     "webmiddle": "^0.3.0"
