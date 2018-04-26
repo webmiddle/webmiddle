@@ -52,9 +52,6 @@
   "repository": "webmiddle/webmiddle",
   "license": "MIT",
   "dependencies": {
-    "lodash.find": "^4.3.0",
-    "lodash.isequal": "^4.4.0",
-    "lodash.sortby": "^4.7.0",
     "proptypes": "^1.0.0",
     "virtual-element": "^1.2.0",
     "webmiddle-manager-cookie": "^0.3.0"
