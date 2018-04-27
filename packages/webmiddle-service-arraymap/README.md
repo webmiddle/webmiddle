@@ -32,7 +32,7 @@ rootContext.evaluate(<MyService />)
 .then(resource => {
   console.log(isResource(resource)); // true
   console.log(resource.name); // "myResources" 
-  console.log(resource.contentType); // "application/json"
+  console.log(resource.contentType); // "x-webmiddle-type"
   console.log(resource.content); // [resource1, resource2, resource3]
 });
 ```

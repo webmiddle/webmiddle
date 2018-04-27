@@ -26,7 +26,7 @@ async function ArrayMap({ name, array, callback, limit }, context) {
   }
 
   await Promise.all(promises);
-  return context.createResource(name, "application/json", resources);
+  return context.createResource(name, "x-webmiddle-type", resources);
 }
 
 ArrayMap.propTypes = {

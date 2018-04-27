@@ -23,7 +23,7 @@ test("main", async t => {
 
   t.true(isResource(output));
   t.is(output.name, "resources", "name");
-  t.is(output.contentType, "application/json", "contentType");
+  t.is(output.contentType, "x-webmiddle-type", "contentType");
 
   t.true(isResource(output.content[0]));
   t.is(output.content[0].name, "resource 0");
