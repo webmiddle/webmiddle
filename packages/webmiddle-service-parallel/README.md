@@ -36,7 +36,7 @@ rootContext.evaluate(<MyService />)
 .then(resource => {
   console.log(isResource(resource)); // true
   console.log(resource.name); // "myResources" 
-  console.log(resource.contentType); // "application/json"
+  console.log(resource.contentType); // "x-webmiddle-type"
   console.log(resource.content); // { resource1, resource2, resource3 }
 });
 ```
@@ -48,7 +48,7 @@ same of Pipe.<br />
 In the other end, if the child returns a promise, then such promise will
 be added to a pool and the next child will be executed immediately.
 
-The service resolves with a JSON resource whose content is an object
+The service resolves with a `x-webmiddle-type` resource whose content is an object
 `<resource name, resource>`, where the resource names are extracted
 directly from the resources returned by the children.
 
