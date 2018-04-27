@@ -316,10 +316,7 @@ test("resource (recursion = 0, depth = 1)", async t => {
       id: resource.id,
       name: resource.name,
       contentType: resource.contentType,
-      content: {
-        type: "object",
-        value: undefined
-      }
+      content: undefined
     }
   });
 });
@@ -337,10 +334,7 @@ test("resource (recursion = 1, depth = 1)", async t => {
       id: resource.id,
       name: resource.name,
       contentType: resource.contentType,
-      content: {
-        type: "object",
-        value: undefined
-      }
+      content: undefined
     }
   });
 });
@@ -358,10 +352,7 @@ test("resource (recursion = 1, depth = 2)", async t => {
       id: resource.id,
       name: resource.name,
       contentType: resource.contentType,
-      content: {
-        type: "object",
-        value: undefined
-      }
+      content: undefined
     }
   });
 });
@@ -379,10 +370,7 @@ test("resource (recursion = 2, depth = 2)", async t => {
       id: resource.id,
       name: resource.name,
       contentType: resource.contentType,
-      content: {
-        type: "object",
-        value: undefined
-      }
+      content: undefined
     }
   });
 });

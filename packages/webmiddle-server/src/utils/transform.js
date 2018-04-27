@@ -23,7 +23,7 @@ function transformResource(resource, recursion = DEFAULT_RECURSION) {
     id: resource.id,
     name: resource.name,
     contentType: resource.contentType,
-    content: transformValue(resource.content, 0) // always omit content
+    content: undefined // always omit content
   };
 
   return {
