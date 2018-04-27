@@ -10,8 +10,7 @@ async function Resume({ savePath, children }, context) {
 
   if (await fileExists(filename)) {
     const fileContent = await readFile(filename);
-    const data = JSON.parse(fileContent);
-    return context.createResource(data.name, data.contentType, data.content);
+    return context.parseResource(fileContent);
   }
   // not exists
   const resource = await context
@@ -19,7 +18,7 @@ async function Resume({ savePath, children }, context) {
       expectResource: true
     })
     .evaluate(<Pipe>{children}</Pipe>);
-  await writeFile(filename, JSON.stringify(resource));
+  await writeFile(filename, context.stringifyResource(resource));
 
   return resource;
 }
