@@ -76,5 +76,5 @@ The server will eventually respond with the following message:
 
 In case of error, the response will have status `500` (for GET and POST requests) and the error string as the body.
 
-In case of success, the response body will always be a JSON object representing a resource.  
+In case of success, the response body will always be a stringified resource.  
 If the evaluated output isn't already a resource, then such output will be wrapped into a resource having the `x-webmiddle-any` contentType.

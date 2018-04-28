@@ -43,6 +43,16 @@ export default class Server {
     this._bindWebsocket();
   }
 
+  stringifyOutput(output) {
+    let resource;
+    if (isResource(output)) {
+      resource = output;
+    } else {
+      resource = this._wrapInResource(output);
+    }
+    return rootContext.stringifyResource(resource);
+  }
+
   _bindExpress() {
     Object.keys(this.handlersByType).forEach(type => {
       ["GET", "POST"].forEach(httpMethod => {
@@ -71,11 +81,8 @@ export default class Server {
                 props,
                 options
               );
-              if (isResource(output)) {
-                res.json(output);
-              } else {
-                res.json(this._wrapInResource(output));
-              }
+              const jsonOutput = this.stringifyOutput(output);
+              res.json(jsonOutput);
             } catch (err) {
               console.error(err instanceof Error ? err.stack : err);
               res.status(500).send(err instanceof Error ? err.stack : err);
@@ -138,13 +145,7 @@ export default class Server {
             }
           );
 
-          let jsonOutput;
-          if (isResource(output)) {
-            jsonOutput = output;
-          } else {
-            jsonOutput = this._wrapInResource(output);
-          }
-
+          const jsonOutput = this.stringifyOutput(output);
           ws.send(
             JSON.stringify({
               type: "response",

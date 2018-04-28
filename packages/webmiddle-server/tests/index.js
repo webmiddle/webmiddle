@@ -101,37 +101,43 @@ const server = new Server(
 server.start();
 
 test("Execute service via GET", async t => {
-  const resource = await requestExpress("GET", "/services/math/sum?a=5&b=10");
+  const responseBody = await requestExpress(
+    "GET",
+    "/services/math/sum?a=5&b=10"
+  );
+  const resource = rootContext.parseResource(responseBody);
 
-  t.false(isResource(resource)); // not an actual Resource object
+  t.true(isResource(resource));
   t.is(resource.name, "result");
   t.is(resource.contentType, "text/plain");
   t.is(resource.content, "15");
 });
 
 test("Execute service via POST", async t => {
-  const resource = await requestExpress("POST", "/services/math/multiply", {
+  const responseBody = await requestExpress("POST", "/services/math/multiply", {
     props: {
       a: 20,
       b: 5
     }
   });
+  const resource = rootContext.parseResource(responseBody);
 
-  t.false(isResource(resource)); // not an actual Resource object
+  t.true(isResource(resource));
   t.is(resource.name, "result");
   t.is(resource.contentType, "text/plain");
   t.is(resource.content, "100");
 });
 
 test("Execute service via WEBSOCKET", async t => {
-  const resource = await requestWebsocket("/services/math/multiply", {
+  const responseBody = await requestWebsocket("/services/math/multiply", {
     props: {
       a: 20,
       b: 5
     }
   });
+  const resource = rootContext.parseResource(responseBody);
 
-  t.false(isResource(resource)); // not an actual Resource object
+  t.true(isResource(resource));
   t.is(resource.name, "result");
   t.is(resource.contentType, "text/plain");
   t.is(resource.content, "100");
@@ -152,31 +158,33 @@ test("Must throw when executing a non existing service via WEBSOCKET", async t =
 });
 
 test("Default context options via POST", async t => {
-  const resource = await requestExpress("POST", "/services/returnOption", {
+  const responseBody = await requestExpress("POST", "/services/returnOption", {
     props: {
       optionName: "base"
     }
   });
+  const resource = rootContext.parseResource(responseBody);
 
-  t.false(isResource(resource)); // not an actual Resource object
+  t.true(isResource(resource));
   t.is(resource.contentType, "x-webmiddle-any");
   t.is(resource.content, "default option");
 });
 
 test("Default context options via WEBSOCKET", async t => {
-  const resource = await requestWebsocket("/services/returnOption", {
+  const responseBody = await requestWebsocket("/services/returnOption", {
     props: {
       optionName: "base"
     }
   });
+  const resource = rootContext.parseResource(responseBody);
 
-  t.false(isResource(resource)); // not an actual Resource object
+  t.true(isResource(resource));
   t.is(resource.contentType, "x-webmiddle-any");
   t.is(resource.content, "default option");
 });
 
 test("Pass context options to service via POST", async t => {
-  const resource = await requestExpress("POST", "/services/returnOption", {
+  const responseBody = await requestExpress("POST", "/services/returnOption", {
     props: {
       optionName: "custom"
     },
@@ -184,14 +192,15 @@ test("Pass context options to service via POST", async t => {
       custom: 5
     }
   });
+  const resource = rootContext.parseResource(responseBody);
 
-  t.false(isResource(resource)); // not an actual Resource object
+  t.true(isResource(resource));
   t.is(resource.contentType, "x-webmiddle-any");
   t.is(resource.content, 5);
 });
 
 test("Pass context options to service via WEBSOCKET", async t => {
-  const resource = await requestWebsocket("/services/returnOption", {
+  const responseBody = await requestWebsocket("/services/returnOption", {
     props: {
       optionName: "custom"
     },
@@ -199,8 +208,9 @@ test("Pass context options to service via WEBSOCKET", async t => {
       custom: 5
     }
   });
+  const resource = rootContext.parseResource(responseBody);
 
-  t.false(isResource(resource)); // not an actual Resource object
+  t.true(isResource(resource));
   t.is(resource.contentType, "x-webmiddle-any");
   t.is(resource.content, 5);
 });
@@ -232,9 +242,10 @@ test("Get progress when executing a service via WEBSOCKET", async t => {
 });
 
 test("Get service paths", async t => {
-  const resource = await requestExpress("GET", "/services/");
+  const responseBody = await requestExpress("GET", "/services/");
+  const resource = rootContext.parseResource(responseBody);
 
-  t.false(isResource(resource)); // not an actual Resource object
+  t.true(isResource(resource));
   t.is(resource.name, "services");
   t.is(resource.contentType, "application/json");
   t.deepEqual(resource.content, [
@@ -246,9 +257,10 @@ test("Get service paths", async t => {
 });
 
 test("Get service paths via WEBSOCKET", async t => {
-  const resource = await requestWebsocket("/services/");
+  const responseBody = await requestWebsocket("/services/");
+  const resource = rootContext.parseResource(responseBody);
 
-  t.false(isResource(resource)); // not an actual Resource object
+  t.true(isResource(resource));
   t.is(resource.name, "services");
   t.is(resource.contentType, "application/json");
   t.deepEqual(resource.content, [

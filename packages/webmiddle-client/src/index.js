@@ -1,6 +1,7 @@
 import superagent from "superagent";
 import WebSocket from "ws";
 import uuid from "uuid";
+import { rootContext } from "webmiddle";
 
 function appendPathToUrl(url, path) {
   return (
@@ -82,7 +83,8 @@ export default class Client {
     if (!this.requestServicePathsPromise) {
       this.requestServicePathsPromise = Promise.resolve().then(async () => {
         const responseBody = await this.requestServer("/services/");
-        return responseBody.content;
+        const resource = rootContext.parseResource(responseBody);
+        return resource.content;
       });
     }
     return this.requestServicePathsPromise;
@@ -96,11 +98,7 @@ export default class Client {
           props,
           options: context.options
         });
-        return context.createResource(
-          responseBody.name,
-          responseBody.contentType,
-          responseBody.content
-        );
+        return context.parseResource(responseBody);
       };
       this.services[path] = Service;
     }
