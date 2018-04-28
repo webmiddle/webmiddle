@@ -9,8 +9,8 @@ class Resource {
     return this.content;
   }
 
-  static parseContent(stringifiedContent) {
-    return stringifiedContent;
+  static parseContent(contentData) {
+    return contentData;
   }
 }
 
@@ -19,8 +19,10 @@ class JsonResource extends Resource {
     return JSON.stringify(this.content);
   }
 
-  static parseContent(stringifiedContent) {
-    return JSON.parse(stringifiedContent);
+  static parseContent(contentData) {
+    return typeof contentData === "string"
+      ? JSON.parse(contentData)
+      : contentData;
   }
 }
 
@@ -62,7 +64,7 @@ class WebmiddleTypeResource extends JsonResource {
     return JSON.stringify(serializableContent);
   }
 
-  static parseContent(stringifiedContent, context) {
+  static parseContent(contentData, context) {
     const handle = data => {
       if (Array.isArray(data)) {
         return data.map(handle);
@@ -94,7 +96,8 @@ class WebmiddleTypeResource extends JsonResource {
       }
       return data;
     };
-    const serializableContent = JSON.parse(stringifiedContent);
+    const serializableContent =
+      typeof contentData === "string" ? JSON.parse(contentData) : contentData;
     const content = handle(serializableContent);
     return content;
   }
@@ -127,8 +130,8 @@ export function stringifyResource(context, resource) {
   });
 }
 
-export function parseResource(context, dataStr) {
-  const data = JSON.parse(dataStr);
+export function parseResource(context, data) {
+  data = typeof data === "string" ? JSON.parse(data) : data;
   const ResourceClass = resourceHandlers[data.contentType] || Resource;
   data.content = ResourceClass.parseContent(data.content, context);
   return context.createResource(data.name, data.contentType, data.content);
