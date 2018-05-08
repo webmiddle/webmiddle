@@ -64,6 +64,6 @@
   },
   "devDependencies": {
     "webmiddle": "^0.3.0",
-    "superagent": "^3.5.2"
+    "superagent": "^3.8.3"
   }
 }
