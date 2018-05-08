@@ -16,7 +16,7 @@ test("GET https page", async t => {
       name="virtual"
       contentType="application/json"
       method="GET"
-      url={`https://httpbin.org/get?number=${escape(number)}&static=${escape(
+      url={`https://eu.httpbin.org/get?number=${escape(number)}&static=${escape(
         "test this number"
       )}`}
     />
@@ -34,7 +34,11 @@ test("GET xml document (infer resource contentType)", async t => {
   const number = Math.round(Math.random() * 100);
 
   const output = await t.context.context.evaluate(
-    <HttpRequest name="virtual" method="GET" url={`https://httpbin.org/xml`} />
+    <HttpRequest
+      name="virtual"
+      method="GET"
+      url={`https://eu.httpbin.org/xml`}
+    />
   );
 
   t.true(isResource(output));
@@ -49,7 +53,7 @@ test("POST https page: form data as string (no content type header)", async t =>
       name="virtual"
       contentType="application/json"
       method="POST"
-      url="https://httpbin.org/post"
+      url="https://eu.httpbin.org/post"
       body={`number=${encodeURIComponent(number)}&static=${encodeURIComponent(
         "test this number"
       )}`}
@@ -72,7 +76,7 @@ test("POST https page: form data as string (no content type header, case insensi
       name="virtual"
       contentType="application/json"
       method="pOsT"
-      url="https://httpbin.org/post"
+      url="https://eu.httpbin.org/post"
       body={`number=${encodeURIComponent(number)}&static=${encodeURIComponent(
         "test this number"
       )}`}
@@ -95,7 +99,7 @@ test("POST https page: form data as object (no content type header)", async t =>
       name="virtual"
       contentType="application/json"
       method="POST"
-      url="https://httpbin.org/post"
+      url="https://eu.httpbin.org/post"
       body={{
         number,
         static: "test this number"
@@ -119,7 +123,7 @@ test("POST https page: form data as object (with content type header)", async t 
       name="virtual"
       contentType="application/json"
       method="POST"
-      url="https://httpbin.org/post"
+      url="https://eu.httpbin.org/post"
       body={{
         number,
         static: "test this number"
@@ -146,7 +150,7 @@ test("POST https page: json data as string", async t => {
       name="virtual"
       contentType="application/json"
       method="POST"
-      url="https://httpbin.org/post"
+      url="https://eu.httpbin.org/post"
       body={JSON.stringify({
         number,
         static: "test this number"
@@ -173,7 +177,7 @@ test("POST https page: json data as string (case insensitive headers)", async t 
       name="virtual"
       contentType="application/json"
       method="POST"
-      url="https://httpbin.org/post"
+      url="https://eu.httpbin.org/post"
       body={JSON.stringify({
         number,
         static: "test this number"
@@ -200,7 +204,7 @@ test("POST https page: json data as object", async t => {
       name="virtual"
       contentType="application/json"
       method="POST"
-      url="https://httpbin.org/post"
+      url="https://eu.httpbin.org/post"
       body={{
         number,
         static: "test this number"
@@ -225,7 +229,7 @@ test("httpHeaders", async t => {
       name="virtual"
       contentType="application/json"
       method="GET"
-      url="https://httpbin.org/get"
+      url="https://eu.httpbin.org/get"
       httpHeaders={{
         "My-Custom-Webmiddle-Header": "HttpRequest service test"
       }}
@@ -249,12 +253,12 @@ test("cookies: save to jar", async t => {
       name="virtual"
       contentType="application/json"
       method="GET"
-      url={`https://httpbin.org/cookies/set?a1=${v1}&a2=${v2}`}
+      url={`https://eu.httpbin.org/cookies/set?a1=${v1}&a2=${v2}`}
     />
   );
 
   const cookies = t.context.context.cookieManager.jar.getCookiesSync(
-    "https://httpbin.org"
+    "https://eu.httpbin.org"
   );
 
   const cookieA1 = cookies.find(c => c.key === "a1");
@@ -272,7 +276,7 @@ test("cookies: read from jar", async t => {
     t.context.context.cookieManager.Cookie.parse(`b1=${v1}; Path=/`, {
       loose: true
     }),
-    "https://httpbin.org",
+    "https://eu.httpbin.org",
     {}
   );
 
@@ -280,7 +284,7 @@ test("cookies: read from jar", async t => {
     t.context.context.cookieManager.Cookie.parse(`b2=${v2}; Path=/`, {
       loose: true
     }),
-    "https://httpbin.org",
+    "https://eu.httpbin.org",
     {}
   );
 
@@ -289,7 +293,7 @@ test("cookies: read from jar", async t => {
       name="virtual"
       contentType="application/json"
       method="GET"
-      url="https://httpbin.org/cookies"
+      url="https://eu.httpbin.org/cookies"
     />
   );
 
@@ -306,7 +310,7 @@ test("Should not throw when status code is between 200 and 299", async t => {
         name="virtual"
         contentType="text/html"
         method="GET"
-        url={`https://httpbin.org/status/201`}
+        url={`https://eu.httpbin.org/status/201`}
       />
     )
   );
@@ -317,7 +321,7 @@ test("Should not throw when status code is between 200 and 299", async t => {
         name="virtual"
         contentType="text/html"
         method="GET"
-        url={`https://httpbin.org/status/299`}
+        url={`https://eu.httpbin.org/status/299`}
       />
     )
   );
@@ -330,7 +334,7 @@ test("Should fail with correct status code", async t => {
         name="virtual"
         contentType="text/html"
         method="GET"
-        url={`https://httpbin.org/status/499`}
+        url={`https://eu.httpbin.org/status/499`}
       />
     );
   } catch (err) {
