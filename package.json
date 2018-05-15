@@ -36,7 +36,7 @@
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-prettier": "^2.6.0",
-    "eslint-plugin-react": "^7.7.0",
+    "eslint-plugin-react": "^7.8.2",
     "husky": "^0.14.3",
     "lerna": "^3.0.0-beta.10",
     "lint-staged": "^7.1.0",
