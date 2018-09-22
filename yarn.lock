@@ -2821,8 +2821,8 @@ eslint-plugin-jsx-a11y@^6.0.3:
     jsx-ast-utils "^2.0.0"
 
 eslint-plugin-prettier@^2.6.0:
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-2.6.0.tgz#33e4e228bdb06142d03c560ce04ec23f6c767dd7"
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-2.6.2.tgz#71998c60aedfa2141f7bfcbf9d1c459bf98b4fad"
   dependencies:
     fast-diff "^1.1.1"
     jest-docblock "^21.0.0"
@@ -6966,7 +6966,7 @@ write@^0.2.1:
   dependencies:
     mkdirp "^0.5.1"
 
-ws@5.2.2, ws@^5.1.1:
+ws@^5.1.1, ws@^5.2.1:
   version "5.2.2"
   resolved "https://registry.yarnpkg.com/ws/-/ws-5.2.2.tgz#dffef14866b8e8dc9133582514d1befaf96e980f"
   dependencies:
