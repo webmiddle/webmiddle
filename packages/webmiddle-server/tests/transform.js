@@ -2,63 +2,82 @@ import test from "ava";
 import { transformValue, transformCallStateInfo } from "../src/utils/transform";
 import { rootContext } from "webmiddle";
 
-test("number", async t => {
-  t.deepEqual(transformValue(10), {
+test("number (recursion = 0)", async t => {
+  t.deepEqual(transformValue(10, 0), {
     type: "number",
     value: 10
   });
 });
 
-test("string", async t => {
-  t.deepEqual(transformValue("abc"), {
+test("string (recursion = 0, short)", async t => {
+  t.deepEqual(transformValue("abc", 0), {
     type: "string",
     value: "abc"
   });
 });
 
-test("boolean", async t => {
-  t.deepEqual(transformValue(true), {
+test("string (recursion = 0, long)", async t => {
+  const longString = [...Array(101)].map(() => "a").join("");
+  t.deepEqual(transformValue(longString, 0), {
+    type: "more"
+  });
+});
+
+test("boolean (recursion = 0)", async t => {
+  t.deepEqual(transformValue(true, 0), {
     type: "boolean",
     value: true
   });
 
-  t.deepEqual(transformValue(false), {
+  t.deepEqual(transformValue(false, 0), {
     type: "boolean",
     value: false
   });
 });
 
-test("undefined", async t => {
-  t.deepEqual(transformValue(undefined), {
-    type: "undefined",
-    value: undefined
+test("array with zero length (recursion = 0)", async t => {
+  t.deepEqual(transformValue([], 0), {
+    type: "array",
+    length: 0,
+    value: []
   });
 });
 
-test("null (object)", async t => {
-  t.deepEqual(transformValue(null), {
-    type: "object",
-    value: null
+test("array with length (recursion = 0)", async t => {
+  t.deepEqual(transformValue(["a"], 0), {
+    type: "more"
   });
 });
 
-test("function", async t => {
-  function fn() {
-    return "whatever";
+test("function (recursion = 0)", async t => {
+  function fn(a, b) {
+    return a + b;
   }
 
-  t.deepEqual(transformValue(fn), {
+  t.deepEqual(transformValue(fn, 0), {
     type: "function",
     value: undefined,
     name: fn.name
   });
 });
 
+test("undefined (recursion = 0)", async t => {
+  t.deepEqual(transformValue(undefined, 0), {
+    type: "undefined",
+    value: undefined
+  });
+});
+
+test("null (object) (recursion = 0)", async t => {
+  t.deepEqual(transformValue(null, 0), {
+    type: "object",
+    value: null
+  });
+});
+
 test("array (recursion = 0, depth = 1)", async t => {
   t.deepEqual(transformValue(["a", 100, "c"], 0), {
-    type: "array",
-    length: 3,
-    value: undefined
+    type: "more"
   });
 });
 
@@ -93,9 +112,7 @@ test("array (recursion = 1, depth = 2)", async t => {
         value: "a"
       },
       {
-        type: "array",
-        length: 1,
-        value: undefined // not enough recursion
+        type: "more"
       }
     ]
   });
@@ -135,8 +152,7 @@ test("plain object (recursion = 0, depth 1)", async t => {
       0
     ),
     {
-      type: "object",
-      value: undefined
+      type: "more"
     }
   );
 });
@@ -177,7 +193,7 @@ test("plain object (recursion = 1, depth = 2)", async t => {
       type: "object",
       value: {
         a: { type: "number", value: 0 },
-        b: { type: "object", value: undefined }
+        b: { type: "more" }
       }
     }
   );
@@ -214,22 +230,7 @@ test("plain object (recursion = 2, array depth = 2)", async t => {
 
 test("virtual (recursion = 0, depth = 1)", async t => {
   t.deepEqual(transformValue(<div a={0} b={1} />, 0), {
-    type: "virtual",
-    value: {
-      type: {
-        type: "string",
-        value: "div"
-      },
-      attributes: {
-        a: { type: "number", value: 0 },
-        b: { type: "number", value: 1 }
-      },
-      children: {
-        type: "array",
-        length: 0,
-        value: undefined
-      }
-    }
+    type: "more"
   });
 });
 
@@ -249,7 +250,7 @@ test("virtual (recursion = 1, depth = 1)", async t => {
       children: {
         type: "array",
         length: 0,
-        value: undefined
+        value: []
       }
     }
   });
@@ -265,15 +266,12 @@ test("virtual (recursion = 1, depth = 2)", async t => {
       },
       attributes: {
         a: { type: "number", value: 0 },
-        b: {
-          type: "object",
-          value: undefined
-        }
+        b: { type: "more" }
       },
       children: {
         type: "array",
         length: 0,
-        value: undefined
+        value: []
       }
     }
   });
@@ -281,7 +279,7 @@ test("virtual (recursion = 1, depth = 2)", async t => {
 
 test("virtual (recursion = 2, depth = 2)", async t => {
   // same as recursion = 1
-  t.deepEqual(transformValue(<div a={0} b={{ c: 1 }} />, 1), {
+  t.deepEqual(transformValue(<div a={0} b={{ c: 1 }} />, 2), {
     type: "virtual",
     value: {
       type: {
@@ -292,13 +290,18 @@ test("virtual (recursion = 2, depth = 2)", async t => {
         a: { type: "number", value: 0 },
         b: {
           type: "object",
-          value: undefined
+          value: {
+            c: {
+              type: "number",
+              value: 1
+            }
+          }
         }
       },
       children: {
         type: "array",
         length: 0,
-        value: undefined
+        value: []
       }
     }
   });
@@ -311,13 +314,7 @@ test("resource (recursion = 0, depth = 1)", async t => {
   });
 
   t.deepEqual(transformValue(resource, 0), {
-    type: "resource",
-    value: {
-      id: resource.id,
-      name: resource.name,
-      contentType: resource.contentType,
-      content: undefined
-    }
+    type: "more"
   });
 });
 
@@ -334,7 +331,7 @@ test("resource (recursion = 1, depth = 1)", async t => {
       id: resource.id,
       name: resource.name,
       contentType: resource.contentType,
-      content: undefined
+      content: { type: "more" }
     }
   });
 });
@@ -352,7 +349,7 @@ test("resource (recursion = 1, depth = 2)", async t => {
       id: resource.id,
       name: resource.name,
       contentType: resource.contentType,
-      content: undefined
+      content: { type: "more" }
     }
   });
 });
@@ -364,13 +361,19 @@ test("resource (recursion = 2, depth = 2)", async t => {
   });
 
   // same as recursion = 1
-  t.deepEqual(transformValue(resource, 1), {
+  t.deepEqual(transformValue(resource, 2), {
     type: "resource",
     value: {
       id: resource.id,
       name: resource.name,
       contentType: resource.contentType,
-      content: undefined
+      content: {
+        type: "object",
+        value: {
+          a: { type: "number", value: 0 },
+          b: { type: "more" }
+        }
+      }
     }
   });
 });
@@ -415,7 +418,7 @@ test("callStateInfo: virtual", async t => {
         children: {
           type: "array",
           length: 0,
-          value: undefined
+          value: []
         }
       },
       options: {},

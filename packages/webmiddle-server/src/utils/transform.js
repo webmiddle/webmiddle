@@ -3,13 +3,34 @@ import { isResource, isVirtual } from "webmiddle";
 
 const DEFAULT_RECURSION = 1;
 
+function shouldLazyLoad(value, recursion) {
+  return (
+    recursion === 0 &&
+    typeof value !== "number" &&
+    (typeof value !== "string" || value.length > 100) &&
+    (!Array.isArray(value) || value.length !== 0) &&
+    typeof value !== "boolean" &&
+    typeof value !== "function" &&
+    typeof value !== "undefined" &&
+    value !== null
+  );
+}
+
+function lazyLoad(value) {
+  return {
+    type: "more"
+  };
+}
+
 function transformVirtual(virtual, recursion = DEFAULT_RECURSION) {
   const transformedValue = {
     type: transformValue(virtual.type, Math.max(0, recursion - 1)),
-    attributes: mapValues(virtual.attributes, (
-      attrValue // always include attributes
-    ) => transformValue(attrValue, Math.max(0, recursion - 1))),
-    children: transformValue(virtual.children, 0) // always omit children
+    attributes: shouldLazyLoad(virtual.attributes, recursion) // don't wrap attributes in a { type: 'object' } since we know it's always an object
+      ? lazyLoad(virtual.attributes)
+      : mapValues(virtual.attributes, attrValue =>
+          transformValue(attrValue, Math.max(0, recursion - 1))
+        ),
+    children: transformValue(virtual.children, Math.max(0, recursion - 1))
   };
 
   return {
@@ -23,7 +44,7 @@ function transformResource(resource, recursion = DEFAULT_RECURSION) {
     id: resource.id,
     name: resource.name,
     contentType: resource.contentType,
-    content: undefined // always omit content
+    content: transformValue(resource.content, Math.max(0, recursion - 1))
   };
 
   return {
@@ -35,16 +56,15 @@ function transformResource(resource, recursion = DEFAULT_RECURSION) {
 function transformFunction(fn) {
   return {
     type: "function",
-    value: undefined, // lazily loaded
+    value: undefined, // always omitted
     name: fn.name
   };
 }
 
 function transformArray(array, recursion = DEFAULT_RECURSION) {
-  const transformedValue =
-    recursion === 0
-      ? undefined
-      : array.map(v => transformValue(v, recursion - 1));
+  const transformedValue = shouldLazyLoad(array, recursion)
+    ? lazyLoad(array)
+    : array.map(v => transformValue(v, recursion - 1));
 
   return {
     type: "array",
@@ -54,10 +74,9 @@ function transformArray(array, recursion = DEFAULT_RECURSION) {
 }
 
 function transformPlainObject(obj, recursion = DEFAULT_RECURSION) {
-  const transformedValue =
-    recursion === 0
-      ? undefined
-      : mapValues(obj, v => transformValue(v, recursion - 1));
+  const transformedValue = shouldLazyLoad(obj, recursion)
+    ? lazyLoad(obj)
+    : mapValues(obj, v => transformValue(v, recursion - 1));
 
   return {
     type: "object",
@@ -66,6 +85,10 @@ function transformPlainObject(obj, recursion = DEFAULT_RECURSION) {
 }
 
 export function transformValue(value, recursion = DEFAULT_RECURSION) {
+  if (shouldLazyLoad(value, recursion)) {
+    return lazyLoad(value);
+  }
+
   if (isVirtual(value)) return transformVirtual(value, recursion);
   if (isResource(value)) return transformResource(value, recursion);
   if (typeof value === "function") return transformFunction(value, recursion);
@@ -75,12 +98,9 @@ export function transformValue(value, recursion = DEFAULT_RECURSION) {
 
   // Note: value === null will still have type === 'object'
 
-  const type = typeof value;
-  const transformedValue = value;
-
   return {
-    type,
-    value: transformedValue
+    type: typeof value,
+    value
   };
 }
 
