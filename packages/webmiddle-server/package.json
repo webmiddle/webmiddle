@@ -55,15 +55,15 @@
     "webmiddle": "^0.3.0"
   },
   "dependencies": {
-    "body-parser": "^1.18.2",
+    "body-parser": "^1.18.3",
     "cors": "^2.8.1",
     "express": "^4.14.1",
     "lodash": "^4.17.10",
-    "uuid": "^3.0.1",
-    "ws": "^5.1.1"
+    "uuid": "^3.3.0",
+    "ws": "^5.2.1"
   },
   "devDependencies": {
     "webmiddle": "^0.3.0",
-    "superagent": "^3.5.2"
+    "superagent": "^3.8.3"
   }
 }

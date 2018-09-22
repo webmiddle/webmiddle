@@ -52,6 +52,6 @@
   "repository": "webmiddle/webmiddle",
   "license": "MIT",
   "dependencies": {
-    "tough-cookie": "^2.3.4"
+    "tough-cookie": "^2.4.3"
   }
 }
