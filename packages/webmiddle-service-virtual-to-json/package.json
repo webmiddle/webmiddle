@@ -10,10 +10,10 @@
     "node": "^6.9.0 || >=8.0.0"
   },
   "scripts": {
-    "test": "node ../../scripts/npmRun ava",
+    "test": "ava",
     "test:watch": "yarn run test -- --watch",
-    "clean": "node ../../scripts/rimraf dist",
-    "babel": "node ../../scripts/npmRun babel src --out-dir dist --source-maps inline",
+    "clean": "rimraf dist",
+    "babel": "babel src --out-dir dist --source-maps inline",
     "build": "yarn run clean && yarn run babel",
     "build:watch": "yarn run clean && yarn run babel -- --watch",
     "prepublish": "yarn run build"
