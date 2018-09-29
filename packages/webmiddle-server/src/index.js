@@ -5,7 +5,7 @@ import bodyParser from "body-parser";
 import _ from "lodash";
 import WebSocket from "ws";
 import uuid from "uuid";
-import { transformCallStateInfo, loadMore } from "./utils/transform";
+import { serializeCallStateInfo, loadMore } from "./utils/serialize";
 
 function httpToServicePath(path) {
   if (path.startsWith("/")) path = path.slice(1);
@@ -134,7 +134,7 @@ export default class Server {
                   requestId,
                   body: {
                     ...message.data,
-                    info: transformCallStateInfo(
+                    info: serializeCallStateInfo(
                       message.data && message.data.info
                     )
                   }
@@ -202,7 +202,7 @@ export default class Server {
   }
 
   async _handleMore(path, props) {
-    return loadMore(props.path, props.transformedPath, rootContext);
+    return loadMore(props.path, props.serializedPath, rootContext);
   }
 
   // return all the service paths

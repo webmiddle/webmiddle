@@ -1,20 +1,20 @@
 import test from "ava";
 import {
-  transformValue,
-  transformCallStateInfo,
+  serializeValue,
+  serializeCallStateInfo,
   loadMore
-} from "../src/utils/transform";
+} from "../src/utils/serialize";
 import { rootContext } from "webmiddle";
 
 test("number (recursion = -1)", async t => {
-  t.deepEqual(transformValue(10, -1), {
+  t.deepEqual(serializeValue(10, -1), {
     type: "number",
     value: 10
   });
 });
 
 test("string (recursion = -1, short)", async t => {
-  t.deepEqual(transformValue("abc", -1), {
+  t.deepEqual(serializeValue("abc", -1), {
     type: "string",
     value: "abc"
   });
@@ -22,27 +22,27 @@ test("string (recursion = -1, short)", async t => {
 
 test("string (recursion = -1, long)", async t => {
   const longString = [...Array(101)].map(() => "a").join("");
-  t.deepEqual(transformValue(longString, -1), {
+  t.deepEqual(serializeValue(longString, -1), {
     type: "more",
     path: [],
-    transformedPath: []
+    serializedPath: []
   });
 });
 
 test("boolean (recursion = -1)", async t => {
-  t.deepEqual(transformValue(true, -1), {
+  t.deepEqual(serializeValue(true, -1), {
     type: "boolean",
     value: true
   });
 
-  t.deepEqual(transformValue(false, -1), {
+  t.deepEqual(serializeValue(false, -1), {
     type: "boolean",
     value: false
   });
 });
 
 test("array with zero length (recursion = -1)", async t => {
-  t.deepEqual(transformValue([], -1), {
+  t.deepEqual(serializeValue([], -1), {
     type: "array",
     length: 0,
     value: []
@@ -50,10 +50,10 @@ test("array with zero length (recursion = -1)", async t => {
 });
 
 test("array with length (recursion = -1)", async t => {
-  t.deepEqual(transformValue(["a"], -1), {
+  t.deepEqual(serializeValue(["a"], -1), {
     type: "more",
     path: [],
-    transformedPath: []
+    serializedPath: []
   });
 });
 
@@ -62,7 +62,7 @@ test("function (recursion = -1)", async t => {
     return a + b;
   }
 
-  t.deepEqual(transformValue(fn, -1), {
+  t.deepEqual(serializeValue(fn, -1), {
     type: "function",
     value: undefined,
     name: fn.name
@@ -70,29 +70,29 @@ test("function (recursion = -1)", async t => {
 });
 
 test("undefined (recursion = -1)", async t => {
-  t.deepEqual(transformValue(undefined, -1), {
+  t.deepEqual(serializeValue(undefined, -1), {
     type: "undefined",
     value: undefined
   });
 });
 
 test("null (object) (recursion = -1)", async t => {
-  t.deepEqual(transformValue(null, -1), {
+  t.deepEqual(serializeValue(null, -1), {
     type: "object",
     value: null
   });
 });
 
 test("array (recursion = -1, depth = 1)", async t => {
-  t.deepEqual(transformValue(["a", 100, "c"], -1), {
+  t.deepEqual(serializeValue(["a", 100, "c"], -1), {
     type: "more",
     path: [],
-    transformedPath: []
+    serializedPath: []
   });
 });
 
 test("array (recursion = 0, depth = 1)", async t => {
-  t.deepEqual(transformValue(["a", 100, "c"], 0), {
+  t.deepEqual(serializeValue(["a", 100, "c"], 0), {
     type: "array",
     length: 3,
     value: [
@@ -113,7 +113,7 @@ test("array (recursion = 0, depth = 1)", async t => {
 });
 
 test("array (recursion = 0, depth = 2)", async t => {
-  t.deepEqual(transformValue(["a", ["b"]], 0), {
+  t.deepEqual(serializeValue(["a", ["b"]], 0), {
     type: "array",
     length: 2,
     value: [
@@ -124,14 +124,14 @@ test("array (recursion = 0, depth = 2)", async t => {
       {
         type: "more",
         path: ["1"],
-        transformedPath: ["value", "1"]
+        serializedPath: ["value", "1"]
       }
     ]
   });
 });
 
 test("array (recursion = 1, depth = 2)", async t => {
-  t.deepEqual(transformValue(["a", ["b"]], 1), {
+  t.deepEqual(serializeValue(["a", ["b"]], 1), {
     type: "array",
     length: 2,
     value: [
@@ -155,7 +155,7 @@ test("array (recursion = 1, depth = 2)", async t => {
 
 test("plain object (recursion = -1, depth 1)", async t => {
   t.deepEqual(
-    transformValue(
+    serializeValue(
       {
         a: 0,
         b: 1,
@@ -166,14 +166,14 @@ test("plain object (recursion = -1, depth 1)", async t => {
     {
       type: "more",
       path: [],
-      transformedPath: []
+      serializedPath: []
     }
   );
 });
 
 test("plain object (recursion = 0, depth = 1)", async t => {
   t.deepEqual(
-    transformValue(
+    serializeValue(
       {
         a: 0,
         b: 1,
@@ -194,7 +194,7 @@ test("plain object (recursion = 0, depth = 1)", async t => {
 
 test("plain object (recursion = 0, depth = 2)", async t => {
   t.deepEqual(
-    transformValue(
+    serializeValue(
       {
         a: 0,
         b: {
@@ -210,7 +210,7 @@ test("plain object (recursion = 0, depth = 2)", async t => {
         b: {
           type: "more",
           path: ["b"],
-          transformedPath: ["value", "b"]
+          serializedPath: ["value", "b"]
         }
       }
     }
@@ -219,7 +219,7 @@ test("plain object (recursion = 0, depth = 2)", async t => {
 
 test("plain object (recursion = 1, array depth = 2)", async t => {
   t.deepEqual(
-    transformValue(
+    serializeValue(
       {
         a: 0,
         b: {
@@ -247,16 +247,16 @@ test("plain object (recursion = 1, array depth = 2)", async t => {
 });
 
 test("virtual (recursion = -1, depth = 1)", async t => {
-  t.deepEqual(transformValue(<div a={0} b={1} />, -1), {
+  t.deepEqual(serializeValue(<div a={0} b={1} />, -1), {
     type: "more",
     path: [],
-    transformedPath: []
+    serializedPath: []
   });
 });
 
 test("virtual (recursion = 0, depth = 1)", async t => {
   // same as recursion = 0
-  t.deepEqual(transformValue(<div a={0} b={1} />, 0), {
+  t.deepEqual(serializeValue(<div a={0} b={1} />, 0), {
     type: "virtual",
     value: {
       type: {
@@ -277,7 +277,7 @@ test("virtual (recursion = 0, depth = 1)", async t => {
 });
 
 test("virtual (recursion = 0, depth = 2)", async t => {
-  t.deepEqual(transformValue(<div a={0} b={{ c: 1 }} />, 0), {
+  t.deepEqual(serializeValue(<div a={0} b={{ c: 1 }} />, 0), {
     type: "virtual",
     value: {
       type: {
@@ -289,7 +289,7 @@ test("virtual (recursion = 0, depth = 2)", async t => {
         b: {
           type: "more",
           path: ["attributes", "b"],
-          transformedPath: ["value", "attributes", "b"]
+          serializedPath: ["value", "attributes", "b"]
         }
       },
       children: {
@@ -303,7 +303,7 @@ test("virtual (recursion = 0, depth = 2)", async t => {
 
 test("virtual (recursion = 1, depth = 2)", async t => {
   // same as recursion = 1
-  t.deepEqual(transformValue(<div a={0} b={{ c: 1 }} />, 1), {
+  t.deepEqual(serializeValue(<div a={0} b={{ c: 1 }} />, 1), {
     type: "virtual",
     value: {
       type: {
@@ -337,7 +337,7 @@ test("resource (recursion = -1, short)", async t => {
     b: 1
   });
 
-  t.deepEqual(transformValue(resource, -1), {
+  t.deepEqual(serializeValue(resource, -1), {
     type: "resource",
     value: {
       id: resource.id,
@@ -354,7 +354,7 @@ test("resource (recursion = 0, short)", async t => {
     b: 1
   });
 
-  t.deepEqual(transformValue(resource, 0), {
+  t.deepEqual(serializeValue(resource, 0), {
     type: "resource",
     value: {
       id: resource.id,
@@ -372,7 +372,7 @@ test("resource (recursion = 1, short)", async t => {
   });
 
   // same as recursion = 1
-  t.deepEqual(transformValue(resource, 1), {
+  t.deepEqual(serializeValue(resource, 1), {
     type: "resource",
     value: {
       id: resource.id,
@@ -389,7 +389,7 @@ test("resource (recursion = -1, long)", async t => {
     b: 1
   });
 
-  t.deepEqual(transformValue(resource, -1), {
+  t.deepEqual(serializeValue(resource, -1), {
     type: "resource",
     value: {
       id: resource.id,
@@ -398,7 +398,7 @@ test("resource (recursion = -1, long)", async t => {
       content: {
         type: "more",
         path: ["stringifiedContent"],
-        transformedPath: ["value", "content"]
+        serializedPath: ["value", "content"]
       }
     }
   });
@@ -410,7 +410,7 @@ test("resource (recursion = 0, long)", async t => {
     b: 1
   });
 
-  t.deepEqual(transformValue(resource, 0), {
+  t.deepEqual(serializeValue(resource, 0), {
     type: "resource",
     value: {
       id: resource.id,
@@ -419,7 +419,7 @@ test("resource (recursion = 0, long)", async t => {
       content: {
         type: "more",
         path: ["stringifiedContent"],
-        transformedPath: ["value", "content"]
+        serializedPath: ["value", "content"]
       }
     }
   });
@@ -431,7 +431,7 @@ test("resource (recursion = 1, long)", async t => {
     b: 1
   });
 
-  t.deepEqual(transformValue(resource, 1), {
+  t.deepEqual(serializeValue(resource, 1), {
     type: "resource",
     value: {
       id: resource.id,
@@ -450,7 +450,7 @@ test("callStateInfo: virtual", async t => {
 
   console.log(
     JSON.stringify(
-      transformCallStateInfo({
+      serializeCallStateInfo({
         type: "virtual",
         value: <Service a={1} b={{ c: { d: 0 } }} />,
         callRootContextPath,
@@ -463,7 +463,7 @@ test("callStateInfo: virtual", async t => {
   );
 
   t.deepEqual(
-    transformCallStateInfo({
+    serializeCallStateInfo({
       type: "virtual",
       value: <Service a={1} b={{ c: { d: 0 } }} />,
       callRootContextPath,
@@ -502,7 +502,7 @@ test("callStateInfo: virtual", async t => {
                     "b",
                     "c"
                   ],
-                  transformedPath: [
+                  serializedPath: [
                     callRootContextPath,
                     infoPath,
                     "value",
@@ -556,25 +556,20 @@ test("loadMore", async t => {
   const output = await context.evaluate(virtual);
   t.is(output, 1);
 
-  const transformedInfo = transformCallStateInfo(info);
+  const serializedInfo = serializeCallStateInfo(info);
 
   const originalObj = info.value.attributes.b.c;
-  const moreObj = transformedInfo.value.value.attributes.b.value.c;
+  const moreObj = serializedInfo.value.value.attributes.b.value.c;
 
   const retrievedObj = loadMore(
     moreObj.path,
-    moreObj.transformedPath,
+    moreObj.serializedPath,
     rootContext
   );
 
   t.deepEqual(
     retrievedObj,
-    transformValue(
-      originalObj,
-      undefined,
-      moreObj.path,
-      moreObj.transformedPath
-    )
+    serializeValue(originalObj, undefined, moreObj.path, moreObj.serializedPath)
   );
 });
 
@@ -604,13 +599,13 @@ test("loadMore: resource content (should retrieve the stringified content)", asy
   const output = await context.evaluate(virtual);
   t.is(output, resource);
 
-  const transformedInfo = transformCallStateInfo(info);
+  const serializedInfo = serializeCallStateInfo(info);
 
-  const moreObj = transformedInfo.result.value.content;
+  const moreObj = serializedInfo.result.value.content;
 
   const retrievedObj = loadMore(
     moreObj.path,
-    moreObj.transformedPath,
+    moreObj.serializedPath,
     rootContext
   );
 

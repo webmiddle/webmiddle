@@ -23,83 +23,83 @@ function shouldLazyLoad(value, recursion) {
   );
 }
 
-function lazyLoad(value, path = [], transformedPath) {
+function lazyLoad(value, path = [], serializedPath) {
   return {
     type: "more",
     path,
-    transformedPath
+    serializedPath
   };
 }
 
-function transformVirtual(
+function serializeVirtual(
   virtual,
   recursion = DEFAULT_RECURSION,
   path = [],
-  transformedPath = []
+  serializedPath = []
 ) {
-  const transformedValue = {
-    type: transformValue(
+  const serializedValue = {
+    type: serializeValue(
       virtual.type,
       recursion - 1,
       joinPath(path, "type"),
-      joinPath(transformedPath, "value", "type")
+      joinPath(serializedPath, "value", "type")
     ),
     attributes: mapValues(virtual.attributes, (
       attrValue,
       attrName // always include
     ) =>
-      transformValue(
+      serializeValue(
         attrValue,
         recursion - 1,
         joinPath(path, "attributes", attrName),
-        joinPath(transformedPath, "value", "attributes", attrName)
+        joinPath(serializedPath, "value", "attributes", attrName)
       )
     ),
-    children: transformValue(
+    children: serializeValue(
       virtual.children,
       recursion - 1,
       joinPath(path, "children"),
-      joinPath(transformedPath, "value", "children")
+      joinPath(serializedPath, "value", "children")
     )
   };
 
   return {
     type: "virtual",
-    value: transformedValue
+    value: serializedValue
   };
 }
 
-function transformResource(
+function serializeResource(
   resource,
   recursion = DEFAULT_RECURSION,
   path = [],
-  transformedPath = []
+  serializedPath = []
 ) {
   const stringifiedContent = resource.stringifyContent();
 
-  const transformedValue = {
+  const serializedValue = {
     id: resource.id,
     name: resource.name,
     contentType: resource.contentType,
-    content: transformValue(
+    content: serializeValue(
       stringifiedContent,
       recursion - 1,
       joinPath(path, "stringifiedContent"), // make sure to lazy load the stringified version (it exists since we called stringifyContent())
-      joinPath(transformedPath, "value", "content")
+      joinPath(serializedPath, "value", "content")
     )
   };
 
   return {
     type: "resource",
-    value: transformedValue
+    value: serializedValue
   };
 }
 
-function transformFunction(
+function serializeFunction(
   fn,
   recursion = DEFAULT_RECURSION,
   path = [],
-  transformedPath = []
+  serializedPath = []
 ) {
   return {
     type: "function",
@@ -108,73 +108,73 @@ function transformFunction(
   };
 }
 
-function transformArray(
+function serializeArray(
   array,
   recursion = DEFAULT_RECURSION,
   path = [],
-  transformedPath = []
+  serializedPath = []
 ) {
-  const transformedValue = shouldLazyLoad(array, recursion)
+  const serializedValue = shouldLazyLoad(array, recursion)
     ? lazyLoad(array, path)
     : array.map((v, i) =>
-        transformValue(
+        serializeValue(
           v,
           recursion - 1,
           joinPath(path, i),
-          joinPath(transformedPath, "value", i)
+          joinPath(serializedPath, "value", i)
         )
       );
 
   return {
     type: "array",
-    value: transformedValue,
+    value: serializedValue,
     length: array.length
   };
 }
 
-function transformPlainObject(
+function serializePlainObject(
   obj,
   recursion = DEFAULT_RECURSION,
   path = [],
-  transformedPath = []
+  serializedPath = []
 ) {
-  const transformedValue = shouldLazyLoad(obj, recursion)
+  const serializedValue = shouldLazyLoad(obj, recursion)
     ? lazyLoad(obj, path)
     : mapValues(obj, (v, k) =>
-        transformValue(
+        serializeValue(
           v,
           recursion - 1,
           joinPath(path, k),
-          joinPath(transformedPath, "value", k)
+          joinPath(serializedPath, "value", k)
         )
       );
 
   return {
     type: "object",
-    value: transformedValue
+    value: serializedValue
   };
 }
 
-export function transformValue(
+export function serializeValue(
   value,
   recursion = DEFAULT_RECURSION,
   path = [],
-  transformedPath = []
+  serializedPath = []
 ) {
   if (shouldLazyLoad(value, recursion)) {
-    return lazyLoad(value, path, transformedPath);
+    return lazyLoad(value, path, serializedPath);
   }
 
   if (isVirtual(value))
-    return transformVirtual(value, recursion, path, transformedPath);
+    return serializeVirtual(value, recursion, path, serializedPath);
   if (isResource(value))
-    return transformResource(value, recursion, path, transformedPath);
+    return serializeResource(value, recursion, path, serializedPath);
   if (typeof value === "function")
-    return transformFunction(value, recursion, path, transformedPath);
+    return serializeFunction(value, recursion, path, serializedPath);
   if (Array.isArray(value))
-    return transformArray(value, recursion, path, transformedPath);
+    return serializeArray(value, recursion, path, serializedPath);
   if (typeof value === "object" && value !== null)
-    return transformPlainObject(value, recursion, path, transformedPath);
+    return serializePlainObject(value, recursion, path, serializedPath);
 
   // Note: value === null will still have type === 'object'
 
@@ -184,49 +184,49 @@ export function transformValue(
   };
 }
 
-export function transformCallStateInfo(info) {
+export function serializeCallStateInfo(info) {
   if (!info) return undefined;
 
   const path = [].concat(info.callRootContextPath, info.path);
-  const transformedPath = [].concat(info.callRootContextPath, info.path);
+  const serializedPath = [].concat(info.callRootContextPath, info.path);
 
   // type, value, options, children
   return {
     type: info.type,
     callRootContextPath: info.callRootContextPath,
     path: info.path,
-    value: transformValue(
+    value: serializeValue(
       info.value,
       undefined,
       joinPath(path, "value"),
-      joinPath(transformedPath, "value")
+      joinPath(serializedPath, "value")
     ),
     options: mapValues(info.options, optionValue =>
-      transformValue(
+      serializeValue(
         optionValue,
         undefined,
         joinPath(path, "options", optionValue),
-        joinPath(transformedPath, "options", optionValue)
+        joinPath(serializedPath, "options", optionValue)
       )
     ),
-    result: transformValue(
+    result: serializeValue(
       info.result,
       0,
       joinPath(path, "result"),
-      joinPath(transformedPath, "result")
+      joinPath(serializedPath, "result")
     ),
     children: info.children.map((child, i) =>
-      transformValue(
+      serializeValue(
         child,
         0,
         joinPath(path, ["children", i]),
-        joinPath(transformedPath, ["children", i])
+        joinPath(serializedPath, ["children", i])
       )
     )
   };
 }
 
-export function loadMore(path, transformedPath, rootContext) {
+export function loadMore(path, serializedPath, rootContext) {
   const [callRootContextPath, infoPath, ...valuePath] = path;
 
   const context =
@@ -241,5 +241,5 @@ export function loadMore(path, transformedPath, rootContext) {
 
   const value = valuePath.reduce((obj, part) => obj[part], info);
 
-  return transformValue(value, undefined, path, transformedPath);
+  return serializeValue(value, undefined, path, serializedPath);
 }
