@@ -99,7 +99,7 @@ test("must return virtual resource", async t => {
 
   t.true(isResource(output));
   t.is(output.name, "virtual", "name");
-  t.is(output.contentType, "application/x-webmiddle-virtual", "contentType");
+  t.is(output.contentType, "x-webmiddle-virtual", "contentType");
   t.true(isVirtual(output.content));
 });
 
@@ -207,7 +207,9 @@ test("helpers: elMap + elAttr", async t => {
   const output = await rootContext.evaluate(
     <CheerioToVirtual name="virtual" from={xmlResource}>
       <categories el="book">
-        {elMap(el => <category el={el}>{elAttr("category")}</category>)}
+        {elMap(el => (
+          <category el={el}>{elAttr("category")}</category>
+        ))}
       </categories>
     </CheerioToVirtual>
   );

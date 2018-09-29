@@ -1,14 +1,21 @@
 import mapValues from "lodash/mapValues";
 import { isResource, isVirtual } from "webmiddle";
 
+import get from "lodash/get";
+
 const DEFAULT_RECURSION = 1;
+
+function joinPath(path = [], ...pathParts) {
+  return path.concat(pathParts.map(part => String(part)));
+}
 
 function shouldLazyLoad(value, recursion) {
   return (
-    recursion === 0 &&
+    recursion < 0 &&
     typeof value !== "number" &&
     (typeof value !== "string" || value.length > 100) &&
     (!Array.isArray(value) || value.length !== 0) &&
+    !isResource(value) &&
     typeof value !== "boolean" &&
     typeof value !== "function" &&
     typeof value !== "undefined" &&
@@ -16,21 +23,44 @@ function shouldLazyLoad(value, recursion) {
   );
 }
 
-function lazyLoad(value) {
+function lazyLoad(value, path = [], transformedPath) {
   return {
-    type: "more"
+    type: "more",
+    path,
+    transformedPath
   };
 }
 
-function transformVirtual(virtual, recursion = DEFAULT_RECURSION) {
+function transformVirtual(
+  virtual,
+  recursion = DEFAULT_RECURSION,
+  path = [],
+  transformedPath = []
+) {
   const transformedValue = {
-    type: transformValue(virtual.type, Math.max(0, recursion - 1)),
-    attributes: shouldLazyLoad(virtual.attributes, recursion) // don't wrap attributes in a { type: 'object' } since we know it's always an object
-      ? lazyLoad(virtual.attributes)
-      : mapValues(virtual.attributes, attrValue =>
-          transformValue(attrValue, Math.max(0, recursion - 1))
-        ),
-    children: transformValue(virtual.children, Math.max(0, recursion - 1))
+    type: transformValue(
+      virtual.type,
+      recursion - 1,
+      joinPath(path, "type"),
+      joinPath(transformedPath, "value", "type")
+    ),
+    attributes: mapValues(virtual.attributes, (
+      attrValue,
+      attrName // always include
+    ) =>
+      transformValue(
+        attrValue,
+        recursion - 1,
+        joinPath(path, "attributes", attrName),
+        joinPath(transformedPath, "value", "attributes", attrName)
+      )
+    ),
+    children: transformValue(
+      virtual.children,
+      recursion - 1,
+      joinPath(path, "children"),
+      joinPath(transformedPath, "value", "children")
+    )
   };
 
   return {
@@ -39,12 +69,24 @@ function transformVirtual(virtual, recursion = DEFAULT_RECURSION) {
   };
 }
 
-function transformResource(resource, recursion = DEFAULT_RECURSION) {
+function transformResource(
+  resource,
+  recursion = DEFAULT_RECURSION,
+  path = [],
+  transformedPath = []
+) {
+  const stringifiedContent = resource.stringifyContent();
+
   const transformedValue = {
     id: resource.id,
     name: resource.name,
     contentType: resource.contentType,
-    content: transformValue(resource.content, Math.max(0, recursion - 1))
+    content: transformValue(
+      stringifiedContent,
+      recursion - 1,
+      joinPath(path, "stringifiedContent"), // make sure to lazy load the stringified version (it exists since we called stringifyContent())
+      joinPath(transformedPath, "value", "content")
+    )
   };
 
   return {
@@ -53,7 +95,12 @@ function transformResource(resource, recursion = DEFAULT_RECURSION) {
   };
 }
 
-function transformFunction(fn) {
+function transformFunction(
+  fn,
+  recursion = DEFAULT_RECURSION,
+  path = [],
+  transformedPath = []
+) {
   return {
     type: "function",
     value: undefined, // always omitted
@@ -61,10 +108,22 @@ function transformFunction(fn) {
   };
 }
 
-function transformArray(array, recursion = DEFAULT_RECURSION) {
+function transformArray(
+  array,
+  recursion = DEFAULT_RECURSION,
+  path = [],
+  transformedPath = []
+) {
   const transformedValue = shouldLazyLoad(array, recursion)
-    ? lazyLoad(array)
-    : array.map(v => transformValue(v, recursion - 1));
+    ? lazyLoad(array, path)
+    : array.map((v, i) =>
+        transformValue(
+          v,
+          recursion - 1,
+          joinPath(path, i),
+          joinPath(transformedPath, "value", i)
+        )
+      );
 
   return {
     type: "array",
@@ -73,10 +132,22 @@ function transformArray(array, recursion = DEFAULT_RECURSION) {
   };
 }
 
-function transformPlainObject(obj, recursion = DEFAULT_RECURSION) {
+function transformPlainObject(
+  obj,
+  recursion = DEFAULT_RECURSION,
+  path = [],
+  transformedPath = []
+) {
   const transformedValue = shouldLazyLoad(obj, recursion)
-    ? lazyLoad(obj)
-    : mapValues(obj, v => transformValue(v, recursion - 1));
+    ? lazyLoad(obj, path)
+    : mapValues(obj, (v, k) =>
+        transformValue(
+          v,
+          recursion - 1,
+          joinPath(path, k),
+          joinPath(transformedPath, "value", k)
+        )
+      );
 
   return {
     type: "object",
@@ -84,17 +155,26 @@ function transformPlainObject(obj, recursion = DEFAULT_RECURSION) {
   };
 }
 
-export function transformValue(value, recursion = DEFAULT_RECURSION) {
+export function transformValue(
+  value,
+  recursion = DEFAULT_RECURSION,
+  path = [],
+  transformedPath = []
+) {
   if (shouldLazyLoad(value, recursion)) {
-    return lazyLoad(value);
+    return lazyLoad(value, path, transformedPath);
   }
 
-  if (isVirtual(value)) return transformVirtual(value, recursion);
-  if (isResource(value)) return transformResource(value, recursion);
-  if (typeof value === "function") return transformFunction(value, recursion);
-  if (Array.isArray(value)) return transformArray(value, recursion);
+  if (isVirtual(value))
+    return transformVirtual(value, recursion, path, transformedPath);
+  if (isResource(value))
+    return transformResource(value, recursion, path, transformedPath);
+  if (typeof value === "function")
+    return transformFunction(value, recursion, path, transformedPath);
+  if (Array.isArray(value))
+    return transformArray(value, recursion, path, transformedPath);
   if (typeof value === "object" && value !== null)
-    return transformPlainObject(value, recursion);
+    return transformPlainObject(value, recursion, path, transformedPath);
 
   // Note: value === null will still have type === 'object'
 
@@ -107,25 +187,59 @@ export function transformValue(value, recursion = DEFAULT_RECURSION) {
 export function transformCallStateInfo(info) {
   if (!info) return undefined;
 
-  function transformInfoValue(type, value) {
-    if (type === "virtual") {
-      // value is the virtual
-      return transformValue(value).value;
-    }
-
-    return transformValue(value);
-  }
-
-  function transformInfoOptions(type, options) {
-    return mapValues(options, optionValue => transformValue(optionValue));
-  }
+  const path = [].concat(info.callRootContextPath, info.path);
+  const transformedPath = [].concat(info.callRootContextPath, info.path);
 
   // type, value, options, children
   return {
     type: info.type,
-    value: transformInfoValue(info.type, info.value),
-    options: transformInfoOptions(info.type, info.options),
-    result: transformValue(info.result, 0),
-    children: info.children.map(child => transformValue(child, 0))
+    callRootContextPath: info.callRootContextPath,
+    path: info.path,
+    value: transformValue(
+      info.value,
+      undefined,
+      joinPath(path, "value"),
+      joinPath(transformedPath, "value")
+    ),
+    options: mapValues(info.options, optionValue =>
+      transformValue(
+        optionValue,
+        undefined,
+        joinPath(path, "options", optionValue),
+        joinPath(transformedPath, "options", optionValue)
+      )
+    ),
+    result: transformValue(
+      info.result,
+      0,
+      joinPath(path, "result"),
+      joinPath(transformedPath, "result")
+    ),
+    children: info.children.map((child, i) =>
+      transformValue(
+        child,
+        0,
+        joinPath(path, ["children", i]),
+        joinPath(transformedPath, ["children", i])
+      )
+    )
   };
+}
+
+export function loadMore(path, transformedPath, rootContext) {
+  const [callRootContextPath, infoPath, ...valuePath] = path;
+
+  const context =
+    callRootContextPath === ""
+      ? rootContext
+      : get(
+          rootContext.children,
+          callRootContextPath.split(".").join(".children.")
+        );
+
+  const info = get(context._callState, infoPath.split(".").join(".children."));
+
+  const value = valuePath.reduce((obj, part) => obj[part], info);
+
+  return transformValue(value, undefined, path, transformedPath);
 }

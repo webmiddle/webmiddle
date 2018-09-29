@@ -5,7 +5,7 @@ import bodyParser from "body-parser";
 import _ from "lodash";
 import WebSocket from "ws";
 import uuid from "uuid";
-import { transformCallStateInfo } from "./utils/transform";
+import { transformCallStateInfo, loadMore } from "./utils/transform";
 
 function httpToServicePath(path) {
   if (path.startsWith("/")) path = path.slice(1);
@@ -22,7 +22,8 @@ export default class Server {
     this.websocketServer = null;
 
     this.handlersByType = {
-      services: this._handleService.bind(this)
+      services: this._handleService.bind(this),
+      more: this._handleMore.bind(this)
     };
   }
 
@@ -44,13 +45,10 @@ export default class Server {
   }
 
   stringifyOutput(output) {
-    let resource;
     if (isResource(output)) {
-      resource = output;
-    } else {
-      resource = this._wrapInResource(output);
+      return rootContext.stringifyResource(output);
     }
-    return rootContext.stringifyResource(resource);
+    return JSON.stringify(output);
   }
 
   _bindExpress() {
@@ -199,7 +197,12 @@ export default class Server {
     });
     if (onMessage) context.emitter.on("message", onMessage);
 
-    return context.evaluate(<Service {...props} />);
+    const output = await context.evaluate(<Service {...props} />);
+    return isResource(output) ? output : this._wrapInResource(output);
+  }
+
+  async _handleMore(path, props) {
+    return loadMore(props.path, props.transformedPath, rootContext);
   }
 
   // return all the service paths

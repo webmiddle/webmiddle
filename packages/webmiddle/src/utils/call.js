@@ -10,6 +10,7 @@ function makeCallStateInfoPath(parentCallStateInfo) {
 }
 
 function emitBubble(context, eventName, topic, data) {
+  const target = context;
   let propagationStopped = false;
   const stopPropagation = () => {
     propagationStopped = true;
@@ -20,7 +21,7 @@ function emitBubble(context, eventName, topic, data) {
       {
         topic,
         data,
-        contextPath: context.path
+        target
       },
       stopPropagation
     );
@@ -38,7 +39,8 @@ export default async function call(fn, context, info) {
     options: {},
     ...info,
     children: [],
-    path: ""
+    callRootContextPath: context.path,
+    path: "" // relative to callRootContextPath
   };
   context._callState.push(callStateInfo);
   callStateInfo.path = String(context._callState.length - 1);
@@ -50,8 +52,7 @@ export default async function call(fn, context, info) {
   });
 
   emitBubble(context, "message", "callStateInfo:add", {
-    info: callStateInfo,
-    path: callStateInfo.path
+    info: callStateInfo
   });
 
   const newContext = context.extend();
@@ -61,6 +62,7 @@ export default async function call(fn, context, info) {
   const handleMessage = (message, stopPropagation) => {
     if (message.topic === "callStateInfo:add:before") {
       const newCallStateInfo = message.data.info;
+      newCallStateInfo.callRootContextPath = callStateInfo.callRootContextPath;
       callStateInfo.children.push(newCallStateInfo);
       newCallStateInfo.path = makeCallStateInfoPath(callStateInfo);
       // stop bubbling to prevent other ascendants from linking this callStateInfo
@@ -77,8 +79,7 @@ export default async function call(fn, context, info) {
 
   // result is ready => notify
   emitBubble(context, "message", "callStateInfo:update", {
-    info: callStateInfo,
-    path: callStateInfo.path
+    info: callStateInfo
   });
 
   return { result: callStateInfo.result, context: newContext };

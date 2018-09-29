@@ -102,11 +102,7 @@ async function JSONSelectToVirtual(
 
   const target = context.createVirtual("root", {}, targetChildren);
 
-  return context.createResource(
-    name,
-    "application/x-webmiddle-virtual",
-    target
-  );
+  return context.createResource(name, "x-webmiddle-virtual", target);
 }
 
 JSONSelectToVirtual.propTypes = {

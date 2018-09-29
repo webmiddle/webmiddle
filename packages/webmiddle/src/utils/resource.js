@@ -1,12 +1,20 @@
 import { isVirtual } from "./virtual";
 
+// NOTE: resources MUST be immutable
+
 class Resource {
   constructor(data) {
     Object.assign(this, data);
   }
 
   stringifyContent() {
-    return this.content;
+    if (typeof this.stringifiedContent === "undefined") {
+      this.stringifiedContent =
+        typeof this.content === "undefined" || this.content === null
+          ? ""
+          : String(this.content);
+    }
+    return this.stringifiedContent;
   }
 
   static parseContent(contentData) {
@@ -16,7 +24,10 @@ class Resource {
 
 class JsonResource extends Resource {
   stringifyContent() {
-    return JSON.stringify(this.content);
+    if (typeof this.stringifiedContent === "undefined") {
+      this.stringifiedContent = JSON.stringify(this.content);
+    }
+    return this.stringifiedContent;
   }
 
   static parseContent(contentData) {
@@ -60,8 +71,11 @@ class WebmiddleTypeResource extends JsonResource {
       }
       return data;
     };
-    const serializableContent = handle(this.content);
-    return JSON.stringify(serializableContent);
+    if (typeof this.stringifiedContent === "undefined") {
+      const serializableContent = handle(this.content);
+      this.stringifiedContent = JSON.stringify(serializableContent);
+    }
+    return this.stringifiedContent;
   }
 
   static parseContent(contentData, context) {
@@ -103,9 +117,12 @@ class WebmiddleTypeResource extends JsonResource {
   }
 }
 
+class WebmiddleVirtualResource extends JsonResource {}
+
 const resourceHandlers = {
   "application/json": JsonResource,
-  "x-webmiddle-type": WebmiddleTypeResource
+  "x-webmiddle-type": WebmiddleTypeResource,
+  "x-webmiddle-virtual": WebmiddleVirtualResource
 };
 
 export function createResource(context, name, contentType, content) {

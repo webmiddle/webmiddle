@@ -69,7 +69,7 @@ rootContext.evaluate(
   />
 ).then(resource => {
   console.log(isResource(output)); // true
-  console.log(resource.contentType); // "application/x-webmiddle-virtual"
+  console.log(resource.contentType); // "x-webmiddle-virtual"
   console.log(resource.content); // { type, attributes, children }
 });
 ```

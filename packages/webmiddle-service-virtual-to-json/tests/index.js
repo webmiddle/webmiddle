@@ -4,7 +4,7 @@ import { rootContext } from "webmiddle";
 
 const virtualResource = rootContext.createResource(
   "virtualResource",
-  "application/x-webmiddle-virtual",
+  "x-webmiddle-virtual",
   {
     type: "root",
     attributes: {},

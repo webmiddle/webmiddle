@@ -23,6 +23,7 @@ test("virtual (service)", async t => {
       value: virtual,
       options: {},
       children: [],
+      callRootContextPath: context.path,
       path: "0",
       result: output
     }
@@ -100,10 +101,12 @@ test("service returning virtual (virtual (service) -> virtual (service)", async 
           value: subVirtual,
           options: {},
           children: [],
+          callRootContextPath: context.path,
           path: "0.0",
           result: output
         }
       ],
+      callRootContextPath: context.path,
       path: "0",
       result: output
     }
@@ -125,12 +128,12 @@ test('must emit "add" events with correct paths', async t => {
 
   t.deepEqual(addData, [
     {
-      path: "0",
       info: {
         type: "virtual",
         value: virtual,
         options: {},
         children: [],
+        callRootContextPath: context.path,
         path: "0",
         result: output
       }
@@ -139,17 +142,19 @@ test('must emit "add" events with correct paths', async t => {
 });
 
 test('must emit "add" events that can be traced back to the original objects', async t => {
-  const Service = () => "yes";
+  // NOTE: make sure to test deep levels of virtual calls
+  // (to make sure paths are generated correctly)
+  const SubService = () => "yes";
+  const Service = ({ a, ...rest }) =>
+    a >= 0 ? <Service {...rest} a={a - 1} /> : <SubService />;
   const virtual = <Service a={10} b={20} />;
 
   const context = t.context.context.extend({ debug: true });
 
   const addData = [];
-  const contextPathData = [];
   context.emitter.on("message", message => {
     if (message.topic === "callStateInfo:add") {
       addData.push(message.data);
-      contextPathData.push(message.contextPath);
     }
   });
 
@@ -157,7 +162,7 @@ test('must emit "add" events that can be traced back to the original objects', a
 
   for (let i = 0; i < addData.length; i++) {
     // find the root context of the call state chain
-    const contextPath = contextPathData[i];
+    const contextPath = addData[i].info.callRootContextPath;
     const contextPathParts = contextPath.split(".");
     let callStateRootContext = rootContext;
     contextPathParts.forEach(childIndex => {
@@ -165,7 +170,7 @@ test('must emit "add" events that can be traced back to the original objects', a
     });
 
     // find the call state info
-    const callStateInfoPath = addData[i].path;
+    const callStateInfoPath = addData[i].info.path;
     const callStateInfoPathParts = callStateInfoPath.split(".");
     let callStateInfo =
       callStateRootContext._callState[callStateInfoPathParts[0]]; // callStateInfo path is never empty
@@ -174,7 +179,6 @@ test('must emit "add" events that can be traced back to the original objects', a
     });
 
     t.is(callStateInfo, addData[i].info);
-    t.is(callStateInfo.path, addData[i].path);
   }
 });
 
@@ -187,7 +191,10 @@ test('must emit "update" events with correct results', async t => {
   const updateResults = [];
   context.emitter.on("message", message => {
     if (message.topic === "callStateInfo:update") {
-      if (typeof message.data.info.result !== "undefined") {
+      if (
+        message.target === context &&
+        typeof message.data.info.result !== "undefined"
+      ) {
         updateResults.push(message.data.info.result);
       }
     }
@@ -208,4 +215,20 @@ test("context should have separate call state chain", async t => {
 
   t.is(baseContext._callState.length, 0);
   t.not(childContext._callState.length, 0);
+});
+
+test("should not emit messages when not in debug mode", async t => {
+  const Service = () => "yes";
+  const virtual = <Service a={10} b={20} />;
+
+  const context = t.context.context.extend({ debug: false });
+
+  const messages = [];
+  context.emitter.on("message", message => {
+    messages.push(message);
+  });
+
+  const output = await context.evaluate(virtual);
+
+  t.deepEqual(messages, []);
 });

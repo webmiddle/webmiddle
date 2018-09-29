@@ -55,9 +55,11 @@ test("main", async t => {
 
   const Service = () => {
     serviceExecuted = true;
-    return t.context.context.createResource("resource", "text/plain", {
-      foo: "bar"
-    });
+    return t.context.context.createResource(
+      "resource",
+      "text/plain",
+      "foo bar"
+    );
   };
 
   serviceExecuted = false;
@@ -71,13 +73,7 @@ test("main", async t => {
   t.true(isResource(output));
   t.is(output.name, "resource");
   t.is(output.contentType, "text/plain");
-  t.deepEqual(
-    output.content,
-    {
-      foo: "bar"
-    },
-    "context"
-  );
+  t.is(output.content, "foo bar", "context");
 
   serviceExecuted = false;
   const secondOutput = await t.context.context.evaluate(
@@ -90,13 +86,7 @@ test("main", async t => {
   t.true(isResource(secondOutput));
   t.is(secondOutput.name, "resource");
   t.is(secondOutput.contentType, "text/plain");
-  t.deepEqual(
-    secondOutput.content,
-    {
-      foo: "bar"
-    },
-    "context"
-  );
+  t.is(secondOutput.content, "foo bar", "context");
 });
 
 test("x-webmiddle-type", async t => {

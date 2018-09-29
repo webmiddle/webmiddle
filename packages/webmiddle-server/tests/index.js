@@ -196,7 +196,7 @@ test("Pass context options to service via POST", async t => {
 
   t.true(isResource(resource));
   t.is(resource.contentType, "x-webmiddle-any");
-  t.is(resource.content, 5);
+  t.is(resource.content, String(5));
 });
 
 test("Pass context options to service via WEBSOCKET", async t => {
@@ -212,7 +212,7 @@ test("Pass context options to service via WEBSOCKET", async t => {
 
   t.true(isResource(resource));
   t.is(resource.contentType, "x-webmiddle-any");
-  t.is(resource.content, 5);
+  t.is(resource.content, String(5));
 });
 
 test("Get progress when executing a service via WEBSOCKET", async t => {
@@ -235,10 +235,11 @@ test("Get progress when executing a service via WEBSOCKET", async t => {
     handleProgress
   );
 
-  t.is(progressData[0].path, "0");
   t.true(
     typeof progressData[0].info === "object" && progressData[0].info !== null
   );
+  t.true(typeof progressData[0].info.callRootContextPath !== "undefined");
+  t.true(typeof progressData[0].info.path !== "undefined");
 });
 
 test("Get service paths", async t => {

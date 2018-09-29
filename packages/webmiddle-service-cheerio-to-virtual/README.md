@@ -50,7 +50,7 @@ const MyService = ({ query }) => (
 rootContext.evaluate(<MyService query="javascript" />)
 .then(resource => {
   console.log(isResource(resource)); // true
-  console.log(resource.contentType); // "application/x-webmiddle-virtual"
+  console.log(resource.contentType); // "x-webmiddle-virtual"
   console.log(resource.content); // { type, attributes, children }
 });
 ```
@@ -67,7 +67,7 @@ Such an object can thus represent any tree or even any graph structure,
 where nodes can be annotated with attributes.
 
 A resource whose content is a virtual has the custom contentType
-`application/x-webmiddle-virtual`.
+`x-webmiddle-virtual`.
 
 The virtual is used as an **intermediate format**, similarly to an
 intermediate language in a compiler; this separation allows other users

@@ -141,7 +141,7 @@ test("must return a virtual resource", async t => {
 
   t.true(isResource(output));
   t.is(output.name, "virtual", "name");
-  t.is(output.contentType, "application/x-webmiddle-virtual", "contentType");
+  t.is(output.contentType, "x-webmiddle-virtual", "contentType");
   t.true(isVirtual(output.content));
 });
 
@@ -285,7 +285,11 @@ test("elJoin", async t => {
 test("elMap", async t => {
   const resource = await t.context.context.evaluate(
     <JSONSelectToVirtual name="virtual" from={jsonResource}>
-      <names el=".name">{elMap(el => <name>{el}</name>)}</names>
+      <names el=".name">
+        {elMap(el => (
+          <name>{el}</name>
+        ))}
+      </names>
     </JSONSelectToVirtual>
   );
 

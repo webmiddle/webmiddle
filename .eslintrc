@@ -21,6 +21,7 @@
     "eol-last": 0,
     "no-multi-assign": 1,
     "import/prefer-default-export": 1,
-    "prefer-template": 0
+    "prefer-template": 0,
+    "prefer-destructuring": 1
   }
 }
