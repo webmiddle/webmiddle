@@ -52,7 +52,7 @@
   "repository": "webmiddle/webmiddle",
   "license": "MIT",
   "peerDependencies": {
-    "webmiddle": "^0.3.0"
+    "webmiddle": "^0.4.0-alpha.0"
   },
   "dependencies": {
     "lodash.values": "^4.3.0"

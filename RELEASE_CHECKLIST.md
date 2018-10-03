@@ -1,0 +1,1 @@
+- Manually update peerDependencies since lerna doesn't do it when running `yarn lerna publish`. See https://github.com/lerna/lerna/issues/955
