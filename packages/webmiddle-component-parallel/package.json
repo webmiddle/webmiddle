@@ -1,6 +1,6 @@
 {
   "name": "webmiddle-component-parallel",
-  "version": "0.3.0",
+  "version": "0.4.0-alpha.0",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -54,8 +54,7 @@
   "peerDependencies": {
     "webmiddle": "^0.3.0"
   },
-  "dependencies": {},
   "devDependencies": {
-    "webmiddle": "^0.3.0"
+    "webmiddle": "^0.4.0-alpha.0"
   }
 }
