@@ -318,16 +318,16 @@ test("callVirtual: when type is not a function", async t => {
   t.is(output.result, virtual, "result");
 });
 
-test("callVirtual: service must be called correctly", async t => {
-  const Service = async ({ children, ...args }, context) => ({
+test("callVirtual: component must be called correctly", async t => {
+  const Component = async ({ children, ...args }, context) => ({
     args,
     children,
     context
   });
   const virtual = (
-    <Service foo="bar">
+    <Component foo="bar">
       <element />
-    </Service>
+    </Component>
   );
 
   const output = await callVirtual(t.context.context, virtual);
@@ -346,11 +346,15 @@ test("callVirtual: service must be called correctly", async t => {
 
 test("callVirtual: resource overrides", async t => {
   // bottom to parent
-  const Service = async () =>
+  const Component = async () =>
     t.context.context.createResource("some", "text/html", "<div></div>");
-  const TopService = () => <Service name="rawtext" contentType="text/plain" />;
+  const TopComponent = () => (
+    <Component name="rawtext" contentType="text/plain" />
+  );
 
-  const output = await t.context.context.evaluate(<TopService name="other" />);
+  const output = await t.context.context.evaluate(
+    <TopComponent name="other" />
+  );
 
   t.true(isResource(output));
   t.is(output.name, "other", "name");
@@ -386,8 +390,8 @@ test("evaluate: promise", async t => {
 });
 
 test("evaluate: virtual", async t => {
-  const Service = ({ num }) => num * 2;
-  const output = await t.context.context.evaluate(<Service num={6} />);
+  const Component = ({ num }) => num * 2;
+  const output = await t.context.context.evaluate(<Component num={6} />);
   t.is(output, 12);
 });
 
@@ -405,7 +409,7 @@ test("evaluate: expectResource", async t => {
 });
 
 test("WithOptions", async t => {
-  const Service = (props, context) => {
+  const Component = (props, context) => {
     return (
       context.options.otherOption +
       " " +
@@ -421,17 +425,17 @@ test("WithOptions", async t => {
   });
   const output = await context.evaluate(
     <WithOptions myCustomOption="fun" anotherOption="forever">
-      <Service />
+      <Component />
     </WithOptions>
   );
 
   t.is(output, "bar fun forever");
 });
 
-test("must throw when the service throws", async t => {
-  const Service = () => {
+test("must throw when the component throws", async t => {
+  const Component = () => {
     throw new Error("expected throw");
   };
 
-  await t.throws(t.context.context.evaluate(<Service />));
+  await t.throws(t.context.context.evaluate(<Component />));
 });

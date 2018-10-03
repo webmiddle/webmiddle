@@ -10,9 +10,9 @@
 
 Webmiddle applications can range from simple web scrapers to complex web integration tools targeting JSON APIs, raw HTML pages, XML resources and so on.
 
-Webmiddle applications are written in a declarative, functional and modular way, by using their most evident aspect: **JSX services**.
+Webmiddle applications are written in a declarative, functional and modular way, by using their most evident aspect: **JSX components**.
 
-Each service executes one task, or controls the execution of other tasks, by composing other services.
+Each component executes one task, or controls the execution of other tasks, by composing other components.
 
 [Try it live](https://repl.it/@Maluen/Webmiddle)
 
@@ -57,13 +57,13 @@ FetchPageLinks.propTypes = {
 
 Features currently provided via the core packages:
 
-- **[Concurrency](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-parallel)**, for executing multiple asynchronous services at the same time.
-- **[HTTP](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-http-request)** requests.
-- **[Headless Chrome](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-browser)** requests, for SPAs and pages using client-side generated content.
-- **[Cookie JAR](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-manager-cookie)**, for sharing cookies among different services and webmiddle objects.
-- **[Caching](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-resume)**, for resuming work in case of crash.
+- **[Concurrency](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-component-parallel)**, for executing multiple asynchronous components at the same time.
+- **[HTTP](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-component-http-request)** requests.
+- **[Headless Chrome](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-component-browser)** requests, for SPAs and pages using client-side generated content.
+- **[Cookie JAR](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-manager-cookie)**, for sharing cookies among different components and webmiddle objects.
+- **[Caching](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-component-resume)**, for resuming work in case of crash.
 - **[Error handling](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle#errorboundary)**, via customizable retries and catch options.
-- **[Resource conversion](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-service-cheerio-to-virtual)** from/to multiple formats.
+- **[Resource conversion](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-component-cheerio-to-virtual)** from/to multiple formats.
   - Currently HTML/XML/JSON to JSON.
   - New formats can be easily added by targeting the apposite "virtual" intermediate format.
 
@@ -92,11 +92,11 @@ Example:
 }
 ```
 
-## Service
+## Component
 
 In terms of syntax, they are very similar to [react stateless functional components](https://medium.com/@housecor/react-stateless-functional-components-nine-wins-you-might-have-overlooked-997b0d933dbc#.91r5f1ish):
 
-Evaluating the previous `FetchPageLinks` service as
+Evaluating the previous `FetchPageLinks` component as
 
 ```jsx
 <FetchPageLinks
@@ -134,28 +134,28 @@ Will return a resource like the following
 }
 ```
 
-Services are the building blocks of the webmiddle framework, they can be defined and composed to perform all the web data integration tasks.
+Components are the building blocks of the webmiddle framework, they can be defined and composed to perform all the web data integration tasks.
 
-[Pipe](/packages/webmiddle-service-pipe), [HttpRequest](/packages/webmiddle-service-http-request) and [HtmlToJson](/packages/webmiddle-service-cheerio-to-json) are all core services, however there is no actual difference between a core service and a service that you may want to develop yourself.  
+[Pipe](/packages/webmiddle-component-pipe), [HttpRequest](/packages/webmiddle-component-http-request) and [HtmlToJson](/packages/webmiddle-component-cheerio-to-json) are all core components, however there is no actual difference between a core component and a component that you may want to develop yourself.  
 
-This means that anyone can contribute by adding new services for doing the more disparate things!
+This means that anyone can contribute by adding new components for doing the more disparate things!
 
 ## Context ##
 
-Along with services, context is the other main concept of any webmiddle application.
+Along with components, context is the other main concept of any webmiddle application.
 
-A context contains options that are accessible by any service, regardless of the actual props used to call the service. This is useful when there is the need to share common options among services, without the burden of having to manually pass them as props down all the service tree.
+A context contains options that are accessible by any component, regardless of the actual props used to call the component. This is useful when there is the need to share common options among components, without the burden of having to manually pass them as props down all the component tree.
 
-The context is also what allows service evaluation. The webmiddle framework provides a rootContext which can be extended to add futher options.
+The context is also what allows component evaluation. The webmiddle framework provides a rootContext which can be extended to add futher options.
 
-Services get the context that is being used to evaluate them as second parameter.
+Components get the context that is being used to evaluate them as second parameter.
 
 **Example** ([Try it live](https://repl.it/@Maluen/WebmiddleContext))
 
 ```javascript
 import { rootContext } from "webmiddle";
 
-// service returning a text resource
+// component returning a text resource
 // with the value of the requested context option
 const ReturnOption = ({ optionName }, context) => context.createResource(
   "result",
@@ -176,9 +176,9 @@ rootContext.extend({
 
 ## Remote execution
 
-Services can be turned into REST APIs by using the `webmiddle-server` package, allowing remote access via HTTP or WebSocket.
+Components can be turned into REST APIs by using the `webmiddle-server` package, allowing remote access via HTTP or WebSocket.
 
-Suppose you have the following services:
+Suppose you have the following components:
 
 ```javascript
 import { rootContext } from "webmiddle";
@@ -207,7 +207,7 @@ const server = new Server({
 server.start();
 ```
 
-In another machine, you can then use the `webmiddle-client` package to create a replica of the services run by the server, and execute them remotely. In term of usage it will be just like executing local services:
+In another machine, you can then use the `webmiddle-client` package to create a replica of the components run by the server, and execute them remotely. In term of usage it will be just like executing local components:
 
 ```javascript
 // "localhost" since the server is in the same machine in this example
@@ -217,8 +217,8 @@ const client = new Client({
   port: "3000"
 });
 
-// get the service
-const Multiply = client.service("math/multiply");
+// get the component
+const Multiply = client.component("math/multiply");
 
 // execute it
 rootContext.extend({
@@ -237,11 +237,11 @@ rootContext.extend({
 
 ## Debugging
 
-JSX services make the use of regular debugging tools more difficult; at the same time, the tree-like structure of service calls that this creates, and the `webmiddle-server`, makes the development of specific debugging tools easy.
+JSX components make the use of regular debugging tools more difficult; at the same time, the tree-like structure of component calls that this creates, and the `webmiddle-server`, makes the development of specific debugging tools easy.
 
-The webmiddle evaluation model keeps track of the executed services and creates a call tree that can be inspected by using [webmiddle-devtools](https://github.com/webmiddle/webmiddle-devtools).
+The webmiddle evaluation model keeps track of the executed components and creates a call tree that can be inspected by using [webmiddle-devtools](https://github.com/webmiddle/webmiddle-devtools).
 
-The tool also allows to remotely execute services, making it an useful asset to integrate on one's own development workflow.
+The tool also allows to remotely execute components, making it an useful asset to integrate on one's own development workflow.
 
 ## Core packages
 
@@ -262,48 +262,48 @@ The tool also allows to remotely execute services, making it an useful asset to 
       <td><a href="https://badge.fury.io/js/webmiddle-manager-cookie"><img src="https://badge.fury.io/js/webmiddle-manager-cookie.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
-      <td>webmiddle-service-pipe</td>
-      <td><a href="https://badge.fury.io/js/webmiddle-service-pipe"><img src="https://badge.fury.io/js/webmiddle-service-pipe.svg" alt="npm version" height="18"></a></td>
+      <td>webmiddle-component-pipe</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-component-pipe"><img src="https://badge.fury.io/js/webmiddle-component-pipe.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
-      <td>webmiddle-service-parallel</td>
-      <td><a href="https://badge.fury.io/js/webmiddle-service-parallel"><img src="https://badge.fury.io/js/webmiddle-service-parallel.svg" alt="npm version" height="18"></a></td>
+      <td>webmiddle-component-parallel</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-component-parallel"><img src="https://badge.fury.io/js/webmiddle-component-parallel.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
-      <td>webmiddle-service-arraymap</td>
-      <td><a href="https://badge.fury.io/js/webmiddle-service-arraymap"><img src="https://badge.fury.io/js/webmiddle-service-arraymap.svg" alt="npm version" height="18"></a></td>
+      <td>webmiddle-component-arraymap</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-component-arraymap"><img src="https://badge.fury.io/js/webmiddle-component-arraymap.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
-      <td>webmiddle-service-resume</td>
-      <td><a href="https://badge.fury.io/js/webmiddle-service-resume"><img src="https://badge.fury.io/js/webmiddle-service-resume.svg" alt="npm version" height="18"></a></td>
+      <td>webmiddle-component-resume</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-component-resume"><img src="https://badge.fury.io/js/webmiddle-component-resume.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
-      <td>webmiddle-service-http-request</td>
-      <td><a href="https://badge.fury.io/js/webmiddle-service-http-request"><img src="https://badge.fury.io/js/webmiddle-service-http-request.svg" alt="npm version" height="18"></a></td>
+      <td>webmiddle-component-http-request</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-component-http-request"><img src="https://badge.fury.io/js/webmiddle-component-http-request.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
-      <td>webmiddle-service-browser</td>
-      <td><a href="https://badge.fury.io/js/webmiddle-service-browser"><img src="https://badge.fury.io/js/webmiddle-service-browser.svg" alt="npm version" height="18"></a></td>
+      <td>webmiddle-component-browser</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-component-browser"><img src="https://badge.fury.io/js/webmiddle-component-browser.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
-      <td>webmiddle-service-cheerio-to-virtual</td>
-      <td><a href="https://badge.fury.io/js/webmiddle-service-cheerio-to-virtual"><img src="https://badge.fury.io/js/webmiddle-service-cheerio-to-virtual.svg" alt="npm version" height="18"></a></td>
+      <td>webmiddle-component-cheerio-to-virtual</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-component-cheerio-to-virtual"><img src="https://badge.fury.io/js/webmiddle-component-cheerio-to-virtual.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
-      <td>webmiddle-service-jsonselect-to-virtual</td>
-      <td><a href="https://badge.fury.io/js/webmiddle-service-jsonselect-to-virtual"><img src="https://badge.fury.io/js/webmiddle-service-jsonselect-to-virtual.svg" alt="npm version" height="18"></a></td>
+      <td>webmiddle-component-jsonselect-to-virtual</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-component-jsonselect-to-virtual"><img src="https://badge.fury.io/js/webmiddle-component-jsonselect-to-virtual.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
-      <td>webmiddle-service-virtual-to-json</td>
-      <td><a href="https://badge.fury.io/js/webmiddle-service-virtual-to-json"><img src="https://badge.fury.io/js/webmiddle-service-virtual-to-json.svg" alt="npm version" height="18"></a></td>
+      <td>webmiddle-component-virtual-to-json</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-component-virtual-to-json"><img src="https://badge.fury.io/js/webmiddle-component-virtual-to-json.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
-      <td>webmiddle-service-cheerio-to-json</td>
-      <td><a href="https://badge.fury.io/js/webmiddle-service-cheerio-to-json"><img src="https://badge.fury.io/js/webmiddle-service-cheerio-to-json.svg" alt="npm version" height="18"></a></td>
+      <td>webmiddle-component-cheerio-to-json</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-component-cheerio-to-json"><img src="https://badge.fury.io/js/webmiddle-component-cheerio-to-json.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
-      <td>webmiddle-service-jsonselect-to-json</td>
-      <td><a href="https://badge.fury.io/js/webmiddle-service-jsonselect-to-json"><img src="https://badge.fury.io/js/webmiddle-service-jsonselect-to-json.svg" alt="npm version" height="18"></a></td>
+      <td>webmiddle-component-jsonselect-to-json</td>
+      <td><a href="https://badge.fury.io/js/webmiddle-component-jsonselect-to-json"><img src="https://badge.fury.io/js/webmiddle-component-jsonselect-to-json.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
       <td>webmiddle-server</td>
@@ -318,15 +318,15 @@ The tool also allows to remotely execute services, making it an useful asset to 
 
 ## Open source ecosystem
 
-Create your own services and publish them to npm!
+Create your own components and publish them to npm!
 
-One of the main philosophies of the framework is **reuse**, by creating an ecosystem where general-purpose services and services for specific websites can be published as separate npm modules, to be usable in other projects.
+One of the main philosophies of the framework is **reuse**, by creating an ecosystem where general-purpose components and components for specific websites can be published as separate npm modules, to be usable in other projects.
 
-**NOTE**: If you think that a service / feature is so common and general that it should be in the core, [open an issue](https://github.com/webmiddle/webmiddle/issues/new) or just do a pull request!
+**NOTE**: If you think that a component / feature is so common and general that it should be in the core, [open an issue](https://github.com/webmiddle/webmiddle/issues/new) or just do a pull request!
 
 ## Contributing
 
-This is a monorepo, i.e. all the core services and the main webmiddle package are all in this single repository.
+This is a monorepo, i.e. all the core components and the main webmiddle package are all in this single repository.
 It is inspired by [Babel](https://github.com/babel/babel) and other projects, check out this [article](https://github.com/babel/babel/blob/master/doc/design/monorepo.md) to see why this isn't an horrible idea after all.
 
 It uses [Yarn](https://yarnpkg.com) and [Lerna](https://github.com/lerna/lerna) for managing the monorepo, as you might have guessed from the lerna.json file.

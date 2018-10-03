@@ -1,6 +1,6 @@
 ## Unreleased
 
-- #13 | Don't create callStateInfo for service calls anymore.
+- #13 | Don't create callStateInfo for component calls anymore.
 
 ## v0.3.0
 
@@ -15,7 +15,7 @@
 #### BREAKING CHANGES
 
 - #6 | webmiddle: remove pickDefaults
-- #6 | Remove service options
+- #6 | Remove component options
 - #7 | Fix error handling
 - New context and callStateInfo runtime model
 - #6 | Refactor context API

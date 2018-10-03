@@ -80,7 +80,7 @@ export default function run(protocol) {
     const resource = await rootContext
       .extend({
         networkRetries: 2,
-        expectResource: false, // the content is wrapped into a Resource later by the service (TODO: change this?)
+        expectResource: false, // the content is wrapped into a Resource later by the component (TODO: change this?)
         whatever: "you got it!"
       })
       .evaluate(<ReturnOption optionName="whatever" />);
@@ -96,7 +96,7 @@ export default function run(protocol) {
     const resource = await rootContext
       .extend({
         networkRetries: 2,
-        expectResource: false // the content is wrapped into a Resource later by the service (TODO: change this?)
+        expectResource: false // the content is wrapped into a Resource later by the component (TODO: change this?)
       })
       .evaluate(<ReturnOption optionName="base" />);
 

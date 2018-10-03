@@ -2,7 +2,7 @@ import call from "./call";
 import evaluate from "./evaluate";
 
 // extracted from https://github.com/developit/propTypes README
-function validateProps(props, propTypes, service) {
+function validateProps(props, propTypes, component) {
   for (const prop in propTypes) {
     if (propTypes.hasOwnProperty(prop)) {
       if (typeof propTypes[prop] !== "function") {
@@ -10,10 +10,10 @@ function validateProps(props, propTypes, service) {
           "Error: invalid prop type",
           prop,
           propTypes,
-          service && service.name ? service.name : service
+          component && component.name ? component.name : component
         );
       }
-      const err = propTypes[prop](props, prop, service, "prop");
+      const err = propTypes[prop](props, prop, component, "prop");
       if (err) {
         console.warn(err);
         return false;
@@ -23,26 +23,26 @@ function validateProps(props, propTypes, service) {
   return true;
 }
 
-function callService(service, props, context) {
-  const result = service(props, context);
+function callComponent(component, props, context) {
+  const result = component(props, context);
   return evaluate(context, result);
 }
 
 export default async function callVirtual(context, virtual) {
-  const service = typeof virtual.type === "function" ? virtual.type : null;
+  const component = typeof virtual.type === "function" ? virtual.type : null;
 
   const props = {
     ...virtual.attributes,
     children: virtual.children
   };
 
-  if (service && service.propTypes) {
-    validateProps(props, service.propTypes, service);
+  if (component && component.propTypes) {
+    validateProps(props, component.propTypes, component);
   }
 
   let result;
-  if (service) {
-    result = await callService(service, props, context);
+  if (component) {
+    result = await callComponent(component, props, context);
   } else {
     result = virtual;
   }

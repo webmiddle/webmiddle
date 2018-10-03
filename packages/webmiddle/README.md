@@ -16,7 +16,7 @@ npm install --save webmiddle
 
 The base context that webmiddle applications can extend to create new context objects with the required options.
 
-It can also be used directly to evaluate services if no context options are required.
+It can also be used directly to evaluate components if no context options are required.
 
 ```jsx
 import { rootContext } from 'webmiddle';
@@ -59,15 +59,15 @@ Example:
 ```jsx
 import { isVirtual } from 'webmiddle';
 
-const Service = () => {};
+const Component = () => {};
 
-console.log(isVirtual(<Service />)); // true
-console.log(isVirtual(Service)); // false
+console.log(isVirtual(<Component />)); // true
+console.log(isVirtual(Component)); // false
 ```
 
 ## ErrorBoundary
 
-A service used for error handling, evaluates its **only** child by wrapping it in a `try...catch` and allowing for retries and catch handling.
+A component used for error handling, evaluates its **only** child by wrapping it in a `try...catch` and allowing for retries and catch handling.
 
 A negative `retries` number means unlimited retries.
 
@@ -76,26 +76,26 @@ Example:
 ```jsx
 import { rootContext, ErrorBoundary } from 'webmiddle';
 
-const FallbackService = (props, context) => context.createResource(
+const FallbackComponent = (props, context) => context.createResource(
   "result",
   "text/plain",
   "fallback"
 );
 
-const ThrowService = () => throw new Error('expected fail');
+const ThrowComponent = () => throw new Error('expected fail');
 
-const Service = () => (
+const Component = () => (
   <ErrorBoundary
     retries={-1}
     isRetryable={{err => err.message !== 'expected fail'}}
-    handleCatch={{err => <FallbackService />}}
+    handleCatch={{err => <FallbackComponent />}}
   >
-    <ThrowService />
+    <ThrowComponent />
   </ErrorBoundary>
 );
 
 rootContext.evaluate(
-  <Service />
+  <Component />
 ).then(resource => {
   console.log(resource.content); // "fallback"
 });
@@ -112,7 +112,7 @@ children               | Array containing a single child that should be evaluate
 
 ## WithOptions
 
-A service that evaluates its **only** child by extending the current context with the new given options.
+A component that evaluates its **only** child by extending the current context with the new given options.
 
 ```jsx
 import { rootContext, WithOptions } from 'webmiddle';
@@ -123,7 +123,7 @@ const ReturnOption = ({ optionName }, context) => context.createResource(
   context.options[optionName],
 );
 
-const Service = () => (
+const Component = () => (
   <WithOptions foo="bar">
     <ReturnOption optionName="foo" />
   </WithOptions>
@@ -132,7 +132,7 @@ const Service = () => (
 rootContext.extend({
   foo: "some"
 }).evaluate(
-  <Service />
+  <Component />
 ).then(resource => {
   console.log(resource.content); // "bar"
 });

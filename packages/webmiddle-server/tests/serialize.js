@@ -443,7 +443,7 @@ test("resource (recursion = 1, long)", async t => {
 });
 
 test("callStateInfo: virtual", async t => {
-  const Service = () => "yes";
+  const Component = () => "yes";
 
   const callRootContextPath = "1.3";
   const infoPath = "0.1";
@@ -452,7 +452,7 @@ test("callStateInfo: virtual", async t => {
     JSON.stringify(
       serializeCallStateInfo({
         type: "virtual",
-        value: <Service a={1} b={{ c: { d: 0 } }} />,
+        value: <Component a={1} b={{ c: { d: 0 } }} />,
         callRootContextPath,
         path: infoPath,
         options: {},
@@ -465,7 +465,7 @@ test("callStateInfo: virtual", async t => {
   t.deepEqual(
     serializeCallStateInfo({
       type: "virtual",
-      value: <Service a={1} b={{ c: { d: 0 } }} />,
+      value: <Component a={1} b={{ c: { d: 0 } }} />,
       callRootContextPath,
       path: infoPath,
       options: {},
@@ -481,7 +481,7 @@ test("callStateInfo: virtual", async t => {
         value: {
           type: {
             type: "function",
-            name: "Service",
+            name: "Component",
             value: undefined
           },
           attributes: {
@@ -539,8 +539,8 @@ test("loadMore", async t => {
     .extend()
     .extend({ debug: true });
 
-  const Service = ({ a, b }) => a + b.c.d;
-  const virtual = <Service a={1} b={{ c: { d: 0 } }} />;
+  const Component = ({ a, b }) => a + b.c.d;
+  const virtual = <Component a={1} b={{ c: { d: 0 } }} />;
 
   let info;
   context.emitter.on("message", message => {
@@ -582,8 +582,8 @@ test("loadMore: resource content (should retrieve the stringified content)", asy
   const resource = rootContext.createResource("test", "application/json", {
     foo: [...new Array(200)].map(() => "a").join("") // make sure is long string when stringified (or won't be lazy loaded)
   });
-  const Service = () => resource;
-  const virtual = <Service />;
+  const Component = () => resource;
+  const virtual = <Component />;
 
   let info;
   context.emitter.on("message", message => {

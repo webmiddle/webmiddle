@@ -42,8 +42,8 @@ rootContext.extend({
 
 Under the hood, it uses the `web-server` REST API (HTTP or WebSocket).
 
-For each path, it creates a service that, when evaluated, executes an HTTP or WebSocket request to the webmiddle-server,
-asking it to execute the remote service at that path. The response is used as the service output.
+For each path, it creates a component that, when evaluated, executes an HTTP or WebSocket request to the webmiddle-server,
+asking it to execute the remote service at that path. The response is used as the component output.
 
 ### Constructor parameters
 

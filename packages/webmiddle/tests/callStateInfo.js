@@ -10,9 +10,9 @@ test.beforeEach(t => {
   t.context.context = rootContext;
 });
 
-test("virtual (service)", async t => {
-  const Service = () => "yes";
-  const virtual = <Service a={10} b={20} />;
+test("virtual (component)", async t => {
+  const Component = () => "yes";
+  const virtual = <Component a={10} b={20} />;
 
   const context = t.context.context.extend({ debug: true });
   const output = await context.evaluate(virtual);
@@ -31,18 +31,18 @@ test("virtual (service)", async t => {
 });
 
 // the tries and catch should show as a list
-test("virtual (service) with retries and final catch", async t => {
+test("virtual (component) with retries and final catch", async t => {
   let tries = 0;
   const retries = 3;
 
-  const Service = () => {
+  const Component = () => {
     tries++;
     throw new Error("expected fail");
   };
 
   const virtual = (
     <ErrorBoundary retries={retries} handleCatch={() => "fallback"}>
-      <Service a={10} b={20} />
+      <Component a={10} b={20} />
     </ErrorBoundary>
   );
 
@@ -78,14 +78,14 @@ test("virtual (service) with retries and final catch", async t => {
   t.is(errorBoundaryCallStateInfo.children.length, tries + 1); // +1 for the catch
 });
 
-// the virtual immediately returned by a service should be evaluated recursively
-// (i.e. the virtual callState should be a children of the service callState)
-test("service returning virtual (virtual (service) -> virtual (service)", async t => {
-  const SubService = () => "more yes!";
-  const subVirtual = <SubService c={30} />;
+// the virtual immediately returned by a component should be evaluated recursively
+// (i.e. the virtual callState should be a children of the component callState)
+test("component returning virtual (virtual (component) -> virtual (component)", async t => {
+  const SubComponent = () => "more yes!";
+  const subVirtual = <SubComponent c={30} />;
 
-  const Service = () => subVirtual;
-  const virtual = <Service a={10} b={20} />;
+  const Component = () => subVirtual;
+  const virtual = <Component a={10} b={20} />;
 
   const context = t.context.context.extend({ debug: true });
   const output = await context.evaluate(virtual);
@@ -114,8 +114,8 @@ test("service returning virtual (virtual (service) -> virtual (service)", async 
 });
 
 test('must emit "add" events with correct paths', async t => {
-  const Service = () => "yes";
-  const virtual = <Service a={10} b={20} />;
+  const Component = () => "yes";
+  const virtual = <Component a={10} b={20} />;
 
   const context = t.context.context.extend({ debug: true });
 
@@ -144,10 +144,10 @@ test('must emit "add" events with correct paths', async t => {
 test('must emit "add" events that can be traced back to the original objects', async t => {
   // NOTE: make sure to test deep levels of virtual calls
   // (to make sure paths are generated correctly)
-  const SubService = () => "yes";
-  const Service = ({ a, ...rest }) =>
-    a >= 0 ? <Service {...rest} a={a - 1} /> : <SubService />;
-  const virtual = <Service a={10} b={20} />;
+  const SubComponent = () => "yes";
+  const Component = ({ a, ...rest }) =>
+    a >= 0 ? <Component {...rest} a={a - 1} /> : <SubComponent />;
+  const virtual = <Component a={10} b={20} />;
 
   const context = t.context.context.extend({ debug: true });
 
@@ -183,8 +183,8 @@ test('must emit "add" events that can be traced back to the original objects', a
 });
 
 test('must emit "update" events with correct results', async t => {
-  const Service = () => "yes";
-  const virtual = <Service a={10} b={20} />;
+  const Component = () => "yes";
+  const virtual = <Component a={10} b={20} />;
 
   const context = t.context.context.extend({ debug: true });
 
@@ -209,8 +209,8 @@ test("context should have separate call state chain", async t => {
   const baseContext = rootContext.extend({ debug: true });
   const childContext = baseContext.extend();
 
-  const Service = () => "yes";
-  const virtual = <Service a={10} b={20} />;
+  const Component = () => "yes";
+  const virtual = <Component a={10} b={20} />;
   const output = await childContext.evaluate(virtual);
 
   t.is(baseContext._callState.length, 0);
@@ -218,8 +218,8 @@ test("context should have separate call state chain", async t => {
 });
 
 test("should not emit messages when not in debug mode", async t => {
-  const Service = () => "yes";
-  const virtual = <Service a={10} b={20} />;
+  const Component = () => "yes";
+  const virtual = <Component a={10} b={20} />;
 
   const context = t.context.context.extend({ debug: false });
 

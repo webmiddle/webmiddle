@@ -5,8 +5,8 @@ function Catch({ handler, err }) {
   return handler;
 }
 
-// Separate Try service makes sure the callStateInfo
-// contains a visible "Try" service call
+// Separate Try component makes sure the callStateInfo
+// contains a visible "Try" component call
 function Try({ children }) {
   return children[0];
 }
@@ -34,7 +34,7 @@ export default function ErrorBoundary(
       // Note: still use the old context in case of error
       // since the tries should show as a list in the callState
 
-      if (!await isRetryable(err)) throw err;
+      if (!(await isRetryable(err))) throw err;
 
       if (tries === retries + 1) {
         // last resort

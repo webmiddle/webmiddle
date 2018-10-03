@@ -48,11 +48,11 @@ test("should evaluate child normally if there arent errors (promise)", async t =
 });
 
 test("should evaluate child normally if there arent errors (virtual)", async t => {
-  const Service = ({ str }) => str;
+  const Component = ({ str }) => str;
 
   const output = await t.context.context.evaluate(
     <ErrorBoundary>
-      <Service str="success" />
+      <Component str="success" />
     </ErrorBoundary>
   );
 
@@ -204,10 +204,10 @@ test("handleCatch as a function returning a promise", async t => {
 test("handleCatch as a virtual", async t => {
   let tries = 0;
 
-  const Service = ({ str }) => str;
+  const Component = ({ str }) => str;
 
   const output = await t.context.context.evaluate(
-    <ErrorBoundary handleCatch={<Service str="fallback" />}>
+    <ErrorBoundary handleCatch={<Component str="fallback" />}>
       {() => {
         tries++;
         throw new Error("expected fail");
