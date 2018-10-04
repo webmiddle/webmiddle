@@ -167,7 +167,7 @@ export default class Server {
         }
       });
 
-      ws.send("something from server");
+      //ws.send("something from server");
     });
   }
 
