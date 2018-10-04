@@ -67,31 +67,39 @@ function requestWebsocket(path, body = {}, onProgress) {
   });
 }
 
+const MathSum = ({ a, b }) =>
+  rootContext.createResource(
+    "result",
+    "text/plain",
+    // without Number() a + b would be a string concatenation in GET requests!
+    String(Number(a) + Number(b))
+  );
+MathSum.description = "Sums two number";
+
+const MathMultiply = ({ a, b }) =>
+  rootContext.createResource(
+    "result",
+    "text/plain",
+    String(Number(a) * Number(b))
+  );
+MathMultiply.description = "Multiplies two numbers";
+
+const MathDivide = ({ a, b }) =>
+  rootContext.createResource(
+    "result",
+    "text/plain",
+    String(Number(a) / Number(b))
+  );
+MathDivide.description = "Divides two numbers";
+
+const ReturnOption = ({ optionName }, context) => context.options[optionName];
+
 const server = new Server(
   {
-    "math/sum": ({ a, b }) =>
-      rootContext.createResource(
-        "result",
-        "text/plain",
-        // without Number() a + b would be a string concatenation in GET requests!
-        String(Number(a) + Number(b))
-      ),
-
-    "math/multiply": ({ a, b }) =>
-      rootContext.createResource(
-        "result",
-        "text/plain",
-        String(Number(a) * Number(b))
-      ),
-
-    "math/divide": ({ a, b }) =>
-      rootContext.createResource(
-        "result",
-        "text/plain",
-        String(Number(a) / Number(b))
-      ),
-
-    returnOption: ({ optionName }, context) => context.options[optionName]
+    "math/sum": MathSum,
+    "math/multiply": MathMultiply,
+    "math/divide": MathDivide,
+    returnOption: ReturnOption
   },
   {
     port: PORT,
@@ -249,12 +257,24 @@ test("Get service paths", async t => {
   t.true(isResource(resource));
   t.is(resource.name, "services");
   t.is(resource.contentType, "application/json");
-  t.deepEqual(resource.content, [
-    "math/sum",
-    "math/multiply",
-    "math/divide",
-    "returnOption"
-  ]);
+  t.deepEqual(resource.content, {
+    "math/sum": {
+      name: MathSum.name || null,
+      description: MathSum.description || null
+    },
+    "math/multiply": {
+      name: MathMultiply.name || null,
+      description: MathMultiply.description || null
+    },
+    "math/divide": {
+      name: MathDivide.name || null,
+      description: MathDivide.description || null
+    },
+    returnOption: {
+      name: ReturnOption.name || null,
+      description: ReturnOption.description || null
+    }
+  });
 });
 
 test("Get service paths via WEBSOCKET", async t => {
@@ -264,10 +284,22 @@ test("Get service paths via WEBSOCKET", async t => {
   t.true(isResource(resource));
   t.is(resource.name, "services");
   t.is(resource.contentType, "application/json");
-  t.deepEqual(resource.content, [
-    "math/sum",
-    "math/multiply",
-    "math/divide",
-    "returnOption"
-  ]);
+  t.deepEqual(resource.content, {
+    "math/sum": {
+      name: MathSum.name || null,
+      description: MathSum.description || null
+    },
+    "math/multiply": {
+      name: MathMultiply.name || null,
+      description: MathMultiply.description || null
+    },
+    "math/divide": {
+      name: MathDivide.name || null,
+      description: MathDivide.description || null
+    },
+    returnOption: {
+      name: ReturnOption.name || null,
+      description: ReturnOption.description || null
+    }
+  });
 });

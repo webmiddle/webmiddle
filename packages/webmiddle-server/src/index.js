@@ -5,6 +5,8 @@ import bodyParser from "body-parser";
 import _ from "lodash";
 import WebSocket from "ws";
 import uuid from "uuid";
+import mapValues from "lodash/mapValues";
+
 import { serializeCallStateInfo, loadMore } from "./utils/serialize";
 
 function httpToServicePath(path) {
@@ -207,6 +209,9 @@ export default class Server {
 
   // return all the service paths
   _getAllServicePaths() {
-    return Object.keys(this.serviceRoutes);
+    return mapValues(this.serviceRoutes, Service => ({
+      name: Service.name || null,
+      description: Service.description || null
+    }));
   }
 }

@@ -40,6 +40,7 @@ server.start();
 
 - `/services/`: lists all the service paths.
 - `/services/foo/bar`: executes the service at path `foo.bar`.
+- `loadMore`: lazy load serialized data that was omitted.
 
 Endpoints can be called by using both GET, POST or WEBSOCKET requests.
 
