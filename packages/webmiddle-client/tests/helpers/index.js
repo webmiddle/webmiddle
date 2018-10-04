@@ -51,12 +51,12 @@ export default function run(protocol) {
 
   test("retrieved service paths", async t => {
     const servicePaths = await t.context.client.requestServicePaths();
-    t.deepEqual(servicePaths, [
-      "math/sum",
-      "math/multiply",
-      "math/divide",
-      "returnOption"
-    ]);
+    t.deepEqual(servicePaths, {
+      "math/sum": { name: "math/sum", description: null },
+      "math/multiply": { name: "math/multiply", description: null },
+      "math/divide": { name: "math/divide", description: null },
+      returnOption: { name: "returnOption", description: null }
+    });
   });
 
   test("execute remote service", async t => {
