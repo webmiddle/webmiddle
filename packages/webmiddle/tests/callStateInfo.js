@@ -205,6 +205,37 @@ test('must emit "update" events with correct results', async t => {
   t.deepEqual(updateResults, [output]);
 });
 
+test('must emit "update" events with correct errors', async t => {
+  const expectedErr = new Error("expected");
+  const Component = () => {
+    throw expectedErr;
+  };
+  const virtual = <Component />;
+
+  const context = t.context.context.extend({ debug: true });
+
+  const updateErrors = [];
+  context.emitter.on("message", message => {
+    if (message.topic === "callStateInfo:update") {
+      if (
+        message.target === context &&
+        typeof message.data.info.error !== "undefined"
+      ) {
+        updateErrors.push(message.data.info.error);
+      }
+    }
+  });
+
+  try {
+    await context.evaluate(virtual);
+  } catch (err) {
+    if (err !== expectedErr) throw err;
+  }
+
+  t.is(updateErrors.length, 1);
+  t.is(updateErrors[0], expectedErr);
+});
+
 test("context should have separate call state chain", async t => {
   const baseContext = rootContext.extend({ debug: true });
   const childContext = baseContext.extend();

@@ -215,6 +215,12 @@ export function serializeCallStateInfo(info) {
       joinPath(path, "result"),
       joinPath(serializedPath, "result")
     ),
+    error: serializeValue(
+      info.error,
+      0,
+      joinPath(path, "error"),
+      joinPath(serializedPath, "error")
+    ),
     children: info.children.map((child, i) =>
       serializeValue(
         child,

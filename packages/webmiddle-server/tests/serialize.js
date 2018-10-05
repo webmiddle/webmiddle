@@ -442,7 +442,7 @@ test("resource (recursion = 1, long)", async t => {
   });
 });
 
-test("callStateInfo: virtual", async t => {
+test("callStateInfo: virtual (with result)", async t => {
   const Component = () => "yes";
 
   const callRootContextPath = "1.3";
@@ -528,6 +528,113 @@ test("callStateInfo: virtual", async t => {
       result: {
         type: "string",
         value: "yes"
+      },
+      error: {
+        type: "undefined",
+        value: undefined
+      }
+    }
+  );
+});
+
+test("callStateInfo: virtual (with error)", async t => {
+  const expectedErr = { message: "expected" }; // not an actual Error instance for simplicity of deepEqual comparison
+  const Component = () => {
+    throw expectedErr;
+  };
+
+  const callRootContextPath = "1.3";
+  const infoPath = "0.1";
+
+  console.log(
+    JSON.stringify(
+      serializeCallStateInfo({
+        type: "virtual",
+        value: <Component a={1} b={{ c: { d: 0 } }} />,
+        callRootContextPath,
+        path: infoPath,
+        options: {},
+        children: [],
+        error: expectedErr
+      })
+    )
+  );
+
+  t.deepEqual(
+    serializeCallStateInfo({
+      type: "virtual",
+      value: <Component a={1} b={{ c: { d: 0 } }} />,
+      callRootContextPath,
+      path: infoPath,
+      options: {},
+      children: [],
+      error: expectedErr
+    }),
+    {
+      type: "virtual",
+      callRootContextPath,
+      path: infoPath,
+      value: {
+        type: "virtual",
+        value: {
+          type: {
+            type: "function",
+            name: "Component",
+            value: undefined
+          },
+          attributes: {
+            a: {
+              type: "number",
+              value: 1
+            },
+            b: {
+              type: "object",
+              value: {
+                c: {
+                  type: "more",
+                  path: [
+                    callRootContextPath,
+                    infoPath,
+                    "value",
+                    "attributes",
+                    "b",
+                    "c"
+                  ],
+                  serializedPath: [
+                    callRootContextPath,
+                    infoPath,
+                    "value",
+                    "value",
+                    "attributes",
+                    "b",
+                    "value",
+                    "c"
+                  ]
+                }
+              }
+            }
+          },
+          children: {
+            type: "array",
+            length: 0,
+            value: []
+          }
+        }
+      },
+      options: {},
+      children: [],
+      result: {
+        type: "undefined",
+        value: undefined
+      },
+      error: {
+        type: "object",
+        value: {
+          message: {
+            type: "string",
+            value: "expected"
+          }
+        }
       }
     }
   );

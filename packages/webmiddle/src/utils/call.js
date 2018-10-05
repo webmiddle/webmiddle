@@ -73,14 +73,20 @@ export default async function call(fn, context, info) {
 
   try {
     callStateInfo.result = await fn(newContext);
+  } catch (err) {
+    callStateInfo.error = err;
   } finally {
     newContext.emitter.removeListener("internal", handleMessage);
   }
 
-  // result is ready => notify
+  // result/error is ready => notify
   emitBubble(context, "message", "callStateInfo:update", {
     info: callStateInfo
   });
+
+  if (callStateInfo.error) {
+    throw callStateInfo.error;
+  }
 
   return { result: callStateInfo.result, context: newContext };
 }
