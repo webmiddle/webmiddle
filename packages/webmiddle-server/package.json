@@ -60,7 +60,7 @@
     "express": "^4.14.1",
     "lodash": "^4.17.10",
     "uuid": "^3.3.0",
-    "ws": "^5.2.1"
+    "ws": "^6.1.0"
   },
   "devDependencies": {
     "superagent": "^3.8.3",
