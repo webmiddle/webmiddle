@@ -1,6 +1,6 @@
 {
   "name": "webmiddle-component-arraymap",
-  "version": "0.4.0-alpha.0",
+  "version": "0.4.0",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -55,6 +55,6 @@
     "webmiddle": "^0.4.0"
   },
   "devDependencies": {
-    "webmiddle": "^0.4.0-alpha.0"
+    "webmiddle": "^0.4.0"
   }
 }

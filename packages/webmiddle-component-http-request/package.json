@@ -1,6 +1,6 @@
 {
   "name": "webmiddle-component-http-request",
-  "version": "0.4.0-alpha.0",
+  "version": "0.4.0",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -58,6 +58,6 @@
     "request": "^2.87.0"
   },
   "devDependencies": {
-    "webmiddle": "^0.4.0-alpha.0"
+    "webmiddle": "^0.4.0"
   }
 }
