@@ -1,6 +1,20 @@
-## Unreleased
+## v0.4.0
 
+- Bump dependencies
+- Remove obsolete script execall.js
+- #8 | Split save & read cookie tests, remove randomness
+- callStateInfo: send result update
+- callStateInfo: store and emit thrown error
+
+#### BREAKING CHANGES
 - #13 | Don't create callStateInfo for component calls anymore.
+- Packages: set webmiddle as peer dependency to prevent duplication
+- #14 | Resource API change
+- #15 | Virtual API change
+- webmiddle-server: transform: lazy load
+- webmiddle-server: rename transform to serialize
+- #89 | API change: rename service to component. Keep service for components that are "network-aware".
+- webmiddle-server: service paths: include name and description of services
 
 ## v0.3.0
 
