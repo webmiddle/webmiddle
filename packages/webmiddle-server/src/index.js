@@ -2,10 +2,10 @@ import { rootContext, isResource } from "webmiddle";
 import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
-import _ from "lodash";
 import WebSocket from "ws";
 import uuid from "uuid";
 import mapValues from "lodash/mapValues";
+import EventEmitter from "events";
 
 import { serializeCallStateInfo, loadMore } from "./utils/serialize";
 
@@ -22,10 +22,14 @@ export default class Server {
     this.PORT = options.port || 3000;
     this.expressServer = express();
     this.websocketServer = null;
+    this.notificationEmitter = new EventEmitter();
+
+    this.evaluations = {}; // <evaluation id, evaluation>
 
     this.handlersByType = {
       services: this._handleService.bind(this),
-      more: this._handleMore.bind(this)
+      more: this._handleMore.bind(this),
+      evaluations: this._handleEvaluations.bind(this)
     };
   }
 
@@ -167,7 +171,23 @@ export default class Server {
         }
       });
 
+      ws.on("close", () => {
+        delete clients[ws.id];
+      });
+
       //ws.send("something from server");
+    });
+
+    this.notificationEmitter.on("message", message => {
+      Object.keys(clients).forEach(clientId => {
+        const client = clients[clientId];
+        client.send(
+          JSON.stringify({
+            type: "notification",
+            body: message
+          })
+        );
+      });
     });
   }
 
@@ -181,7 +201,7 @@ export default class Server {
     );
   }
 
-  async _handleService(path, props, options, onMessage) {
+  async _handleService(path, props, options, handleProgress) {
     if (!path) {
       return rootContext.createResource(
         "services",
@@ -193,25 +213,136 @@ export default class Server {
     const Service = this.serviceRoutes[path];
     if (!Service) throw new Error("Service not found at path: " + path);
 
+    const evaluation = this._createEvaluation(path, props, options);
+
     const context = rootContext.extend({
       ...this.contextOptions,
       ...options
     });
-    if (onMessage) context.emitter.on("message", onMessage);
 
-    const output = await context.evaluate(<Service {...props} />);
-    return isResource(output) ? output : this._wrapInResource(output);
+    // progress
+    const handleContextMessage = message => {
+      evaluation.progressQueue.push(message);
+      evaluation.progressEmitter.emit("message", message);
+    };
+    context.emitter.on("message", handleContextMessage);
+    if (handleProgress)
+      evaluation.progressEmitter.on("message", handleProgress);
+
+    const onFinally = () => {
+      evaluation.progressEmitter.removeAllListeners();
+      context.emitter.removeListener("message", handleContextMessage);
+      this._notifyEvaluationChange(evaluation, "update");
+    };
+
+    evaluation.promise = context
+      .evaluate(<Service {...props} />)
+      .then(output => {
+        // success
+        const result = isResource(output)
+          ? output
+          : this._wrapInResource(output);
+        evaluation.status = "success";
+        evaluation.result = result;
+        onFinally();
+        return result;
+      })
+      .catch(err => {
+        // failure
+        evaluation.status = "error";
+        evaluation.error = err;
+        onFinally();
+        throw err;
+      });
+    return evaluation.promise;
+  }
+
+  _getAllServicePaths() {
+    return mapValues(this.serviceRoutes, Service => ({
+      name: Service.name || null,
+      description: Service.description || null
+    }));
   }
 
   async _handleMore(path, props) {
     return loadMore(props.path, props.serializedPath, rootContext);
   }
 
-  // return all the service paths
-  _getAllServicePaths() {
-    return mapValues(this.serviceRoutes, Service => ({
-      name: Service.name || null,
-      description: Service.description || null
-    }));
+  _createEvaluation(path, props, options) {
+    const evaluation = {
+      id: uuid.v4(),
+      created_timestamp: Date.now(), // used for sorting
+      path,
+      props,
+      options,
+      status: "progress",
+      progressQueue: [],
+      progressEmitter: new EventEmitter()
+    };
+    this.evaluations[evaluation.id] = evaluation;
+    this._notifyEvaluationChange(evaluation, "add");
+    return evaluation;
+  }
+
+  async _handleEvaluations(path, props, options, handleProgress) {
+    if (!path) {
+      return rootContext.createResource(
+        "evaluations",
+        "application/json",
+        this._getAllEvaluations()
+      );
+    }
+
+    const evaluationId = path;
+    const evaluation = this.evaluations[evaluationId];
+    if (!evaluation) {
+      throw new Error("Evaluation not found");
+    }
+
+    const { command } = props;
+    if (command === "reattach") {
+      if (handleProgress) {
+        evaluation.progressQueue.forEach(message => handleProgress(message));
+        if (evaluation.status === "progress") {
+          evaluation.progressEmitter.on("message", handleProgress);
+        }
+      }
+      return evaluation.promise;
+    }
+    if (command === "remove") {
+      if (evaluation.status === "progress") {
+        throw new Error("Can't remove an evaluation that is still running.");
+      }
+      delete this.evaluations[evaluationId];
+      this._notifyEvaluationChange(evaluation, "remove");
+      return true;
+    }
+    throw new Error("Invalid command");
+  }
+
+  _getAllEvaluations() {
+    return mapValues(this.evaluations, evaluation =>
+      this._serializeEvaluation(evaluation)
+    );
+  }
+
+  _notifyEvaluationChange(evaluation, changeType) {
+    this.notificationEmitter.emit("message", {
+      topic: `evaluation:${changeType}`,
+      data: {
+        evaluation: this._serializeEvaluation(evaluation)
+      }
+    });
+  }
+
+  _serializeEvaluation(evaluation) {
+    return {
+      id: evaluation.id,
+      created_timestamp: evaluation.created_timestamp,
+      path: evaluation.path,
+      props: evaluation.props,
+      options: evaluation.options,
+      status: evaluation.status
+    };
   }
 }
