@@ -132,6 +132,36 @@ function serializeArray(
   };
 }
 
+function serializeError(
+  error,
+  recursion = DEFAULT_RECURSION,
+  path = [],
+  serializedPath = []
+) {
+  // include non-enumerable properties
+  const errorObj = {
+    ...error,
+    message: error.message,
+    stack: error.stack
+  };
+
+  const serializedValue = shouldLazyLoad(error, recursion)
+    ? lazyLoad(error, path)
+    : mapValues(errorObj, (v, k) =>
+        serializeValue(
+          v,
+          recursion - 1,
+          joinPath(path, k),
+          joinPath(serializedPath, "value", k)
+        )
+      );
+
+  return {
+    type: "error",
+    value: serializedValue
+  };
+}
+
 function serializePlainObject(
   obj,
   recursion = DEFAULT_RECURSION,
@@ -173,6 +203,9 @@ export function serializeValue(
     return serializeFunction(value, recursion, path, serializedPath);
   if (Array.isArray(value))
     return serializeArray(value, recursion, path, serializedPath);
+  if (value instanceof Error) {
+    return serializeError(value, recursion, path, serializedPath);
+  }
   if (typeof value === "object" && value !== null)
     return serializePlainObject(value, recursion, path, serializedPath);
 

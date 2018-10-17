@@ -246,6 +246,62 @@ test("plain object (recursion = 1, array depth = 2)", async t => {
   );
 });
 
+test("error (recursion = -1)", async t => {
+  const message = [...new Array(200)].map(() => "a").join("");
+  const error = new Error(message);
+  error.custom = 100;
+
+  t.deepEqual(serializeValue(error, -1), {
+    type: "more",
+    path: [],
+    serializedPath: []
+  });
+});
+
+test("error (recursion = 0)", async t => {
+  const message = [...new Array(200)].map(() => "a").join("");
+  const error = new Error(message);
+  error.custom = 100;
+
+  t.deepEqual(serializeValue(error, 0), {
+    type: "error",
+    value: {
+      message: {
+        type: "more",
+        path: ["message"],
+        serializedPath: ["value", "message"]
+      },
+      stack: {
+        type: "more",
+        path: ["stack"],
+        serializedPath: ["value", "stack"]
+      },
+      custom: { type: "number", value: error.custom }
+    }
+  });
+});
+
+test("error (recursion = 1)", async t => {
+  const message = [...new Array(200)].map(() => "a").join("");
+  const error = new Error(message);
+  error.custom = 100;
+
+  t.deepEqual(serializeValue(error, 1), {
+    type: "error",
+    value: {
+      message: {
+        type: "string",
+        value: message
+      },
+      stack: {
+        type: "string",
+        value: error.stack
+      },
+      custom: { type: "number", value: error.custom }
+    }
+  });
+});
+
 test("virtual (recursion = -1, depth = 1)", async t => {
   t.deepEqual(serializeValue(<div a={0} b={1} />, -1), {
     type: "more",
