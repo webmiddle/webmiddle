@@ -201,12 +201,12 @@ export function serializeCallStateInfo(info) {
       joinPath(path, "value"),
       joinPath(serializedPath, "value")
     ),
-    options: mapValues(info.options, optionValue =>
+    options: mapValues(info.options, (optionValue, optionName) =>
       serializeValue(
         optionValue,
         undefined,
-        joinPath(path, "options", optionValue),
-        joinPath(serializedPath, "options", optionValue)
+        joinPath(path, "options", optionName),
+        joinPath(serializedPath, "options", optionName)
       )
     ),
     result: serializeValue(
