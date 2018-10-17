@@ -36,7 +36,7 @@ export default async function call(fn, context, info) {
   }
 
   const callStateInfo = {
-    options: {},
+    options: context.options,
     ...info,
     children: [],
     callRootContextPath: context.path,

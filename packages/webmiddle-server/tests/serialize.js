@@ -455,7 +455,7 @@ test("callStateInfo: virtual (with result)", async t => {
         value: <Component a={1} b={{ c: { d: 0 } }} />,
         callRootContextPath,
         path: infoPath,
-        options: {},
+        options: { debug: true, networkRetries: 2 },
         children: [],
         result: "yes"
       })
@@ -468,7 +468,7 @@ test("callStateInfo: virtual (with result)", async t => {
       value: <Component a={1} b={{ c: { d: 0 } }} />,
       callRootContextPath,
       path: infoPath,
-      options: {},
+      options: { debug: true, networkRetries: 2 },
       children: [],
       result: "yes"
     }),
@@ -523,7 +523,16 @@ test("callStateInfo: virtual (with result)", async t => {
           }
         }
       },
-      options: {},
+      options: {
+        debug: {
+          type: "boolean",
+          value: true
+        },
+        networkRetries: {
+          type: "number",
+          value: 2
+        }
+      },
       children: [],
       result: {
         type: "string",
@@ -553,7 +562,7 @@ test("callStateInfo: virtual (with error)", async t => {
         value: <Component a={1} b={{ c: { d: 0 } }} />,
         callRootContextPath,
         path: infoPath,
-        options: {},
+        options: { debug: true, networkRetries: 2 },
         children: [],
         error: expectedErr
       })
@@ -566,7 +575,7 @@ test("callStateInfo: virtual (with error)", async t => {
       value: <Component a={1} b={{ c: { d: 0 } }} />,
       callRootContextPath,
       path: infoPath,
-      options: {},
+      options: { debug: true, networkRetries: 2 },
       children: [],
       error: expectedErr
     }),
@@ -621,7 +630,16 @@ test("callStateInfo: virtual (with error)", async t => {
           }
         }
       },
-      options: {},
+      options: {
+        debug: {
+          type: "boolean",
+          value: true
+        },
+        networkRetries: {
+          type: "number",
+          value: 2
+        }
+      },
       children: [],
       result: {
         type: "undefined",

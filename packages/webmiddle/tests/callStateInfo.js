@@ -21,7 +21,7 @@ test("virtual (component)", async t => {
     {
       type: "virtual",
       value: virtual,
-      options: {},
+      options: context.options,
       children: [],
       callRootContextPath: context.path,
       path: "0",
@@ -94,12 +94,12 @@ test("component returning virtual (virtual (component) -> virtual (component)", 
     {
       type: "virtual",
       value: virtual,
-      options: {},
+      options: context.options,
       children: [
         {
           type: "virtual",
           value: subVirtual,
-          options: {},
+          options: context.options,
           children: [],
           callRootContextPath: context.path,
           path: "0.0",
@@ -131,7 +131,7 @@ test('must emit "add" events with correct paths', async t => {
       info: {
         type: "virtual",
         value: virtual,
-        options: {},
+        options: context.options,
         children: [],
         callRootContextPath: context.path,
         path: "0",
