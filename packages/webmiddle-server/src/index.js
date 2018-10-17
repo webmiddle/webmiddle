@@ -243,14 +243,12 @@ export default class Server {
           ? output
           : this._wrapInResource(output);
         evaluation.status = "success";
-        evaluation.result = result;
         onFinally();
         return result;
       })
       .catch(err => {
         // failure
         evaluation.status = "error";
-        evaluation.error = err;
         onFinally();
         throw err;
       });
