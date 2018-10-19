@@ -1,5 +1,5 @@
 import evaluateVirtual from "./evaluateVirtual";
-import call from "./call";
+import addCallNode from "./addCallNode";
 import { isResource } from "./resource";
 import { isVirtual } from "./virtual";
 
@@ -31,7 +31,7 @@ export default async function evaluate(context, value) {
   if (isVirtual(result)) {
     context.log("evaluate virtual", result);
     let resultEvaluated = false;
-    ({ result } = await call(
+    ({ result } = await addCallNode(
       async newContext => {
         const topVirtual = result;
 

@@ -28,7 +28,7 @@ function emitBubble(context, eventName, topic, data) {
   }
 }
 
-export default async function call(fn, context, node) {
+export default async function addCallNode(fn, context, node) {
   if (!context.options.debug) {
     return { result: await fn(context), context };
   }
