@@ -1,4 +1,4 @@
-import callVirtual from "./callVirtual";
+import evaluateVirtual from "./evaluateVirtual";
 import call from "./call";
 import { isResource } from "./resource";
 import { isVirtual } from "./virtual";
@@ -38,7 +38,7 @@ export default async function evaluate(context, value) {
         const {
           result: virtualResult,
           context: virtualContext
-        } = await callVirtual(newContext, result);
+        } = await evaluateVirtual(newContext, result);
 
         context = virtualContext; // change context in top scope
 

@@ -10,7 +10,7 @@ import {
   isVirtual,
   WithOptions
 } from "../src/index.js";
-import callVirtual from "../src/utils/callVirtual";
+import evaluateVirtual from "../src/utils/evaluateVirtual";
 
 test.beforeEach(t => {
   t.context.context = rootContext;
@@ -312,13 +312,13 @@ test("context extend: hierarchy", t => {
   t.is(subFirstChildContext.path, firstChildContext.path + ".0");
 });
 
-test("callVirtual: when type is not a function", async t => {
+test("evaluateVirtual: when type is not a function", async t => {
   const virtual = <element />;
-  const output = await callVirtual(t.context.context, virtual);
+  const output = await evaluateVirtual(t.context.context, virtual);
   t.is(output.result, virtual, "result");
 });
 
-test("callVirtual: component must be called correctly", async t => {
+test("evaluateVirtual: component must be called correctly", async t => {
   const Component = async ({ children, ...args }, context) => ({
     args,
     children,
@@ -330,7 +330,7 @@ test("callVirtual: component must be called correctly", async t => {
     </Component>
   );
 
-  const output = await callVirtual(t.context.context, virtual);
+  const output = await evaluateVirtual(t.context.context, virtual);
 
   t.deepEqual(
     output.result.args,
@@ -344,7 +344,7 @@ test("callVirtual: component must be called correctly", async t => {
   t.is(output.result.children[0].type, "element", "children");
 });
 
-test("callVirtual: resource overrides", async t => {
+test("evaluateVirtual: resource overrides", async t => {
   // bottom to parent
   const Component = async () =>
     t.context.context.createResource("some", "text/html", "<div></div>");

@@ -1,4 +1,3 @@
-import call from "./call";
 import evaluate from "./evaluate";
 
 // extracted from https://github.com/developit/propTypes README
@@ -23,12 +22,12 @@ function validateProps(props, propTypes, component) {
   return true;
 }
 
-function callComponent(component, props, context) {
+function evaluateComponent(context, component, props) {
   const result = component(props, context);
   return evaluate(context, result);
 }
 
-export default async function callVirtual(context, virtual) {
+export default async function evaluateVirtual(context, virtual) {
   const component = typeof virtual.type === "function" ? virtual.type : null;
 
   const props = {
@@ -42,7 +41,7 @@ export default async function callVirtual(context, virtual) {
 
   let result;
   if (component) {
-    result = await callComponent(component, props, context);
+    result = await evaluateComponent(context, component, props);
   } else {
     result = virtual;
   }
