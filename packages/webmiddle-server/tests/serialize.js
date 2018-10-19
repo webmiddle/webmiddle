@@ -1,7 +1,7 @@
 import test from "ava";
 import {
   serializeValue,
-  serializeCallStateInfo,
+  serializeCallNode,
   loadMore
 } from "../src/utils/serialize";
 import { rootContext } from "webmiddle";
@@ -498,19 +498,19 @@ test("resource (recursion = 1, long)", async t => {
   });
 });
 
-test("callStateInfo: virtual (with result)", async t => {
+test("callNode: virtual (with result)", async t => {
   const Component = () => "yes";
 
   const callRootContextPath = "1.3";
-  const infoPath = "0.1";
+  const nodePath = "0.1";
 
   console.log(
     JSON.stringify(
-      serializeCallStateInfo({
+      serializeCallNode({
         type: "virtual",
         value: <Component a={1} b={{ c: { d: 0 } }} />,
         callRootContextPath,
-        path: infoPath,
+        path: nodePath,
         options: { debug: true, networkRetries: 2 },
         children: [],
         result: "yes"
@@ -519,11 +519,11 @@ test("callStateInfo: virtual (with result)", async t => {
   );
 
   t.deepEqual(
-    serializeCallStateInfo({
+    serializeCallNode({
       type: "virtual",
       value: <Component a={1} b={{ c: { d: 0 } }} />,
       callRootContextPath,
-      path: infoPath,
+      path: nodePath,
       options: { debug: true, networkRetries: 2 },
       children: [],
       result: "yes"
@@ -531,7 +531,7 @@ test("callStateInfo: virtual (with result)", async t => {
     {
       type: "virtual",
       callRootContextPath,
-      path: infoPath,
+      path: nodePath,
       value: {
         type: "virtual",
         value: {
@@ -552,7 +552,7 @@ test("callStateInfo: virtual (with result)", async t => {
                   type: "more",
                   path: [
                     callRootContextPath,
-                    infoPath,
+                    nodePath,
                     "value",
                     "attributes",
                     "b",
@@ -560,7 +560,7 @@ test("callStateInfo: virtual (with result)", async t => {
                   ],
                   serializedPath: [
                     callRootContextPath,
-                    infoPath,
+                    nodePath,
                     "value",
                     "value",
                     "attributes",
@@ -602,22 +602,22 @@ test("callStateInfo: virtual (with result)", async t => {
   );
 });
 
-test("callStateInfo: virtual (with error)", async t => {
+test("callNode: virtual (with error)", async t => {
   const expectedErr = { message: "expected" }; // not an actual Error instance for simplicity of deepEqual comparison
   const Component = () => {
     throw expectedErr;
   };
 
   const callRootContextPath = "1.3";
-  const infoPath = "0.1";
+  const nodePath = "0.1";
 
   console.log(
     JSON.stringify(
-      serializeCallStateInfo({
+      serializeCallNode({
         type: "virtual",
         value: <Component a={1} b={{ c: { d: 0 } }} />,
         callRootContextPath,
-        path: infoPath,
+        path: nodePath,
         options: { debug: true, networkRetries: 2 },
         children: [],
         error: expectedErr
@@ -626,11 +626,11 @@ test("callStateInfo: virtual (with error)", async t => {
   );
 
   t.deepEqual(
-    serializeCallStateInfo({
+    serializeCallNode({
       type: "virtual",
       value: <Component a={1} b={{ c: { d: 0 } }} />,
       callRootContextPath,
-      path: infoPath,
+      path: nodePath,
       options: { debug: true, networkRetries: 2 },
       children: [],
       error: expectedErr
@@ -638,7 +638,7 @@ test("callStateInfo: virtual (with error)", async t => {
     {
       type: "virtual",
       callRootContextPath,
-      path: infoPath,
+      path: nodePath,
       value: {
         type: "virtual",
         value: {
@@ -659,7 +659,7 @@ test("callStateInfo: virtual (with error)", async t => {
                   type: "more",
                   path: [
                     callRootContextPath,
-                    infoPath,
+                    nodePath,
                     "value",
                     "attributes",
                     "b",
@@ -667,7 +667,7 @@ test("callStateInfo: virtual (with error)", async t => {
                   ],
                   serializedPath: [
                     callRootContextPath,
-                    infoPath,
+                    nodePath,
                     "value",
                     "value",
                     "attributes",
@@ -723,24 +723,24 @@ test("loadMore", async t => {
   const Component = ({ a, b }) => a + b.c.d;
   const virtual = <Component a={1} b={{ c: { d: 0 } }} />;
 
-  let info;
+  let node;
   context.emitter.on("message", message => {
-    if (message.topic === "callStateInfo:update") {
+    if (message.topic === "callNode:update") {
       if (
         message.target === context &&
-        typeof message.data.info.result !== "undefined"
+        typeof message.data.node.result !== "undefined"
       ) {
-        info = message.data.info;
+        node = message.data.node;
       }
     }
   });
   const output = await context.evaluate(virtual);
   t.is(output, 1);
 
-  const serializedInfo = serializeCallStateInfo(info);
+  const serializedNode = serializeCallNode(node);
 
-  const originalObj = info.value.attributes.b.c;
-  const moreObj = serializedInfo.value.value.attributes.b.value.c;
+  const originalObj = node.value.attributes.b.c;
+  const moreObj = serializedNode.value.value.attributes.b.value.c;
 
   const retrievedObj = loadMore(
     moreObj.path,
@@ -766,23 +766,23 @@ test("loadMore: resource content (should retrieve the stringified content)", asy
   const Component = () => resource;
   const virtual = <Component />;
 
-  let info;
+  let node;
   context.emitter.on("message", message => {
-    if (message.topic === "callStateInfo:update") {
+    if (message.topic === "callNode:update") {
       if (
         message.target === context &&
-        typeof message.data.info.result !== "undefined"
+        typeof message.data.node.result !== "undefined"
       ) {
-        info = message.data.info;
+        node = message.data.node;
       }
     }
   });
   const output = await context.evaluate(virtual);
   t.is(output, resource);
 
-  const serializedInfo = serializeCallStateInfo(info);
+  const serializedNode = serializeCallNode(node);
 
-  const moreObj = serializedInfo.result.value.content;
+  const moreObj = serializedNode.result.value.content;
 
   const retrievedObj = loadMore(
     moreObj.path,

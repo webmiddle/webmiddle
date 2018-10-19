@@ -267,10 +267,10 @@ test("Get progress when executing a service via WEBSOCKET", async t => {
   );
 
   t.true(
-    typeof progressData[0].info === "object" && progressData[0].info !== null
+    typeof progressData[0].node === "object" && progressData[0].node !== null
   );
-  t.true(typeof progressData[0].info.callRootContextPath !== "undefined");
-  t.true(typeof progressData[0].info.path !== "undefined");
+  t.true(typeof progressData[0].node.callRootContextPath !== "undefined");
+  t.true(typeof progressData[0].node.path !== "undefined");
 });
 
 test("Get service paths", async t => {

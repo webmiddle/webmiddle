@@ -52,34 +52,32 @@ test("virtual (component) with retries and final catch", async t => {
 
   const output = await context.evaluate(virtual);
 
-  const errorBoundaryCallStateInfo = context._callState[0];
-  t.is(errorBoundaryCallStateInfo.type, "virtual");
-  t.is(typeof errorBoundaryCallStateInfo.value.type, "function");
-  t.is(errorBoundaryCallStateInfo.value.type.name, "ErrorBoundary");
+  const errorBoundaryCallNode = context._callState[0];
+  t.is(errorBoundaryCallNode.type, "virtual");
+  t.is(typeof errorBoundaryCallNode.value.type, "function");
+  t.is(errorBoundaryCallNode.value.type.name, "ErrorBoundary");
 
-  //console.log(JSON.stringify(errorBoundaryCallStateInfo.children.map(child => child.value.type.name), null, 2));
+  //console.log(JSON.stringify(errorBoundaryCallNode.children.map(child => child.value.type.name), null, 2));
 
   // the last child should be the Catch
-  const catchCallStateInfo =
-    errorBoundaryCallStateInfo.children[
-      errorBoundaryCallStateInfo.children.length - 1
-    ];
-  t.is(catchCallStateInfo.type, "virtual");
-  t.is(typeof catchCallStateInfo.value.type, "function");
-  t.is(catchCallStateInfo.value.type.name, "Catch");
+  const catchCallNode =
+    errorBoundaryCallNode.children[errorBoundaryCallNode.children.length - 1];
+  t.is(catchCallNode.type, "virtual");
+  t.is(typeof catchCallNode.value.type, "function");
+  t.is(catchCallNode.value.type.name, "Catch");
 
   // the previous childs should be the tries
-  errorBoundaryCallStateInfo.children.slice(0, -1).forEach(child => {
+  errorBoundaryCallNode.children.slice(0, -1).forEach(child => {
     t.is(child.type, "virtual");
     t.is(typeof child.value.type, "function");
     t.is(child.value.type.name, "Try");
   });
 
-  t.is(errorBoundaryCallStateInfo.children.length, tries + 1); // +1 for the catch
+  t.is(errorBoundaryCallNode.children.length, tries + 1); // +1 for the catch
 });
 
 // the virtual immediately returned by a component should be evaluated recursively
-// (i.e. the virtual callState should be a children of the component callState)
+// (i.e. the virtual callNode should be a children of the component callNode)
 test("component returning virtual (virtual (component) -> virtual (component)", async t => {
   const SubComponent = () => "more yes!";
   const subVirtual = <SubComponent c={30} />;
@@ -121,14 +119,14 @@ test('must emit "add" events with correct paths', async t => {
 
   const addData = [];
   context.emitter.on("message", message => {
-    if (message.topic === "callStateInfo:add") addData.push(message.data);
+    if (message.topic === "callNode:add") addData.push(message.data);
   });
 
   const output = await context.evaluate(virtual);
 
   t.deepEqual(addData, [
     {
-      info: {
+      node: {
         type: "virtual",
         value: virtual,
         options: context.options,
@@ -153,7 +151,7 @@ test('must emit "add" events that can be traced back to the original objects', a
 
   const addData = [];
   context.emitter.on("message", message => {
-    if (message.topic === "callStateInfo:add") {
+    if (message.topic === "callNode:add") {
       addData.push(message.data);
     }
   });
@@ -161,24 +159,23 @@ test('must emit "add" events that can be traced back to the original objects', a
   const output = await context.evaluate(virtual);
 
   for (let i = 0; i < addData.length; i++) {
-    // find the root context of the call state chain
-    const contextPath = addData[i].info.callRootContextPath;
+    // find the context of the call root
+    const contextPath = addData[i].node.callRootContextPath;
     const contextPathParts = contextPath.split(".");
-    let callStateRootContext = rootContext;
+    let callRootContext = rootContext;
     contextPathParts.forEach(childIndex => {
-      callStateRootContext = callStateRootContext.children[childIndex];
+      callRootContext = callRootContext.children[childIndex];
     });
 
-    // find the call state info
-    const callStateInfoPath = addData[i].info.path;
-    const callStateInfoPathParts = callStateInfoPath.split(".");
-    let callStateInfo =
-      callStateRootContext._callState[callStateInfoPathParts[0]]; // callStateInfo path is never empty
-    callStateInfoPathParts.slice(1).forEach(childIndex => {
-      callStateInfo = callStateInfo.children[childIndex];
+    // find the callNode
+    const callNodePath = addData[i].node.path;
+    const callNodePathParts = callNodePath.split(".");
+    let callNode = callRootContext._callState[callNodePathParts[0]]; // callNode path is never empty
+    callNodePathParts.slice(1).forEach(childIndex => {
+      callNode = callNode.children[childIndex];
     });
 
-    t.is(callStateInfo, addData[i].info);
+    t.is(callNode, addData[i].node);
   }
 });
 
@@ -190,12 +187,12 @@ test('must emit "update" events with correct results', async t => {
 
   const updateResults = [];
   context.emitter.on("message", message => {
-    if (message.topic === "callStateInfo:update") {
+    if (message.topic === "callNode:update") {
       if (
         message.target === context &&
-        typeof message.data.info.result !== "undefined"
+        typeof message.data.node.result !== "undefined"
       ) {
-        updateResults.push(message.data.info.result);
+        updateResults.push(message.data.node.result);
       }
     }
   });
@@ -216,12 +213,12 @@ test('must emit "update" events with correct errors', async t => {
 
   const updateErrors = [];
   context.emitter.on("message", message => {
-    if (message.topic === "callStateInfo:update") {
+    if (message.topic === "callNode:update") {
       if (
         message.target === context &&
-        typeof message.data.info.error !== "undefined"
+        typeof message.data.node.error !== "undefined"
       ) {
-        updateErrors.push(message.data.info.error);
+        updateErrors.push(message.data.node.error);
       }
     }
   });
@@ -236,7 +233,7 @@ test('must emit "update" events with correct errors', async t => {
   t.is(updateErrors[0], expectedErr);
 });
 
-test("context should have separate call state chain", async t => {
+test("context should have separate callState", async t => {
   const baseContext = rootContext.extend({ debug: true });
   const childContext = baseContext.extend();
 

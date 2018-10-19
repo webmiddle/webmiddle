@@ -5,7 +5,7 @@ function Catch({ handler, err }) {
   return handler;
 }
 
-// Separate Try component makes sure the callStateInfo
+// Separate Try component makes sure the call state
 // contains a visible "Try" component call
 function Try({ children }) {
   return children[0];
@@ -32,7 +32,7 @@ export default function ErrorBoundary(
       console.error(err instanceof Error ? err.stack : err);
 
       // Note: still use the old context in case of error
-      // since the tries should show as a list in the callState
+      // since the tries should show as a list in the call state
 
       if (!(await isRetryable(err))) throw err;
 

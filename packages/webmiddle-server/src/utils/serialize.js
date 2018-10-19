@@ -217,24 +217,24 @@ export function serializeValue(
   };
 }
 
-export function serializeCallStateInfo(info) {
-  if (!info) return undefined;
+export function serializeCallNode(node) {
+  if (!node) return undefined;
 
-  const path = [].concat(info.callRootContextPath, info.path);
-  const serializedPath = [].concat(info.callRootContextPath, info.path);
+  const path = [].concat(node.callRootContextPath, node.path);
+  const serializedPath = [].concat(node.callRootContextPath, node.path);
 
   // type, value, options, children
   return {
-    type: info.type,
-    callRootContextPath: info.callRootContextPath,
-    path: info.path,
+    type: node.type,
+    callRootContextPath: node.callRootContextPath,
+    path: node.path,
     value: serializeValue(
-      info.value,
+      node.value,
       undefined,
       joinPath(path, "value"),
       joinPath(serializedPath, "value")
     ),
-    options: mapValues(info.options, (optionValue, optionName) =>
+    options: mapValues(node.options, (optionValue, optionName) =>
       serializeValue(
         optionValue,
         undefined,
@@ -243,18 +243,18 @@ export function serializeCallStateInfo(info) {
       )
     ),
     result: serializeValue(
-      info.result,
+      node.result,
       0,
       joinPath(path, "result"),
       joinPath(serializedPath, "result")
     ),
     error: serializeValue(
-      info.error,
+      node.error,
       0,
       joinPath(path, "error"),
       joinPath(serializedPath, "error")
     ),
-    children: info.children.map((child, i) =>
+    children: node.children.map((child, i) =>
       serializeValue(
         child,
         0,
@@ -266,7 +266,7 @@ export function serializeCallStateInfo(info) {
 }
 
 export function loadMore(path, serializedPath, rootContext) {
-  const [callRootContextPath, infoPath, ...valuePath] = path;
+  const [callRootContextPath, nodePath, ...valuePath] = path;
 
   const context =
     callRootContextPath === ""
@@ -276,9 +276,9 @@ export function loadMore(path, serializedPath, rootContext) {
           callRootContextPath.split(".").join(".children.")
         );
 
-  const info = get(context._callState, infoPath.split(".").join(".children."));
+  const node = get(context._callState, nodePath.split(".").join(".children."));
 
-  const value = valuePath.reduce((obj, part) => obj[part], info);
+  const value = valuePath.reduce((obj, part) => obj[part], node);
 
   return serializeValue(value, undefined, path, serializedPath);
 }

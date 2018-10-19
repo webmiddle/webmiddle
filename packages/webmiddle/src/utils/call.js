@@ -1,11 +1,9 @@
-// Note: this should be called AFTER the info has been pushed
+// Note: this should be called AFTER the node has been pushed
 // to the parent children array
-function makeCallStateInfoPath(parentCallStateInfo) {
-  const pathPrefix = parentCallStateInfo.path ? "." : "";
+function makeCallNodePath(parentCallNode) {
+  const pathPrefix = parentCallNode.path ? "." : "";
   return (
-    parentCallStateInfo.path +
-    pathPrefix +
-    (parentCallStateInfo.children.length - 1)
+    parentCallNode.path + pathPrefix + (parentCallNode.children.length - 1)
   );
 }
 
@@ -30,63 +28,63 @@ function emitBubble(context, eventName, topic, data) {
   }
 }
 
-export default async function call(fn, context, info) {
+export default async function call(fn, context, node) {
   if (!context.options.debug) {
     return { result: await fn(context), context };
   }
 
-  const callStateInfo = {
+  const callNode = {
     options: context.options,
-    ...info,
+    ...node,
     children: [],
     callRootContextPath: context.path,
     path: "" // relative to callRootContextPath
   };
-  context._callState.push(callStateInfo);
-  callStateInfo.path = String(context._callState.length - 1);
+  context._callState.push(callNode);
+  callNode.path = String(context._callState.length - 1);
 
   // after this, ascendant context will have updated the
-  // path for this callStateInfo (if pending call)
-  emitBubble(context, "internal", "callStateInfo:add:before", {
-    info: callStateInfo
+  // path for this callNode (if pending call)
+  emitBubble(context, "internal", "callNode:add:before", {
+    node: callNode
   });
 
-  emitBubble(context, "message", "callStateInfo:add", {
-    info: callStateInfo
+  emitBubble(context, "message", "callNode:add", {
+    node: callNode
   });
 
   const newContext = context.extend();
 
-  // listen for new callStateInfos in the new context or in its descendants,
+  // listen for new callNodes in the new context or in its descendants,
   // to setup the parent/children link
   const handleMessage = (message, stopPropagation) => {
-    if (message.topic === "callStateInfo:add:before") {
-      const newCallStateInfo = message.data.info;
-      newCallStateInfo.callRootContextPath = callStateInfo.callRootContextPath;
-      callStateInfo.children.push(newCallStateInfo);
-      newCallStateInfo.path = makeCallStateInfoPath(callStateInfo);
-      // stop bubbling to prevent other ascendants from linking this callStateInfo
+    if (message.topic === "callNode:add:before") {
+      const newCallNode = message.data.node;
+      newCallNode.callRootContextPath = callNode.callRootContextPath;
+      callNode.children.push(newCallNode);
+      newCallNode.path = makeCallNodePath(callNode);
+      // stop bubbling to prevent other ascendants from linking this callNode
       stopPropagation();
     }
   };
   newContext.emitter.on("internal", handleMessage);
 
   try {
-    callStateInfo.result = await fn(newContext);
+    callNode.result = await fn(newContext);
   } catch (err) {
-    callStateInfo.error = err;
+    callNode.error = err;
   } finally {
     newContext.emitter.removeListener("internal", handleMessage);
   }
 
   // result/error is ready => notify
-  emitBubble(context, "message", "callStateInfo:update", {
-    info: callStateInfo
+  emitBubble(context, "message", "callNode:update", {
+    node: callNode
   });
 
-  if (callStateInfo.error) {
-    throw callStateInfo.error;
+  if (callNode.error) {
+    throw callNode.error;
   }
 
-  return { result: callStateInfo.result, context: newContext };
+  return { result: callNode.result, context: newContext };
 }

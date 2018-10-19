@@ -7,7 +7,7 @@ import uuid from "uuid";
 import mapValues from "lodash/mapValues";
 import EventEmitter from "events";
 
-import { serializeCallStateInfo, loadMore } from "./utils/serialize";
+import { serializeCallNode, loadMore } from "./utils/serialize";
 
 function httpToServicePath(path) {
   if (path.startsWith("/")) path = path.slice(1);
@@ -140,9 +140,7 @@ export default class Server {
                   requestId,
                   body: {
                     ...message.data,
-                    info: serializeCallStateInfo(
-                      message.data && message.data.info
-                    )
+                    node: serializeCallNode(message.data && message.data.node)
                   }
                 })
               );
