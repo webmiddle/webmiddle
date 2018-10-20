@@ -87,7 +87,7 @@ const virtualResource = rootContext.createResource(
 );
 
 test("must throw if neither fullConversion and children are specified", async t => {
-  await t.throws(
+  await t.throwsAsync(
     rootContext.evaluate(<CheerioToVirtual name="virtual" from={xmlResource} />)
   );
 });
@@ -194,7 +194,7 @@ test("condition", async t => {
 });
 
 test("condition: must throw if is not a function", async t => {
-  await t.throws(
+  await t.throwsAsync(
     rootContext.evaluate(
       <CheerioToVirtual name="virtual" from={xmlResource}>
         <title el="title" condition="true" />

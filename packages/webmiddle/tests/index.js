@@ -437,5 +437,5 @@ test("must throw when the component throws", async t => {
     throw new Error("expected throw");
   };
 
-  await t.throws(t.context.context.evaluate(<Component />));
+  await t.throwsAsync(t.context.context.evaluate(<Component />));
 });

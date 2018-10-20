@@ -81,7 +81,7 @@ test.beforeEach(t => {
 });
 
 test("must throw if neither fullConversion and children are specified", async t => {
-  await t.throws(
+  await t.throwsAsync(
     t.context.context.evaluate(
       <JSONSelectToVirtual name="virtual" from={jsonResource} />
     )
@@ -199,7 +199,7 @@ test("condition", async t => {
 });
 
 test("condition: must throw if is not a function", async t => {
-  await t.throws(
+  await t.throwsAsync(
     t.context.context.evaluate(
       <JSONSelectToVirtual name="virtual" from={jsonResource}>
         <name el=".name" condition="true" />

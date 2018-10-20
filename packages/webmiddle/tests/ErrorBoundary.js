@@ -11,9 +11,9 @@ test.beforeEach(t => {
 });
 
 test("should throw without exactly one child", async t => {
-  await t.throws(t.context.context.evaluate(<ErrorBoundary />));
+  await t.throwsAsync(t.context.context.evaluate(<ErrorBoundary />));
 
-  await t.throws(
+  await t.throwsAsync(
     t.context.context.evaluate(
       <ErrorBoundary>
         {"first"}
@@ -62,7 +62,7 @@ test("should evaluate child normally if there arent errors (virtual)", async t =
 test("should default to zero retries and no handleCatch", async t => {
   let tries = 0;
 
-  await t.throws(
+  await t.throwsAsync(
     t.context.context.evaluate(
       <ErrorBoundary>
         {() => {
@@ -80,7 +80,7 @@ test("zero retries", async t => {
   let tries = 0;
   const retries = 0;
 
-  await t.throws(
+  await t.throwsAsync(
     t.context.context.evaluate(
       <ErrorBoundary retries={retries}>
         {() => {
@@ -98,7 +98,7 @@ test("positive retries", async t => {
   let tries = 0;
   const retries = 3;
 
-  await t.throws(
+  await t.throwsAsync(
     t.context.context.evaluate(
       <ErrorBoundary retries={retries}>
         {() => {
@@ -116,7 +116,7 @@ test("unlimited retries", async t => {
   let tries = 0;
   const retries = -1;
 
-  await t.throws(
+  await t.throwsAsync(
     t.context.context.evaluate(
       <ErrorBoundary retries={retries} isRetryable={() => tries < 3}>
         {() => {
@@ -134,7 +134,7 @@ test("isRetryable: false", async t => {
   let tries = 0;
   const retries = 3;
 
-  await t.throws(
+  await t.throwsAsync(
     t.context.context.evaluate(
       <ErrorBoundary retries={retries} isRetryable={() => false}>
         {() => {
@@ -152,7 +152,7 @@ test("isRetryable as a function returning a promise", async t => {
   let tries = 0;
   const retries = 3;
 
-  await t.throws(
+  await t.throwsAsync(
     t.context.context.evaluate(
       <ErrorBoundary
         retries={retries}

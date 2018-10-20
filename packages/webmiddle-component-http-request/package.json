@@ -18,11 +18,14 @@
     "build:watch": "yarn run clean && yarn run babel -- --watch",
     "prepublish": "yarn run build"
   },
+  "babel": {
+    "extends": "../../babel.config.js"
+  },
   "ava": {
     "files": [
       "tests/*.js"
     ],
-    "source": [
+    "sources": [
       "**/*.{js,jsx}",
       "!dist/**/*"
     ],
@@ -30,10 +33,12 @@
     "failFast": true,
     "tap": true,
     "require": [
-      "babel-register"
+      "@babel/register"
     ],
     "babel": {
-      "extends": "../../.babelrc"
+      "testOptions": {
+        "extends": "../../babel.config.js"
+      }
     }
   },
   "keywords": [

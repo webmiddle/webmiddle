@@ -65,7 +65,7 @@ function requestWebsocket(path, body = {}, onProgress) {
             if (message.status === "success") {
               resolve(message.body);
             } else if (message.status === "error") {
-              reject(message.body);
+              reject(new Error(message.body));
             }
           }
         });
@@ -73,7 +73,7 @@ function requestWebsocket(path, body = {}, onProgress) {
         ws.send(JSON.stringify({ type: "request", requestId, path, body }));
       } catch (err) {
         console.error(err instanceof Error ? err.stack : err);
-        reject(err instanceof Error ? err.stack : err);
+        reject(err);
       }
     });
   });
@@ -175,17 +175,19 @@ test("Execute service via WEBSOCKET", async t => {
 });
 
 test("Must throw when executing a non existing service via GET", async t => {
-  await t.throws(
+  await t.throwsAsync(
     requestExpress("GET", "/services/wrongUndefinedService?a=5&b=10")
   );
 });
 
 test("Must throw when executing a non existing service via POST", async t => {
-  await t.throws(requestExpress("POST", "/services/wrongUndefinedService"));
+  await t.throwsAsync(
+    requestExpress("POST", "/services/wrongUndefinedService")
+  );
 });
 
 test("Must throw when executing a non existing service via WEBSOCKET", async t => {
-  await t.throws(requestWebsocket("/services/wrongUndefinedService"));
+  await t.throwsAsync(requestWebsocket("/services/wrongUndefinedService"));
 });
 
 test("Default context options via POST", async t => {
@@ -386,7 +388,7 @@ test("Evaluations: get list (express)", async t => {
 });
 
 test("Evaluations: Must throw when requesting a non existing evaluation (websocket)'", async t => {
-  await t.throws(requestWebsocket("/evaluations/INVALID"));
+  await t.throwsAsync(requestWebsocket("/evaluations/INVALID"));
 });
 
 test("Evaluations: reattach: ended with success (websocket)", async t => {
@@ -426,19 +428,19 @@ test("Evaluations: reattach: ended with success (websocket)", async t => {
 
 test("Evaluations: reattach: ended with failure (websocket)", async t => {
   const customUniqueOption = uuid.v4();
-  const expectedError = "expected";
+  const expectedErrorMessage = "expected";
   try {
     await requestWebsocket("/services/throwOption", {
       props: {
         optionName: "custom"
       },
       options: {
-        custom: expectedError,
+        custom: expectedErrorMessage,
         customUniqueOption
       }
     });
   } catch (err) {
-    if (err !== expectedError) throw err;
+    if (err.message !== expectedErrorMessage) throw err;
   }
 
   const responseBody = await requestWebsocket("/evaluations/");
@@ -463,7 +465,7 @@ test("Evaluations: reattach: ended with failure (websocket)", async t => {
     reattachErr = err;
   }
 
-  t.is(reattachErr, expectedError);
+  t.is(reattachErr.message, expectedErrorMessage);
 });
 
 test("Evaluations: reattach: progress with success (websocket)", async t => {
@@ -534,7 +536,7 @@ test("Evaluations: remove: must throw when evaluation is in progress (websocket)
   // complete evaluation after some delay
   delay(1000).then(() => eventEmitter.emit(customUniqueOption));
 
-  await t.throws(
+  await t.throwsAsync(
     requestWebsocket(`/evaluations/${evaluation.id}`, {
       props: {
         command: "delete"
@@ -607,7 +609,7 @@ test("Evaluations: Must throw when sending an invalid command (websocket)'", asy
   t.truthy(evaluation.id);
   t.is(evaluation.status, "success");
 
-  await t.throws(
+  await t.throwsAsync(
     requestWebsocket(`/evaluations/${evaluation.id}`, {
       props: {
         command: "INVALID"

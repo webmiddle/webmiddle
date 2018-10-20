@@ -307,7 +307,7 @@ test("cookies: read from jar", async t => {
 });
 
 test("Should not throw when status code is between 200 and 299", async t => {
-  await t.notThrows(
+  await t.notThrowsAsync(
     t.context.context.evaluate(
       <HttpRequest
         name="virtual"
@@ -318,7 +318,7 @@ test("Should not throw when status code is between 200 and 299", async t => {
     )
   );
 
-  await t.notThrows(
+  await t.notThrowsAsync(
     t.context.context.evaluate(
       <HttpRequest
         name="virtual"

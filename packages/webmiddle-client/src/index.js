@@ -66,14 +66,14 @@ export default class Client {
             if (message.status === "success") {
               resolve(message.body);
             } else if (message.status === "error") {
-              reject(message.body);
+              reject(new Error(message.body));
             }
           });
 
           ws.send(JSON.stringify({ type: "request", requestId, path, body }));
         } catch (err) {
           console.error(err instanceof Error ? err.stack : err);
-          reject(err instanceof Error ? err.stack : err);
+          reject(err);
         }
       });
     });
