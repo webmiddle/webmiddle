@@ -8,8 +8,7 @@
   "scripts": {
     "build": "lerna run build",
     "test": "cross-env NODE_ENV=test nyc lerna run test",
-    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
-    "precommit": "lint-staged"
+    "report-coverage": "nyc report --reporter=text-lcov > coverage.lcov && codecov"
   },
   "engines": {
     "node": "^6.14.0 || >=8.10.0",
@@ -49,6 +48,11 @@
     ],
     "sourceMap": false,
     "instrument": false
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "lint-staged": {
     "*.js": [
