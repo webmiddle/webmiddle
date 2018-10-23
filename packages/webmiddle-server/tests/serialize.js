@@ -499,219 +499,304 @@ test("resource (recursion = 1, long)", async t => {
 });
 
 test("callNode: virtual (with result)", async t => {
-  const Component = () => "yes";
+  const SubComponent = () => "yes";
+  const Component = () => <SubComponent />;
 
   const callRootContextPath = "1.3";
   const nodePath = "0.1";
+  const subNodePath = "0.1.0";
 
-  console.log(
-    JSON.stringify(
-      serializeCallNode({
+  const callNode = {
+    type: "virtual",
+    value: <Component a={1} b={{ c: { d: 0 } }} />,
+    callRootContextPath,
+    path: nodePath,
+    options: { debug: true, networkRetries: 2 },
+    children: [
+      {
         type: "virtual",
-        value: <Component a={1} b={{ c: { d: 0 } }} />,
+        value: <SubComponent />,
         callRootContextPath,
-        path: nodePath,
+        path: subNodePath,
         options: { debug: true, networkRetries: 2 },
         children: [],
         result: "yes"
-      })
-    )
-  );
+      }
+    ],
+    result: "yes"
+  };
 
-  t.deepEqual(
-    serializeCallNode({
+  console.log(JSON.stringify(serializeCallNode(callNode)));
+
+  t.deepEqual(serializeCallNode(callNode), {
+    type: "virtual",
+    callRootContextPath,
+    path: nodePath,
+    value: {
       type: "virtual",
-      value: <Component a={1} b={{ c: { d: 0 } }} />,
-      callRootContextPath,
-      path: nodePath,
-      options: { debug: true, networkRetries: 2 },
-      children: [],
-      result: "yes"
-    }),
-    {
-      type: "virtual",
-      callRootContextPath,
-      path: nodePath,
       value: {
-        type: "virtual",
-        value: {
-          type: {
-            type: "function",
-            name: "Component",
-            value: undefined
+        type: {
+          type: "function",
+          name: "Component",
+          value: undefined
+        },
+        attributes: {
+          a: {
+            type: "number",
+            value: 1
           },
-          attributes: {
-            a: {
-              type: "number",
-              value: 1
-            },
-            b: {
-              type: "object",
-              value: {
-                c: {
-                  type: "more",
-                  path: [
-                    callRootContextPath,
-                    nodePath,
-                    "value",
-                    "attributes",
-                    "b",
-                    "c"
-                  ],
-                  serializedPath: [
-                    callRootContextPath,
-                    nodePath,
-                    "value",
-                    "value",
-                    "attributes",
-                    "b",
-                    "value",
-                    "c"
-                  ]
-                }
+          b: {
+            type: "object",
+            value: {
+              c: {
+                type: "more",
+                path: [
+                  callRootContextPath,
+                  nodePath,
+                  "value",
+                  "attributes",
+                  "b",
+                  "c"
+                ],
+                serializedPath: [
+                  callRootContextPath,
+                  nodePath,
+                  "value",
+                  "value",
+                  "attributes",
+                  "b",
+                  "value",
+                  "c"
+                ]
               }
             }
-          },
-          children: {
-            type: "array",
-            length: 0,
-            value: []
           }
-        }
-      },
-      options: {
-        debug: {
-          type: "boolean",
-          value: true
         },
-        networkRetries: {
-          type: "number",
-          value: 2
+        children: {
+          type: "array",
+          length: 0,
+          value: []
         }
-      },
-      children: [],
-      result: {
-        type: "string",
-        value: "yes"
-      },
-      error: {
-        type: "undefined",
-        value: undefined
       }
+    },
+    options: {
+      debug: {
+        type: "boolean",
+        value: true
+      },
+      networkRetries: {
+        type: "number",
+        value: 2
+      }
+    },
+    children: [
+      {
+        type: "virtual",
+        callRootContextPath,
+        path: subNodePath,
+        value: {
+          type: "virtual",
+          value: {
+            type: {
+              type: "function",
+              name: "SubComponent",
+              value: undefined
+            },
+            attributes: {},
+            children: {
+              type: "array",
+              length: 0,
+              value: []
+            }
+          }
+        },
+        options: {
+          debug: {
+            type: "boolean",
+            value: true
+          },
+          networkRetries: {
+            type: "number",
+            value: 2
+          }
+        },
+        children: [],
+        result: {
+          type: "string",
+          value: "yes"
+        },
+        error: {
+          type: "undefined",
+          value: undefined
+        }
+      }
+    ],
+    result: {
+      type: "string",
+      value: "yes"
+    },
+    error: {
+      type: "undefined",
+      value: undefined
     }
-  );
+  });
 });
 
 test("callNode: virtual (with error)", async t => {
   const expectedErr = { message: "expected" }; // not an actual Error instance for simplicity of deepEqual comparison
-  const Component = () => {
+  const SubComponent = () => {
     throw expectedErr;
   };
+  const Component = () => <SubComponent />;
 
   const callRootContextPath = "1.3";
   const nodePath = "0.1";
+  const subNodePath = "0.1.0";
 
-  console.log(
-    JSON.stringify(
-      serializeCallNode({
+  const callNode = {
+    type: "virtual",
+    value: <Component a={1} b={{ c: { d: 0 } }} />,
+    callRootContextPath,
+    path: nodePath,
+    options: { debug: true, networkRetries: 2 },
+    children: [
+      {
         type: "virtual",
-        value: <Component a={1} b={{ c: { d: 0 } }} />,
+        value: <SubComponent />,
         callRootContextPath,
-        path: nodePath,
+        path: subNodePath,
         options: { debug: true, networkRetries: 2 },
         children: [],
         error: expectedErr
-      })
-    )
-  );
+      }
+    ],
+    error: expectedErr
+  };
 
-  t.deepEqual(
-    serializeCallNode({
+  console.log(JSON.stringify(serializeCallNode(callNode)));
+
+  t.deepEqual(serializeCallNode(callNode), {
+    type: "virtual",
+    callRootContextPath,
+    path: nodePath,
+    value: {
       type: "virtual",
-      value: <Component a={1} b={{ c: { d: 0 } }} />,
-      callRootContextPath,
-      path: nodePath,
-      options: { debug: true, networkRetries: 2 },
-      children: [],
-      error: expectedErr
-    }),
-    {
-      type: "virtual",
-      callRootContextPath,
-      path: nodePath,
       value: {
-        type: "virtual",
-        value: {
-          type: {
-            type: "function",
-            name: "Component",
-            value: undefined
+        type: {
+          type: "function",
+          name: "Component",
+          value: undefined
+        },
+        attributes: {
+          a: {
+            type: "number",
+            value: 1
           },
-          attributes: {
-            a: {
-              type: "number",
-              value: 1
-            },
-            b: {
-              type: "object",
-              value: {
-                c: {
-                  type: "more",
-                  path: [
-                    callRootContextPath,
-                    nodePath,
-                    "value",
-                    "attributes",
-                    "b",
-                    "c"
-                  ],
-                  serializedPath: [
-                    callRootContextPath,
-                    nodePath,
-                    "value",
-                    "value",
-                    "attributes",
-                    "b",
-                    "value",
-                    "c"
-                  ]
-                }
+          b: {
+            type: "object",
+            value: {
+              c: {
+                type: "more",
+                path: [
+                  callRootContextPath,
+                  nodePath,
+                  "value",
+                  "attributes",
+                  "b",
+                  "c"
+                ],
+                serializedPath: [
+                  callRootContextPath,
+                  nodePath,
+                  "value",
+                  "value",
+                  "attributes",
+                  "b",
+                  "value",
+                  "c"
+                ]
               }
             }
-          },
-          children: {
-            type: "array",
-            length: 0,
-            value: []
           }
-        }
-      },
-      options: {
-        debug: {
-          type: "boolean",
-          value: true
         },
-        networkRetries: {
-          type: "number",
-          value: 2
+        children: {
+          type: "array",
+          length: 0,
+          value: []
         }
+      }
+    },
+    options: {
+      debug: {
+        type: "boolean",
+        value: true
       },
-      children: [],
-      result: {
-        type: "undefined",
-        value: undefined
-      },
-      error: {
-        type: "object",
+      networkRetries: {
+        type: "number",
+        value: 2
+      }
+    },
+    children: [
+      {
+        type: "virtual",
+        callRootContextPath,
+        path: subNodePath,
         value: {
-          message: {
-            type: "string",
-            value: "expected"
+          type: "virtual",
+          value: {
+            type: {
+              type: "function",
+              name: "SubComponent",
+              value: undefined
+            },
+            attributes: {},
+            children: {
+              type: "array",
+              length: 0,
+              value: []
+            }
+          }
+        },
+        options: {
+          debug: {
+            type: "boolean",
+            value: true
+          },
+          networkRetries: {
+            type: "number",
+            value: 2
+          }
+        },
+        children: [],
+        result: {
+          type: "undefined",
+          value: undefined
+        },
+        error: {
+          type: "object",
+          value: {
+            message: {
+              type: "string",
+              value: "expected"
+            }
           }
         }
       }
+    ],
+    result: {
+      type: "undefined",
+      value: undefined
+    },
+    error: {
+      type: "object",
+      value: {
+        message: {
+          type: "string",
+          value: "expected"
+        }
+      }
     }
-  );
+  });
 });
 
 test("loadMore", async t => {

@@ -255,7 +255,7 @@ export function serializeCallNode(node) {
       joinPath(serializedPath, "error")
     ),
     children: node.children.map((child, i) =>
-      serializeValue(
+      serializeCallNode(
         child,
         0,
         joinPath(path, ["children", i]),
