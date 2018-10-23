@@ -16,6 +16,8 @@ export default class Client {
     const hostname = options.hostname || "locahost";
     const port = options.port || 3000;
 
+    this.apiKey = options.apiKey || "";
+
     this.serverUrl = `${protocol}://${hostname}:${port}`;
     this.requestServer = protocol.startsWith("ws")
       ? this.requestWebsocket
@@ -28,6 +30,7 @@ export default class Client {
     return new Promise((resolve, reject) => {
       superagent
         .post(appendPathToUrl(this.serverUrl, path))
+        .set("Authorization", this.apiKey)
         .send(body)
         .end((err, res) => {
           if (err) reject(err);
@@ -70,7 +73,15 @@ export default class Client {
             }
           });
 
-          ws.send(JSON.stringify({ type: "request", requestId, path, body }));
+          ws.send(
+            JSON.stringify({
+              type: "request",
+              requestId,
+              authorization: this.apiKey,
+              path,
+              body
+            })
+          );
         } catch (err) {
           console.error(err instanceof Error ? err.stack : err);
           reject(err);

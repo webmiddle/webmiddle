@@ -8,11 +8,13 @@ import EventEmitter from "events";
 import Server from "../src";
 
 const PORT = 3000;
+const API_KEY = "justAnyStringHere012";
 const eventEmitter = new EventEmitter();
 
-function requestExpress(method, path, data = {}) {
+function requestExpress(method, path, data = {}, { apiKey = API_KEY } = {}) {
   return new Promise((resolve, reject) => {
     superagent[method.toLowerCase()]("http://localhost:" + PORT + path)
+      .set("Authorization", apiKey)
       .send(data)
       .end((err, res) => {
         if (err) reject(err);
@@ -46,7 +48,12 @@ function getWebsocketConnection() {
   return wsPromise;
 }
 
-function requestWebsocket(path, body = {}, onProgress) {
+function requestWebsocket(
+  path,
+  body = {},
+  onProgress,
+  { apiKey = API_KEY } = {}
+) {
   return getWebsocketConnection().then(ws => {
     return new Promise((resolve, reject) => {
       try {
@@ -70,7 +77,15 @@ function requestWebsocket(path, body = {}, onProgress) {
           }
         });
 
-        ws.send(JSON.stringify({ type: "request", requestId, path, body }));
+        ws.send(
+          JSON.stringify({
+            type: "request",
+            requestId,
+            authorization: apiKey,
+            path,
+            body
+          })
+        );
       } catch (err) {
         console.error(err instanceof Error ? err.stack : err);
         reject(err);
@@ -126,6 +141,7 @@ const server = new Server(
   },
   {
     port: PORT,
+    apiKey: API_KEY,
     contextOptions: { base: "default option" }
   }
 );
@@ -142,6 +158,20 @@ test("Execute service via GET", async t => {
   t.is(resource.name, "result");
   t.is(resource.contentType, "text/plain");
   t.is(resource.content, "15");
+});
+
+test("Execute service via GET: should fail when sending invalid authorization", async t => {
+  await t.throwsAsync(
+    requestExpress("GET", "/services/math/sum?a=5&b=10", undefined, {
+      apiKey: "wrongApiKey"
+    })
+  );
+
+  await t.notThrowsAsync(
+    requestExpress("GET", "/services/math/sum?a=5&b=10", undefined, {
+      apiKey: API_KEY
+    })
+  );
 });
 
 test("Execute service via POST", async t => {
@@ -172,6 +202,36 @@ test("Execute service via WEBSOCKET", async t => {
   t.is(resource.name, "result");
   t.is(resource.contentType, "text/plain");
   t.is(resource.content, "100");
+});
+
+test("Execute service via WEBSOCKET: should fail when sending invalid authorization", async t => {
+  await t.throwsAsync(
+    requestWebsocket(
+      "/services/math/multiply",
+      {
+        props: {
+          a: 20,
+          b: 5
+        }
+      },
+      undefined,
+      { apiKey: "wrongKey" }
+    )
+  );
+
+  await t.notThrowsAsync(
+    requestWebsocket(
+      "/services/math/multiply",
+      {
+        props: {
+          a: 20,
+          b: 5
+        }
+      },
+      undefined,
+      { apiKey: API_KEY }
+    )
+  );
 });
 
 test("Must throw when executing a non existing service via GET", async t => {

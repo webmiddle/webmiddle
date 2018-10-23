@@ -7,6 +7,7 @@ export default function run(protocol) {
   // NOTE: make sure this is not the same port used in webmiddle-server tests
   // (and in any other test that starts webmiddle-server)
   const PORT = 4000 + (protocol === "ws" ? 1 : 0);
+  const API_KEY = "justAnyStringHere012";
 
   const server = new Server(
     {
@@ -36,17 +37,23 @@ export default function run(protocol) {
     },
     {
       port: PORT,
+      apiKey: API_KEY,
       contextOptions: { base: "default option" }
     }
   );
   server.start();
 
-  test.beforeEach(async t => {
-    t.context.client = new Client({
+  const createClient = ({ apiKey = API_KEY } = {}) => {
+    return new Client({
       protocol,
       hostname: "localhost",
-      port: PORT
+      port: PORT,
+      apiKey
     });
+  };
+
+  test.beforeEach(async t => {
+    t.context.client = createClient();
   });
 
   test("retrieved service paths", async t => {
@@ -72,6 +79,30 @@ export default function run(protocol) {
     t.true(isResource(resource));
     t.is(resource.contentType, "text/plain");
     t.is(resource.content, "30");
+  });
+
+  test("execute remove service: should fail when sending invalid authorization", async t => {
+    const wrongClient = createClient({ apiKey: "wrongString" });
+    const WrongSum = wrongClient.service("math/sum");
+    await t.throwsAsync(
+      rootContext
+        .extend({
+          networkRetries: 2,
+          expectResource: true
+        })
+        .evaluate(<WrongSum a={10} b={20} />)
+    );
+
+    const validClient = createClient({ apiKey: API_KEY });
+    const ValidSum = validClient.service("math/sum");
+    await t.notThrowsAsync(
+      rootContext
+        .extend({
+          networkRetries: 2,
+          expectResource: true
+        })
+        .evaluate(<ValidSum a={10} b={20} />)
+    );
   });
 
   test("execute remote service with options", async t => {

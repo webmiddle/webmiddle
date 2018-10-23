@@ -17,7 +17,8 @@ Given a [webmiddle-server](https://github.com/webmiddle/webmiddle/tree/master/pa
 const client = new Client({
   protocol: "http",
   hostname: "localhost",
-  port: "3000"
+  port: "3000",
+  apiKey: "justAnyStringHere012"
 });
 
 // remote services can now be used like they were defined locally
@@ -51,3 +52,4 @@ The constructor takes a single options object with the following properties:
 - **protocol**: can be either "http" or "ws". Defaults to "ws".
 - **hostname**: defaults to "localhost".
 - **port**: defaults to 3000.
+- **apiKey**: defaults to the empty string.

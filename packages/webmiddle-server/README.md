@@ -29,6 +29,7 @@ const server = new Server({
   "math/divide": ({ a, b }) => textResource(a / b))
 }, {
   port: 3000,
+  apiKey: "justAnyStringHere012",
   contextOptions: { networkRetries: 2 }, // default context options
 });
 server.start();
@@ -43,6 +44,15 @@ server.start();
 - `loadMore`: lazy load serialized data that was omitted.
 
 Endpoints can be called by using both GET, POST or WEBSOCKET requests.
+
+### Authorization
+
+To authorize the requests do the following:
+
+- GET/POSTS requests: set an `Authorization` header with the `apiKey` as value.
+- WEBSOCKET requests: set an `authorization` message property with the `apiKey` as value.
+
+NOTE: if no `apiKey` option is set when creating the server, then the empty string `''` is used.
 
 ### GET requests:
 - The query parameters are used as service props.

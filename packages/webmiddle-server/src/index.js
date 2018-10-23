@@ -20,6 +20,8 @@ export default class Server {
     this.contextOptions = options.contextOptions || {};
 
     this.PORT = options.port || 3000;
+    this.API_KEY = options.apiKey || "";
+
     this.expressServer = express();
     this.websocketServer = null;
     this.notificationEmitter = new EventEmitter();
@@ -66,6 +68,11 @@ export default class Server {
           `/${type}/*`,
           async (req, res) => {
             try {
+              const authorization = req.get("Authorization");
+              if (authorization !== this.API_KEY) {
+                throw new Error("Invalid server API KEY");
+              }
+
               const httpPath = req.url.split("?")[0].slice(("/" + type).length);
               const path = httpToServicePath(httpPath);
 
@@ -118,6 +125,11 @@ export default class Server {
         const requestId = message.requestId;
 
         try {
+          const authorization = message.authorization || "";
+          if (authorization !== this.API_KEY) {
+            throw new Error("Invalid server API KEY");
+          }
+
           // message.path. e.g. "/service/math/foo" or just "/service"
           const messagePathParts = message.path.split("/");
           const type = messagePathParts[1];
