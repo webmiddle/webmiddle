@@ -1,16 +1,12 @@
 git:
   depth: 10
+sudo: false
 language: node_js
 node_js:
   - '8.10.0'
   - '6.14.0'
-dist: trusty
-sudo: false
-addons:
-  chrome: stable
 
 before_install:
-  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
   - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.9.4
   - export PATH=$HOME/.yarn/bin:$PATH
 install:
