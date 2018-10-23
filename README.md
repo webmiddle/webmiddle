@@ -186,9 +186,7 @@ import { rootContext } from "webmiddle";
 const textResource = (content, name = "result") => rootContext.createResource(
   name,
   "text/plain",
-  typeof content !== "undefined" && content !== null
-    ? String(content)
-    : content
+  content
 );
 
 const Multiply = ({ a, b }) => textResource(a * b);
