@@ -599,7 +599,7 @@ test("Evaluations: remove: must throw when evaluation is in progress (websocket)
   await t.throwsAsync(
     requestWebsocket(`/evaluations/${evaluation.id}`, {
       props: {
-        command: "delete"
+        command: "remove"
       }
     })
   );
