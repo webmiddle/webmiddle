@@ -345,3 +345,19 @@ test("Should fail with correct status code", async t => {
     t.is(err.message, "success");
   }
 });
+
+test("Should fail with null status code", async t => {
+  try {
+    await t.context.context.evaluate(
+      <HttpRequest
+        name="virtual"
+        contentType="text/html"
+        method="GET"
+        url={`fake`}
+      />
+    );
+  } catch (err) {
+    t.is(err.statusCode, null);
+    t.not(err.message, "success");
+  }
+});
