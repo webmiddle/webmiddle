@@ -284,18 +284,6 @@ The tool also allows to remotely execute components, making it an useful asset t
       <td><a href="https://badge.fury.io/js/webmiddle-component-browser"><img src="https://badge.fury.io/js/webmiddle-component-browser.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
-      <td>webmiddle-component-cheerio-to-virtual</td>
-      <td><a href="https://badge.fury.io/js/webmiddle-component-cheerio-to-virtual"><img src="https://badge.fury.io/js/webmiddle-component-cheerio-to-virtual.svg" alt="npm version" height="18"></a></td>
-    </tr>
-    <tr>
-      <td>webmiddle-component-jsonselect-to-virtual</td>
-      <td><a href="https://badge.fury.io/js/webmiddle-component-jsonselect-to-virtual"><img src="https://badge.fury.io/js/webmiddle-component-jsonselect-to-virtual.svg" alt="npm version" height="18"></a></td>
-    </tr>
-    <tr>
-      <td>webmiddle-component-virtual-to-json</td>
-      <td><a href="https://badge.fury.io/js/webmiddle-component-virtual-to-json"><img src="https://badge.fury.io/js/webmiddle-component-virtual-to-json.svg" alt="npm version" height="18"></a></td>
-    </tr>
-    <tr>
       <td>webmiddle-component-cheerio-to-json</td>
       <td><a href="https://badge.fury.io/js/webmiddle-component-cheerio-to-json"><img src="https://badge.fury.io/js/webmiddle-component-cheerio-to-json.svg" alt="npm version" height="18"></a></td>
     </tr>
