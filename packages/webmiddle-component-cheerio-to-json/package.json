@@ -60,9 +60,8 @@
     "webmiddle": "^0.4.0"
   },
   "dependencies": {
-    "webmiddle-component-cheerio-to-virtual": "^0.4.0",
-    "webmiddle-component-pipe": "^0.4.0",
-    "webmiddle-component-virtual-to-json": "^0.4.0"
+    "cheerio": "^1.0.0-rc.2",
+    "lodash.every": "^4.6.0"
   },
   "devDependencies": {
     "webmiddle": "^0.4.0"

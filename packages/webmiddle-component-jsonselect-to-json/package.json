@@ -60,9 +60,7 @@
     "webmiddle": "^0.4.0"
   },
   "dependencies": {
-    "webmiddle-component-jsonselect-to-virtual": "^0.4.0",
-    "webmiddle-component-pipe": "^0.4.0",
-    "webmiddle-component-virtual-to-json": "^0.4.0"
+    "JSONSelect": "^0.4.0"
   },
   "devDependencies": {
     "webmiddle": "^0.4.0"

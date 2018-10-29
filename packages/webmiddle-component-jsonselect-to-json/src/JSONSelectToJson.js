@@ -1,24 +1,171 @@
 import { PropTypes } from "webmiddle";
-import Pipe from "webmiddle-component-pipe";
-import JSONSelectToVirtual from "webmiddle-component-jsonselect-to-virtual";
-import VirtualToJson from "webmiddle-component-virtual-to-json";
+import JSONSelect from "JSONSelect";
 
-function JSONSelectToJson(props) {
-  return (
-    <Pipe>
-      <JSONSelectToVirtual {...props} name="virtual">
-        {props.children}
-      </JSONSelectToVirtual>
+// Note: virtual.type must be a string
+async function processVirtual(virtual, sourceEl, JSONSelect, options) {
+  let el = virtual.attributes.el;
+  if (!el) {
+    el = sourceEl;
+  } else if (typeof el === "string") {
+    el = JSONSelect.match(el, undefined, sourceEl);
+  }
 
-      {({ virtual }) => <VirtualToJson name={props.name} from={virtual} />}
-    </Pipe>
+  const condition = virtual.attributes.condition;
+  if (condition) {
+    if (typeof condition !== "function") {
+      throw new Error(
+        `condition must be a function: ${JSON.stringify(condition)}`
+      );
+    }
+    el = el.filter(condition);
+  }
+
+  return options.context.createVirtual(
+    virtual.type,
+    {},
+    await processArray(virtual.children, el, JSONSelect, options)
   );
+}
+
+async function processArray(array, sourceEl, JSONSelect, options) {
+  return Promise.all(
+    array.map(item => process(item, sourceEl, JSONSelect, options))
+  );
+}
+
+async function processObject(obj, sourceEl, JSONSelect, options) {
+  const result = {};
+
+  for (const prop of Object.keys(obj)) {
+    result[prop] = await process(obj[prop], sourceEl, JSONSelect, options);
+  }
+
+  return result;
+}
+
+// Used by $$ functions: instead of calling process() directly,
+// functions can return a new instance of this.
+// Purpose is avoiding multiple process() calls on data (e.g. objects, arrays)
+// that was already processed
+class ToProcess {
+  constructor(value, sourceEl) {
+    this.value = value;
+    this.sourceEl = sourceEl;
+  }
+}
+
+// @return raw xml conversion of value
+async function process(value, sourceEl, JSONSelect, options) {
+  let result;
+  try {
+    result = await options.context
+      .extend({
+        expectResource: false,
+        functionParameters: [sourceEl, JSONSelect, options]
+      })
+      .evaluate(value);
+  } catch (err) {
+    console.error(err instanceof Error ? err.stack : err);
+    result = null;
+  }
+
+  if (result instanceof ToProcess) {
+    return process(result.value, result.sourceEl, JSONSelect, options);
+  }
+  if (Array.isArray(result)) {
+    return processArray(result, sourceEl, JSONSelect, options);
+  }
+  if (typeof result === "object" && result !== null) {
+    return processObject(result, sourceEl, JSONSelect, options);
+  }
+  if (typeof result === "undefined") {
+    return null;
+  }
+
+  return result;
+}
+
+const match = (selector, sourceEl) => {
+  if (typeof selector !== "string") return selector;
+  return [].concat(
+    ...sourceEl.map(rawItem => JSONSelect.match(selector, undefined, rawItem))
+  );
+};
+
+export const $$ = selector => (sourceEl, JSONSelect) =>
+  match(selector, sourceEl);
+Object.assign($$, {
+  find: selector => (sourceEl, JSONSelect) => match(selector, sourceEl),
+
+  within: (selector, body) => async (sourceEl, JSONSelect, options) => {
+    // selector can be a function that retuns a collection
+    let newSourceEl;
+    if (typeof selector === "function") {
+      newSourceEl = await process(selector, sourceEl, JSONSelect, options);
+      newSourceEl = Array.isArray(newSourceEl) ? newSourceEl : [newSourceEl];
+    } else {
+      newSourceEl = match(selector, sourceEl);
+      //newSourceEl = JSONSelect.match(selector, undefined, sourceEl);
+    }
+
+    return new ToProcess(body, newSourceEl);
+  },
+
+  value: () => sourceEl => sourceEl[0],
+
+  map: body => sourceEl =>
+    sourceEl.map(
+      (
+        rawItem // rawItem could be a domNode or any javascript value
+      ) =>
+        // within
+        new ToProcess(body, [rawItem])
+    ),
+
+  filter: fn => (sourceEl, JSONSelect, options) =>
+    sourceEl.filter(
+      rawItem =>
+        // within
+        !!fn([rawItem], JSONSelect, options)
+    ),
+
+  pipe: (...tasks) => sourceEl => {
+    const handleNext = (i, result) => {
+      const task = tasks[i];
+      if (!task) return result;
+      return $$.within(task, (...args) => handleNext(i + 1, ...args));
+    };
+    return handleNext(0, sourceEl);
+  },
+
+  postprocess: (body, postProcessBody) => async (
+    sourceEl,
+    JSONSelect,
+    options
+  ) => {
+    const result = await process(body, sourceEl, JSONSelect, options);
+    return new ToProcess(
+      postProcessBody(result, JSONSelect, options),
+      sourceEl
+    );
+  }
+});
+
+async function JSONSelectToJson({ name, from, children }, context) {
+  if (children.length !== 1) {
+    throw new Error("JSONSelectToJson MUST get exactly one child!");
+  }
+
+  const content = await process(children[0], [from.content], JSONSelect, {
+    context
+  });
+
+  return context.createResource(name, "application/json", content);
 }
 
 JSONSelectToJson.propTypes = {
   name: PropTypes.string.isRequired,
   from: PropTypes.object.isRequired, // resource
-  fullConversion: PropTypes.bool,
   children: PropTypes.array
 };
 
