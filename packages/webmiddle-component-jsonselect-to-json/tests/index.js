@@ -39,7 +39,7 @@ test.beforeEach(t => {
 
 test("Must return a json resource", async t => {
   const output = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {{
         books: $$.within(
           ":root > *",
@@ -58,7 +58,7 @@ test("Must return a json resource", async t => {
   );
 
   t.true(isResource(output));
-  t.is(output.name, "virtual", "name");
+  t.is(output.name, "result", "name");
   t.is(output.contentType, "application/json", "contentType");
   t.deepEqual(output.content, {
     books: [
@@ -76,14 +76,12 @@ test("Must return a json resource", async t => {
 
 test("Should throw when children length isn't exactly one", async t => {
   await t.throwsAsync(
-    rootContext.evaluate(
-      <JSONSelectToJson name="virtual" from={jsonResource} />
-    )
+    rootContext.evaluate(<JSONSelectToJson name="result" from={jsonResource} />)
   );
 
   await t.throwsAsync(
     rootContext.evaluate(
-      <JSONSelectToJson name="virtual" from={jsonResource}>
+      <JSONSelectToJson name="result" from={jsonResource}>
         {() => {}}
         {() => {}}
       </JSONSelectToJson>
@@ -92,7 +90,7 @@ test("Should throw when children length isn't exactly one", async t => {
 
   await t.notThrowsAsync(
     rootContext.evaluate(
-      <JSONSelectToJson name="virtual" from={jsonResource}>
+      <JSONSelectToJson name="result" from={jsonResource}>
         {() => {}}
       </JSONSelectToJson>
     )
@@ -102,7 +100,7 @@ test("Should throw when children length isn't exactly one", async t => {
 test("Functions should be called correctly (top level)", async t => {
   let fnArgs;
   await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {(...args) => {
         fnArgs = args;
       }}
@@ -124,7 +122,7 @@ test("Functions should be called correctly (top level)", async t => {
 test("Functions should be called correctly (inner level)", async t => {
   let fnArgs;
   await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {{
         foo: {
           bar: {
@@ -157,7 +155,7 @@ test("Functions should be called correctly (inner level)", async t => {
 test("Functions should be called correctly (function returning function)", async t => {
   let fnArgs;
   await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {() => () => (...args) => {
         fnArgs = args;
       }}
@@ -178,7 +176,7 @@ test("Functions should be called correctly (function returning function)", async
 
 test("Promises should be awaited (top level)", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {Promise.resolve().then(() => "foo")}
     </JSONSelectToJson>
   );
@@ -188,7 +186,7 @@ test("Promises should be awaited (top level)", async t => {
 
 test("Promises should be awaited (inner level)", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {{
         foo: {
           bar: {
@@ -216,7 +214,7 @@ test("Components should be evaluated correctly (top level)", async t => {
   const Sum = ({ a, b }) => a + b;
 
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       <Sum a={10} b={20} />
     </JSONSelectToJson>
   );
@@ -228,7 +226,7 @@ test("Components should be evaluated correctly (inner level)", async t => {
   const Sum = ({ a, b }) => a + b;
 
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {{
         foo: {
           bar: {
@@ -254,7 +252,7 @@ test("Components should be evaluated correctly (inner level)", async t => {
 
 test("Should return null content in case of exception", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {() => {
         throw new Error("expected");
       }}
@@ -266,7 +264,7 @@ test("Should return null content in case of exception", async t => {
 
 test("Should return null content if is undefined", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {() => undefined}
     </JSONSelectToJson>
   );
@@ -277,7 +275,7 @@ test("Should return null content if is undefined", async t => {
 test("Root value", async t => {
   let rootValue;
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {el => {
         rootValue = el[0];
         return rootValue;
@@ -290,7 +288,7 @@ test("Root value", async t => {
 
 test("Collection", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {el => el}
     </JSONSelectToJson>
   );
@@ -300,7 +298,7 @@ test("Collection", async t => {
 
 test("Array", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {() => [["foo"], "some"]}
     </JSONSelectToJson>
   );
@@ -310,7 +308,7 @@ test("Array", async t => {
 
 test("Object", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {{ foo: { some: "bar" } }}
     </JSONSelectToJson>
   );
@@ -320,7 +318,7 @@ test("Object", async t => {
 
 test("$$: string selector", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {$$(".name")}
     </JSONSelectToJson>
   );
@@ -330,7 +328,7 @@ test("$$: string selector", async t => {
 
 test("$$.find", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {$$.find(".name")}
     </JSONSelectToJson>
   );
@@ -340,7 +338,7 @@ test("$$.find", async t => {
 
 test("$$.within: function selector (returns collection)", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {$$.within($$.find(".name"), $$.value())}
     </JSONSelectToJson>
   );
@@ -350,7 +348,7 @@ test("$$.within: function selector (returns collection)", async t => {
 
 test("$$.within: function selector (returns single value)", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {$$.within(() => "COOKING", $$.value())}
     </JSONSelectToJson>
   );
@@ -360,7 +358,7 @@ test("$$.within: function selector (returns single value)", async t => {
 
 test("$$.value", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {$$.within(".name", $$.value())}
     </JSONSelectToJson>
   );
@@ -370,7 +368,7 @@ test("$$.value", async t => {
 
 test("$$.map", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {$$.within(".name", $$.map($$.value()))}
     </JSONSelectToJson>
   );
@@ -380,7 +378,7 @@ test("$$.map", async t => {
 
 test("$$.map: strings shouldn't be treated as string selectors", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {$$.within($$(["title", "book"]), $$.map($$.value()))}
     </JSONSelectToJson>
   );
@@ -390,7 +388,7 @@ test("$$.map: strings shouldn't be treated as string selectors", async t => {
 
 test("$$.map: empty selector", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {$$.within($$([]), $$.map($$.value()))}
     </JSONSelectToJson>
   );
@@ -400,7 +398,7 @@ test("$$.map: empty selector", async t => {
 
 test("$$.map: empty body", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {$$.within($$(["title", "book"]), $$.map())}
     </JSONSelectToJson>
   );
@@ -410,7 +408,7 @@ test("$$.map: empty body", async t => {
 
 test("$$.filter", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {$$.within(
         ".name",
         $$.filter(nameEl => nameEl[0].search(/monsters/i) >= 0)
@@ -423,7 +421,7 @@ test("$$.filter", async t => {
 
 test("$$.filter: strings shouldn't be treated as string selectors", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {$$.within(
         $$(["title", "book"]),
         $$.filter(stringEl => stringEl[0] === "book")
@@ -436,7 +434,7 @@ test("$$.filter: strings shouldn't be treated as string selectors", async t => {
 
 test("$$.filter: no condition", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {$$.within($$(["title", "book"]), $$.filter())}
     </JSONSelectToJson>
   );
@@ -446,7 +444,7 @@ test("$$.filter: no condition", async t => {
 
 test("$$.pipe", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {$$.within(
         ".name",
         $$.pipe(
@@ -462,7 +460,7 @@ test("$$.pipe", async t => {
 
 test("$$.pipe: empty tasks: should return the sourceEl", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {$$.within(".name", $$.pipe())}
     </JSONSelectToJson>
   );
@@ -472,7 +470,7 @@ test("$$.pipe: empty tasks: should return the sourceEl", async t => {
 
 test("$$.pipe: one task", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {$$.within(".name", $$.pipe($$.value()))}
     </JSONSelectToJson>
   );
@@ -482,7 +480,7 @@ test("$$.pipe: one task", async t => {
 
 test("$$.postprocess", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {$$.postprocess($$(".name"), titles =>
         titles.reduce((obj, title) => {
           const key = title.replace(/ /g, "_").toUpperCase();
@@ -501,7 +499,7 @@ test("$$.postprocess", async t => {
 
 test("$$.postprocess: undefined body", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {$$.postprocess(undefined, () => "COOKING")}
     </JSONSelectToJson>
   );
@@ -511,7 +509,7 @@ test("$$.postprocess: undefined body", async t => {
 
 test("$$.postprocess: undefined postProcessFn", async t => {
   const result = await rootContext.evaluate(
-    <JSONSelectToJson name="virtual" from={jsonResource}>
+    <JSONSelectToJson name="result" from={jsonResource}>
       {$$.postprocess($$("title"))}
     </JSONSelectToJson>
   );

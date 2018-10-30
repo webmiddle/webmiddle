@@ -27,12 +27,12 @@ const xmlResource = rootContext.createResource(
 
 test("Should throw when children length isn't exactly one", async t => {
   await t.throwsAsync(
-    rootContext.evaluate(<CheerioToJson name="virtual" from={xmlResource} />)
+    rootContext.evaluate(<CheerioToJson name="result" from={xmlResource} />)
   );
 
   await t.throwsAsync(
     rootContext.evaluate(
-      <CheerioToJson name="virtual" from={xmlResource}>
+      <CheerioToJson name="result" from={xmlResource}>
         {() => {}}
         {() => {}}
       </CheerioToJson>
@@ -41,7 +41,7 @@ test("Should throw when children length isn't exactly one", async t => {
 
   await t.notThrowsAsync(
     rootContext.evaluate(
-      <CheerioToJson name="virtual" from={xmlResource}>
+      <CheerioToJson name="result" from={xmlResource}>
         {() => {}}
       </CheerioToJson>
     )
@@ -50,7 +50,7 @@ test("Should throw when children length isn't exactly one", async t => {
 
 test("XML: must return a json resource", async t => {
   const output = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {{
         books: $$.within(
           "book",
@@ -74,7 +74,7 @@ test("XML: must return a json resource", async t => {
   );
 
   t.true(isResource(output));
-  t.is(output.name, "virtual", "name");
+  t.is(output.name, "result", "name");
   t.is(output.contentType, "application/json", "contentType");
   t.deepEqual(output.content, {
     books: [
@@ -101,7 +101,7 @@ test("XML: must return a json resource", async t => {
 test("Functions should be called correctly (top level)", async t => {
   let fnArgs;
   await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {(...args) => {
         fnArgs = args;
       }}
@@ -122,7 +122,7 @@ test("Functions should be called correctly (top level)", async t => {
 test("Functions should be called correctly (inner level)", async t => {
   let fnArgs;
   await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {{
         foo: {
           bar: {
@@ -154,7 +154,7 @@ test("Functions should be called correctly (inner level)", async t => {
 test("Functions should be called correctly (function returning function)", async t => {
   let fnArgs;
   await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {() => () => (...args) => {
         fnArgs = args;
       }}
@@ -174,7 +174,7 @@ test("Functions should be called correctly (function returning function)", async
 
 test("Promises should be awaited (top level)", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {Promise.resolve().then(() => "foo")}
     </CheerioToJson>
   );
@@ -184,7 +184,7 @@ test("Promises should be awaited (top level)", async t => {
 
 test("Promises should be awaited (inner level)", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {{
         foo: {
           bar: {
@@ -212,7 +212,7 @@ test("Components should be evaluated correctly (top level)", async t => {
   const Sum = ({ a, b }) => a + b;
 
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       <Sum a={10} b={20} />
     </CheerioToJson>
   );
@@ -224,7 +224,7 @@ test("Components should be evaluated correctly (inner level)", async t => {
   const Sum = ({ a, b }) => a + b;
 
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {{
         foo: {
           bar: {
@@ -250,7 +250,7 @@ test("Components should be evaluated correctly (inner level)", async t => {
 
 test("Should return null content in case of exception", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {() => {
         throw new Error("expected");
       }}
@@ -262,7 +262,7 @@ test("Should return null content in case of exception", async t => {
 
 test("Should return null content if is undefined", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {() => undefined}
     </CheerioToJson>
   );
@@ -274,7 +274,7 @@ test("DomNode root", async t => {
   let domNode;
   let $;
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {(el, parser) => {
         domNode = el[0];
         $ = parser;
@@ -290,7 +290,7 @@ test("DomNode tag", async t => {
   let domNode;
   let $;
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {(el, $cheerio) => {
         domNode = el.find("book")[0];
         $ = $cheerio;
@@ -304,7 +304,7 @@ test("DomNode tag", async t => {
 
 test("CheerioCollection", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {el => el.find("title")}
     </CheerioToJson>
   );
@@ -314,7 +314,7 @@ test("CheerioCollection", async t => {
 
 test("Array", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {() => [["foo"], "some"]}
     </CheerioToJson>
   );
@@ -324,7 +324,7 @@ test("Array", async t => {
 
 test("Object", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {{ foo: { some: "bar" } }}
     </CheerioToJson>
   );
@@ -334,7 +334,7 @@ test("Object", async t => {
 
 test("$$: string selector", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$("title")}
     </CheerioToJson>
   );
@@ -344,7 +344,7 @@ test("$$: string selector", async t => {
 
 test("$$: element selector", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {el => $$(el.find("title"))}
     </CheerioToJson>
   );
@@ -354,7 +354,7 @@ test("$$: element selector", async t => {
 
 test("$$.find", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$.find("title")}
     </CheerioToJson>
   );
@@ -364,7 +364,7 @@ test("$$.find", async t => {
 
 test("$$.within: function selector (returns cheerio collection)", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$.within($$.find("book"), $$.attr("category"))}
     </CheerioToJson>
   );
@@ -374,7 +374,7 @@ test("$$.within: function selector (returns cheerio collection)", async t => {
 
 test("$$.within: function selector (returns dom array)", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$.within(el => [el.find("book")[0]], $$.attr("category"))}
     </CheerioToJson>
   );
@@ -384,7 +384,7 @@ test("$$.within: function selector (returns dom array)", async t => {
 
 test("$$.within: function selector (returns single dom element)", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$.within(el => el.find("book")[0], $$.attr("category"))}
     </CheerioToJson>
   );
@@ -394,7 +394,7 @@ test("$$.within: function selector (returns single dom element)", async t => {
 
 test("$$.within: function selector (returns single string)", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$.within(() => "COOKING", el => el.get()[0])}
     </CheerioToJson>
   );
@@ -404,7 +404,7 @@ test("$$.within: function selector (returns single string)", async t => {
 
 test("$$.attr", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$.within("book", $$.attr("category"))}
     </CheerioToJson>
   );
@@ -414,7 +414,7 @@ test("$$.attr", async t => {
 
 test("$$.value", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$.within("title", $$.value())}
     </CheerioToJson>
   );
@@ -424,7 +424,7 @@ test("$$.value", async t => {
 
 test("$$.value: on collections of plain javascript values", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$.within($$(["title"]), $$.value)}
     </CheerioToJson>
   );
@@ -434,7 +434,7 @@ test("$$.value: on collections of plain javascript values", async t => {
 
 test("$$.map", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$.within("title", $$.map($$.value()))}
     </CheerioToJson>
   );
@@ -444,7 +444,7 @@ test("$$.map", async t => {
 
 test("$$.map: strings shouldn't be treated as string selectors", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$.within($$(["title", "book"]), $$.map($$.value()))}
     </CheerioToJson>
   );
@@ -454,7 +454,7 @@ test("$$.map: strings shouldn't be treated as string selectors", async t => {
 
 test("$$.map: empty selector", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$.within($$([]), $$.map($$.value()))}
     </CheerioToJson>
   );
@@ -464,7 +464,7 @@ test("$$.map: empty selector", async t => {
 
 test("$$.map: empty body", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$.within($$(["title", "book"]), $$.map())}
     </CheerioToJson>
   );
@@ -474,7 +474,7 @@ test("$$.map: empty body", async t => {
 
 test("$$.filter", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$.within(
         "title",
         $$.filter(titleEl => titleEl.text().search(/italian/i) >= 0)
@@ -487,7 +487,7 @@ test("$$.filter", async t => {
 
 test("$$.filter: strings shouldn't be treated as string selectors", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$.within(
         $$(["title", "book"]),
         $$.filter(stringEl => stringEl[0] === "book")
@@ -500,7 +500,7 @@ test("$$.filter: strings shouldn't be treated as string selectors", async t => {
 
 test("$$.filter: no condition", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$.within($$(["title", "book"]), $$.filter())}
     </CheerioToJson>
   );
@@ -510,7 +510,7 @@ test("$$.filter: no condition", async t => {
 
 test("$$.pipe", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$.within(
         "title",
         $$.pipe(
@@ -526,7 +526,7 @@ test("$$.pipe", async t => {
 
 test("$$.pipe: empty tasks: should return the sourceEl", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$.within("title", $$.pipe())}
     </CheerioToJson>
   );
@@ -536,7 +536,7 @@ test("$$.pipe: empty tasks: should return the sourceEl", async t => {
 
 test("$$.pipe: one task", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$.within("title", $$.pipe($$.value()))}
     </CheerioToJson>
   );
@@ -546,7 +546,7 @@ test("$$.pipe: one task", async t => {
 
 test("$$.postprocess", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$.postprocess($$("title"), titles =>
         titles.reduce((obj, title) => {
           const key = title.replace(/ /g, "_").toUpperCase();
@@ -565,7 +565,7 @@ test("$$.postprocess", async t => {
 
 test("$$.postprocess: undefined body", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$.postprocess(undefined, () => "COOKING")}
     </CheerioToJson>
   );
@@ -575,7 +575,7 @@ test("$$.postprocess: undefined body", async t => {
 
 test("$$.postprocess: undefined postProcessFn", async t => {
   const result = await rootContext.evaluate(
-    <CheerioToJson name="virtual" from={xmlResource}>
+    <CheerioToJson name="result" from={xmlResource}>
       {$$.postprocess($$("title"))}
     </CheerioToJson>
   );
