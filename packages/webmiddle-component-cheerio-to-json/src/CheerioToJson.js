@@ -86,27 +86,29 @@ async function process(value, sourceEl, $, options) {
   return result;
 }
 
+async function match(selector, sourceEl, $, options) {
+  // selector can be a function that retuns a cheerio collection
+  let matchedEl;
+  if (typeof selector === "function") {
+    matchedEl = await process(selector, sourceEl, $, {
+      ...options,
+      keepNodes: true
+    });
+    if (!isCheerioCollection(matchedEl)) {
+      matchedEl = Array.isArray(matchedEl) ? $(matchedEl) : $([matchedEl]);
+    }
+  } else {
+    matchedEl = $(selector, sourceEl);
+  }
+  return matchedEl;
+}
+
 export const $$ = selector => (sourceEl, $) => $(selector, sourceEl);
 Object.assign($$, {
   find: (...args) => sourceEl => sourceEl.find(...args),
 
   within: (selector, body) => async (sourceEl, $, options) => {
-    // selector can be a function that retuns a cheerio collection
-    let newSourceEl;
-    if (typeof selector === "function") {
-      newSourceEl = await process(selector, sourceEl, $, {
-        ...options,
-        keepNodes: true
-      });
-      if (!isCheerioCollection(newSourceEl)) {
-        newSourceEl = Array.isArray(newSourceEl)
-          ? $(newSourceEl)
-          : $([newSourceEl]);
-      }
-    } else {
-      newSourceEl = $(selector, sourceEl);
-    }
-
+    const newSourceEl = await match(selector, sourceEl, $, options);
     return new ToProcess(body, newSourceEl);
   },
 
@@ -118,7 +120,7 @@ Object.assign($$, {
     sourceEl.map(
       (i, rawItem) =>
         // rawItem could be a domNode or any javascript value
-        // NOTE: use [] to make sure strings aren't treated as selectors
+        // NOTE: use [] to make sure strings aren't treated as string selectors
         new ToProcess(body, $([rawItem]))
     ),
 
@@ -138,9 +140,9 @@ Object.assign($$, {
     return handleNext(0, sourceEl);
   },
 
-  postprocess: (body, postProcessFn) => async (sourceEl, $, options) => {
+  postprocess: (body, postprocessFn) => async (sourceEl, $, options) => {
     const result = await process(body, sourceEl, $, options);
-    const postProcessedResult = postProcessFn(result, $, options);
+    const postProcessedResult = postprocessFn(result, $, options);
     return postProcessedResult;
   }
 });

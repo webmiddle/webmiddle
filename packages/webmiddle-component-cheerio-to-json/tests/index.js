@@ -58,13 +58,11 @@ test("XML: must return a json resource", async t => {
             lang: $$.within("title", $$.attr("lang")),
             title: $$.within("title", $$.get(0)),
             author: $$.within("author", $$.get(0)),
-            year: $$.within(
-              "year",
-              $$.postprocess($$.get(0), yearString => parseInt(yearString, 10))
+            year: $$.postprocess($$.within("year", $$.get(0)), yearString =>
+              parseInt(yearString, 10)
             ),
-            price: $$.within(
-              "price",
-              $$.postprocess($$.get(0), priceString => parseFloat(priceString))
+            price: $$.postprocess($$.within("price", $$.get(0)), priceString =>
+              parseFloat(priceString)
             )
           })
         )

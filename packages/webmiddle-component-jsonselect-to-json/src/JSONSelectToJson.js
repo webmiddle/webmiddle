@@ -85,29 +85,33 @@ async function process(value, sourceEl, JSONSelect, options) {
   return result;
 }
 
-const match = (selector, sourceEl) => {
-  if (typeof selector !== "string") return selector;
-  return [].concat(
-    ...sourceEl.map(rawItem => JSONSelect.match(selector, undefined, rawItem))
-  );
-};
+async function match(selector, sourceEl, JSONSelect, options) {
+  // selector can be a function that retuns a collection
+  let matchedEl;
+  if (typeof selector === "function") {
+    matchedEl = await process(selector, sourceEl, JSONSelect, options);
+    matchedEl = Array.isArray(matchedEl) ? matchedEl : [matchedEl];
+  } else {
+    matchedEl =
+      typeof selector !== "string"
+        ? selector
+        : [].concat(
+            ...sourceEl.map(rawItem =>
+              JSONSelect.match(selector, undefined, rawItem)
+            )
+          );
+  }
+  return matchedEl;
+}
 
-export const $$ = selector => (sourceEl, JSONSelect) =>
-  match(selector, sourceEl);
+export const $$ = selector => (sourceEl, JSONSelect, options) =>
+  match(selector, sourceEl, JSONSelect, options);
 Object.assign($$, {
-  find: selector => (sourceEl, JSONSelect) => match(selector, sourceEl),
+  find: selector => (sourceEl, JSONSelect, options) =>
+    match(selector, sourceEl, JSONSelect, options),
 
   within: (selector, body) => async (sourceEl, JSONSelect, options) => {
-    // selector can be a function that retuns a collection
-    let newSourceEl;
-    if (typeof selector === "function") {
-      newSourceEl = await process(selector, sourceEl, JSONSelect, options);
-      newSourceEl = Array.isArray(newSourceEl) ? newSourceEl : [newSourceEl];
-    } else {
-      newSourceEl = match(selector, sourceEl);
-      //newSourceEl = JSONSelect.match(selector, undefined, sourceEl);
-    }
-
+    const newSourceEl = await match(selector, sourceEl, JSONSelect, options);
     return new ToProcess(body, newSourceEl);
   },
 
@@ -138,13 +142,13 @@ Object.assign($$, {
     return handleNext(0, sourceEl);
   },
 
-  postprocess: (body, postProcessFn) => async (
+  postprocess: (body, postprocessFn) => async (
     sourceEl,
     JSONSelect,
     options
   ) => {
     const result = await process(body, sourceEl, JSONSelect, options);
-    const postProcessedResult = postProcessFn(result, JSONSelect, options);
+    const postProcessedResult = postprocessFn(result, JSONSelect, options);
     return postProcessedResult;
   }
 });

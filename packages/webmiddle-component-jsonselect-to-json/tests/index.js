@@ -45,11 +45,9 @@ test("Must return a json resource", async t => {
           ":root > *",
           $$.map({
             name: $$.within(".name", $$.get(0)),
-            genre: $$.within(
-              ".genre_s",
-              $$.postprocess($$.get(0), genreString =>
-                genreString.toUpperCase()
-              )
+            genre: $$.postprocess(
+              $$.within(".genre_s", $$.get(0)),
+              genreString => genreString.toUpperCase()
             )
           })
         )
