@@ -44,10 +44,9 @@ test("Must return a json resource", async t => {
         books: $$.within(
           ":root > *",
           $$.map({
-            name: $$.within(".name", $$.get(0)),
-            genre: $$.postprocess(
-              $$.within(".genre_s", $$.get(0)),
-              genreString => genreString.toUpperCase()
+            name: $$.getFirst(".name"),
+            genre: $$.postprocess($$.getFirst(".genre_s"), genreString =>
+              genreString.toUpperCase()
             )
           })
         )
@@ -327,7 +326,7 @@ test("$$: string selector", async t => {
 test("$$: function selector", async t => {
   const result = await rootContext.evaluate(
     <JSONSelectToJson name="result" from={jsonResource}>
-      {el => $$($$.within(".name", $$.get(0)))}
+      {el => $$($$.getFirst(".name"))}
     </JSONSelectToJson>
   );
 
@@ -392,6 +391,36 @@ test("$$.get: one", async t => {
   );
 
   t.deepEqual(result.content, "The Sea of Monsters");
+});
+
+test("$$.getFirst: no argumnet", async t => {
+  const result = await rootContext.evaluate(
+    <JSONSelectToJson name="result" from={jsonResource}>
+      {$$.within(".name", $$.getFirst())}
+    </JSONSelectToJson>
+  );
+
+  t.deepEqual(result.content, "The Lightning Thief");
+});
+
+test("$$.getFirst: with string argumnet", async t => {
+  const result = await rootContext.evaluate(
+    <JSONSelectToJson name="result" from={jsonResource}>
+      {$$.getFirst(".name")}
+    </JSONSelectToJson>
+  );
+
+  t.deepEqual(result.content, "The Lightning Thief");
+});
+
+test("$$.getFirst: with function argumnet", async t => {
+  const result = await rootContext.evaluate(
+    <JSONSelectToJson name="result" from={jsonResource}>
+      {$$.getFirst($$(".name"))}
+    </JSONSelectToJson>
+  );
+
+  t.deepEqual(result.content, "The Lightning Thief");
 });
 
 test("$$.map", async t => {

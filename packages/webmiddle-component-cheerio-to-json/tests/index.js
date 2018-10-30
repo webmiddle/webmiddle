@@ -56,12 +56,12 @@ test("XML: must return a json resource", async t => {
           $$.map({
             category: $$.attr("category"),
             lang: $$.within("title", $$.attr("lang")),
-            title: $$.within("title", $$.get(0)),
-            author: $$.within("author", $$.get(0)),
-            year: $$.postprocess($$.within("year", $$.get(0)), yearString =>
+            title: $$.getFirst("title"),
+            author: $$.getFirst("author"),
+            year: $$.postprocess($$.getFirst("year"), yearString =>
               parseInt(yearString, 10)
             ),
-            price: $$.postprocess($$.within("price", $$.get(0)), priceString =>
+            price: $$.postprocess($$.getFirst("price"), priceString =>
               parseFloat(priceString)
             )
           })
@@ -352,7 +352,7 @@ test("$$: element selector", async t => {
 test("$$: function selector", async t => {
   const result = await rootContext.evaluate(
     <CheerioToJson name="result" from={xmlResource}>
-      {el => $$($$.within("title", $$.get(0)))}
+      {el => $$($$.getFirst("title"))}
     </CheerioToJson>
   );
 
@@ -447,6 +447,36 @@ test("$$.get: one", async t => {
   );
 
   t.deepEqual(result.content, "Harry Potter");
+});
+
+test("$$.getFirst: no argumnet", async t => {
+  const result = await rootContext.evaluate(
+    <CheerioToJson name="result" from={xmlResource}>
+      {$$.within("title", $$.getFirst())}
+    </CheerioToJson>
+  );
+
+  t.deepEqual(result.content, "Everyday Italian");
+});
+
+test("$$.getFirst: with string argumnet", async t => {
+  const result = await rootContext.evaluate(
+    <CheerioToJson name="result" from={xmlResource}>
+      {$$.getFirst("title")}
+    </CheerioToJson>
+  );
+
+  t.deepEqual(result.content, "Everyday Italian");
+});
+
+test("$$.getFirst: with function argumnet", async t => {
+  const result = await rootContext.evaluate(
+    <CheerioToJson name="result" from={xmlResource}>
+      {$$.getFirst($$("title"))}
+    </CheerioToJson>
+  );
+
+  t.deepEqual(result.content, "Everyday Italian");
 });
 
 test("$$.map", async t => {

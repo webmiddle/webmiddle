@@ -115,6 +115,11 @@ Object.assign($$, {
 
   get: (...args) => sourceEl => sourceEl.get(...args),
 
+  getFirst: selector =>
+    typeof selector === "undefined"
+      ? $$.get(0)
+      : $$.within(selector, $$.get(0)),
+
   map: body => (sourceEl, $) =>
     sourceEl.map(
       (i, rawItem) =>
