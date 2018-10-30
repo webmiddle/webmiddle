@@ -324,20 +324,20 @@ test("$$: string selector", async t => {
   t.deepEqual(result.content, ["The Lightning Thief", "The Sea of Monsters"]);
 });
 
-test("$$.find", async t => {
+test("$$: function selector", async t => {
   const result = await rootContext.evaluate(
     <JSONSelectToJson name="result" from={jsonResource}>
-      {$$.find(".name")}
+      {el => $$($$.within(".name", $$.get(0)))}
     </JSONSelectToJson>
   );
 
-  t.deepEqual(result.content, ["The Lightning Thief", "The Sea of Monsters"]);
+  t.deepEqual(result.content, ["The Lightning Thief"]);
 });
 
 test("$$.within: function selector (returns collection)", async t => {
   const result = await rootContext.evaluate(
     <JSONSelectToJson name="result" from={jsonResource}>
-      {$$.within($$.find(".name"), $$.get(0))}
+      {$$.within($$(".name"), $$.get(0))}
     </JSONSelectToJson>
   );
 

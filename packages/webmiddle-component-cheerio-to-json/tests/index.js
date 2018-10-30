@@ -349,20 +349,20 @@ test("$$: element selector", async t => {
   t.deepEqual(result.content, ["Everyday Italian", "Harry Potter"]);
 });
 
-test("$$.find", async t => {
+test("$$: function selector", async t => {
   const result = await rootContext.evaluate(
     <CheerioToJson name="result" from={xmlResource}>
-      {$$.find("title")}
+      {el => $$($$.within("title", $$.get(0)))}
     </CheerioToJson>
   );
 
-  t.deepEqual(result.content, ["Everyday Italian", "Harry Potter"]);
+  t.deepEqual(result.content, ["Everyday Italian"]);
 });
 
 test("$$.within: function selector (returns cheerio collection)", async t => {
   const result = await rootContext.evaluate(
     <CheerioToJson name="result" from={xmlResource}>
-      {$$.within($$.find("book"), $$.attr("category"))}
+      {$$.within($$("book"), $$.attr("category"))}
     </CheerioToJson>
   );
 

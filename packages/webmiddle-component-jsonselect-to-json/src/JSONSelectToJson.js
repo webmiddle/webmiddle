@@ -107,9 +107,6 @@ async function match(selector, sourceEl, JSONSelect, options) {
 export const $$ = selector => (sourceEl, JSONSelect, options) =>
   match(selector, sourceEl, JSONSelect, options);
 Object.assign($$, {
-  find: selector => (sourceEl, JSONSelect, options) =>
-    match(selector, sourceEl, JSONSelect, options),
-
   within: (selector, body) => async (sourceEl, JSONSelect, options) => {
     const newSourceEl = await match(selector, sourceEl, JSONSelect, options);
     return new ToProcess(body, newSourceEl);

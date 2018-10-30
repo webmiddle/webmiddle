@@ -103,10 +103,9 @@ async function match(selector, sourceEl, $, options) {
   return matchedEl;
 }
 
-export const $$ = selector => (sourceEl, $) => $(selector, sourceEl);
+export const $$ = selector => (sourceEl, $, options) =>
+  match(selector, sourceEl, $, options);
 Object.assign($$, {
-  find: (...args) => sourceEl => sourceEl.find(...args),
-
   within: (selector, body) => async (sourceEl, $, options) => {
     const newSourceEl = await match(selector, sourceEl, $, options);
     return new ToProcess(body, newSourceEl);
