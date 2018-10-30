@@ -111,7 +111,7 @@ Object.assign($$, {
     return new ToProcess(body, newSourceEl);
   },
 
-  getFirst: () => sourceEl => sourceEl[0],
+  get: i => sourceEl => (typeof i === "undefined" ? sourceEl : sourceEl[i]),
 
   map: body => sourceEl =>
     sourceEl.map(

@@ -112,7 +112,7 @@ Object.assign($$, {
 
   attr: (...args) => sourceEl => sourceEl.attr(...args),
 
-  getFirst: () => sourceEl => sourceEl[0],
+  get: (...args) => sourceEl => sourceEl.get(...args),
 
   map: body => (sourceEl, $) =>
     sourceEl.map(
