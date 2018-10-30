@@ -442,7 +442,7 @@ test("$$.map", async t => {
   t.deepEqual(result.content, ["Everyday Italian", "Harry Potter"]);
 });
 
-test("$$.map: strings shouldn't be treated as selectors", async t => {
+test("$$.map: strings shouldn't be treated as string selectors", async t => {
   const result = await rootContext.evaluate(
     <CheerioToJson name="virtual" from={xmlResource}>
       {$$.within($$(["title", "book"]), $$.map($$.value()))}
@@ -450,6 +450,26 @@ test("$$.map: strings shouldn't be treated as selectors", async t => {
   );
 
   t.deepEqual(result.content, ["title", "book"]);
+});
+
+test("$$.map: empty selector", async t => {
+  const result = await rootContext.evaluate(
+    <CheerioToJson name="virtual" from={xmlResource}>
+      {$$.within($$([]), $$.map($$.value()))}
+    </CheerioToJson>
+  );
+
+  t.deepEqual(result.content, []);
+});
+
+test("$$.map: empty body", async t => {
+  const result = await rootContext.evaluate(
+    <CheerioToJson name="virtual" from={xmlResource}>
+      {$$.within($$(["title", "book"]), $$.map())}
+    </CheerioToJson>
+  );
+
+  t.deepEqual(result.content, [null, null]);
 });
 
 test("$$.filter", async t => {
@@ -465,7 +485,7 @@ test("$$.filter", async t => {
   t.deepEqual(result.content, ["Everyday Italian"]);
 });
 
-test("$$.filter: strings shouldn't be treated as selectors", async t => {
+test("$$.filter: strings shouldn't be treated as string selectors", async t => {
   const result = await rootContext.evaluate(
     <CheerioToJson name="virtual" from={xmlResource}>
       {$$.within(
@@ -476,6 +496,16 @@ test("$$.filter: strings shouldn't be treated as selectors", async t => {
   );
 
   t.deepEqual(result.content, ["book"]);
+});
+
+test("$$.filter: no condition", async t => {
+  const result = await rootContext.evaluate(
+    <CheerioToJson name="virtual" from={xmlResource}>
+      {$$.within($$(["title", "book"]), $$.filter())}
+    </CheerioToJson>
+  );
+
+  t.deepEqual(result.content, null);
 });
 
 test("$$.pipe", async t => {
@@ -504,6 +534,16 @@ test("$$.pipe: empty tasks: should return the sourceEl", async t => {
   t.deepEqual(result.content, ["Everyday Italian", "Harry Potter"]);
 });
 
+test("$$.pipe: one task", async t => {
+  const result = await rootContext.evaluate(
+    <CheerioToJson name="virtual" from={xmlResource}>
+      {$$.within("title", $$.pipe($$.value()))}
+    </CheerioToJson>
+  );
+
+  t.deepEqual(result.content, ["Everyday Italian"]);
+});
+
 test("$$.postprocess", async t => {
   const result = await rootContext.evaluate(
     <CheerioToJson name="virtual" from={xmlResource}>
@@ -521,4 +561,24 @@ test("$$.postprocess", async t => {
     EVERYDAY_ITALIAN: "Everyday Italian",
     HARRY_POTTER: "Harry Potter"
   });
+});
+
+test("$$.postprocess: undefined body", async t => {
+  const result = await rootContext.evaluate(
+    <CheerioToJson name="virtual" from={xmlResource}>
+      {$$.postprocess(undefined, () => "COOKING")}
+    </CheerioToJson>
+  );
+
+  t.deepEqual(result.content, "COOKING");
+});
+
+test("$$.postprocess: undefined postProcessFn", async t => {
+  const result = await rootContext.evaluate(
+    <CheerioToJson name="virtual" from={xmlResource}>
+      {$$.postprocess($$("title"))}
+    </CheerioToJson>
+  );
+
+  t.deepEqual(result.content, null);
 });

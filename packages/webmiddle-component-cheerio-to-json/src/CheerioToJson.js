@@ -146,9 +146,10 @@ Object.assign($$, {
     return handleNext(0, sourceEl);
   },
 
-  postprocess: (body, postProcessBody) => async (sourceEl, $, options) => {
+  postprocess: (body, postProcessFn) => async (sourceEl, $, options) => {
     const result = await process(body, sourceEl, $, options);
-    return new ToProcess(postProcessBody(result, $, options), sourceEl);
+    const postProcessedResult = postProcessFn(result, $, options);
+    return postProcessedResult;
   }
 });
 

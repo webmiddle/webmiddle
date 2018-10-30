@@ -378,7 +378,7 @@ test("$$.map", async t => {
   t.deepEqual(result.content, ["The Lightning Thief", "The Sea of Monsters"]);
 });
 
-test("$$.map: strings shouldn't be treated as selectors", async t => {
+test("$$.map: strings shouldn't be treated as string selectors", async t => {
   const result = await rootContext.evaluate(
     <JSONSelectToJson name="virtual" from={jsonResource}>
       {$$.within($$(["title", "book"]), $$.map($$.value()))}
@@ -386,6 +386,26 @@ test("$$.map: strings shouldn't be treated as selectors", async t => {
   );
 
   t.deepEqual(result.content, ["title", "book"]);
+});
+
+test("$$.map: empty selector", async t => {
+  const result = await rootContext.evaluate(
+    <JSONSelectToJson name="virtual" from={jsonResource}>
+      {$$.within($$([]), $$.map($$.value()))}
+    </JSONSelectToJson>
+  );
+
+  t.deepEqual(result.content, []);
+});
+
+test("$$.map: empty body", async t => {
+  const result = await rootContext.evaluate(
+    <JSONSelectToJson name="virtual" from={jsonResource}>
+      {$$.within($$(["title", "book"]), $$.map())}
+    </JSONSelectToJson>
+  );
+
+  t.deepEqual(result.content, [null, null]);
 });
 
 test("$$.filter", async t => {
@@ -401,7 +421,7 @@ test("$$.filter", async t => {
   t.deepEqual(result.content, ["The Sea of Monsters"]);
 });
 
-test("$$.filter: strings shouldn't be treated as selectors", async t => {
+test("$$.filter: strings shouldn't be treated as string selectors", async t => {
   const result = await rootContext.evaluate(
     <JSONSelectToJson name="virtual" from={jsonResource}>
       {$$.within(
@@ -412,6 +432,16 @@ test("$$.filter: strings shouldn't be treated as selectors", async t => {
   );
 
   t.deepEqual(result.content, ["book"]);
+});
+
+test("$$.filter: no condition", async t => {
+  const result = await rootContext.evaluate(
+    <JSONSelectToJson name="virtual" from={jsonResource}>
+      {$$.within($$(["title", "book"]), $$.filter())}
+    </JSONSelectToJson>
+  );
+
+  t.deepEqual(result.content, null);
 });
 
 test("$$.pipe", async t => {
@@ -440,6 +470,16 @@ test("$$.pipe: empty tasks: should return the sourceEl", async t => {
   t.deepEqual(result.content, ["The Lightning Thief", "The Sea of Monsters"]);
 });
 
+test("$$.pipe: one task", async t => {
+  const result = await rootContext.evaluate(
+    <JSONSelectToJson name="virtual" from={jsonResource}>
+      {$$.within(".name", $$.pipe($$.value()))}
+    </JSONSelectToJson>
+  );
+
+  t.deepEqual(result.content, ["The Lightning Thief"]);
+});
+
 test("$$.postprocess", async t => {
   const result = await rootContext.evaluate(
     <JSONSelectToJson name="virtual" from={jsonResource}>
@@ -457,4 +497,24 @@ test("$$.postprocess", async t => {
     THE_LIGHTNING_THIEF: "The Lightning Thief",
     THE_SEA_OF_MONSTERS: "The Sea of Monsters"
   });
+});
+
+test("$$.postprocess: undefined body", async t => {
+  const result = await rootContext.evaluate(
+    <JSONSelectToJson name="virtual" from={jsonResource}>
+      {$$.postprocess(undefined, () => "COOKING")}
+    </JSONSelectToJson>
+  );
+
+  t.deepEqual(result.content, "COOKING");
+});
+
+test("$$.postprocess: undefined postProcessFn", async t => {
+  const result = await rootContext.evaluate(
+    <JSONSelectToJson name="virtual" from={jsonResource}>
+      {$$.postprocess($$("title"))}
+    </JSONSelectToJson>
+  );
+
+  t.deepEqual(result.content, null);
 });

@@ -138,16 +138,14 @@ Object.assign($$, {
     return handleNext(0, sourceEl);
   },
 
-  postprocess: (body, postProcessBody) => async (
+  postprocess: (body, postProcessFn) => async (
     sourceEl,
     JSONSelect,
     options
   ) => {
     const result = await process(body, sourceEl, JSONSelect, options);
-    return new ToProcess(
-      postProcessBody(result, JSONSelect, options),
-      sourceEl
-    );
+    const postProcessedResult = postProcessFn(result, JSONSelect, options);
+    return postProcessedResult;
   }
 });
 
