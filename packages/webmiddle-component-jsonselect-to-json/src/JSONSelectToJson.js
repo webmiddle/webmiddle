@@ -111,7 +111,7 @@ Object.assign($$, {
     return new ToProcess(body, newSourceEl);
   },
 
-  value: () => sourceEl => sourceEl[0],
+  getFirst: () => sourceEl => sourceEl[0],
 
   map: body => sourceEl =>
     sourceEl.map(

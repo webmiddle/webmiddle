@@ -2,7 +2,6 @@ import test from "ava";
 import { rootContext, isResource } from "webmiddle";
 import CheerioToJson, { $$ } from "../src/index.js";
 import isCheerioCollection from "../src/isCheerioCollection";
-import isDomNode from "../src/isDomNode";
 
 const xmlResource = rootContext.createResource(
   "xmlResource",
@@ -57,15 +56,19 @@ test("XML: must return a json resource", async t => {
           $$.map({
             category: $$.attr("category"),
             lang: $$.within("title", $$.attr("lang")),
-            title: $$.within("title", $$.value()),
-            author: $$.within("author", $$.value()),
+            title: $$.within("title", $$.getFirst()),
+            author: $$.within("author", $$.getFirst()),
             year: $$.within(
               "year",
-              $$.postprocess($$.value(), yearString => parseInt(yearString, 10))
+              $$.postprocess($$.getFirst(), yearString =>
+                parseInt(yearString, 10)
+              )
             ),
             price: $$.within(
               "price",
-              $$.postprocess($$.value(), priceString => parseFloat(priceString))
+              $$.postprocess($$.getFirst(), priceString =>
+                parseFloat(priceString)
+              )
             )
           })
         )
@@ -412,20 +415,20 @@ test("$$.attr", async t => {
   t.deepEqual(result.content, "COOKING");
 });
 
-test("$$.value", async t => {
+test("$$.getFirst", async t => {
   const result = await rootContext.evaluate(
     <CheerioToJson name="result" from={xmlResource}>
-      {$$.within("title", $$.value())}
+      {$$.within("title", $$.getFirst())}
     </CheerioToJson>
   );
 
   t.deepEqual(result.content, "Everyday Italian");
 });
 
-test("$$.value: on collections of plain javascript values", async t => {
+test("$$.getFirst: on collections of plain javascript values", async t => {
   const result = await rootContext.evaluate(
     <CheerioToJson name="result" from={xmlResource}>
-      {$$.within($$(["title"]), $$.value)}
+      {$$.within($$(["title"]), $$.getFirst)}
     </CheerioToJson>
   );
 
@@ -435,7 +438,7 @@ test("$$.value: on collections of plain javascript values", async t => {
 test("$$.map", async t => {
   const result = await rootContext.evaluate(
     <CheerioToJson name="result" from={xmlResource}>
-      {$$.within("title", $$.map($$.value()))}
+      {$$.within("title", $$.map($$.getFirst()))}
     </CheerioToJson>
   );
 
@@ -445,7 +448,7 @@ test("$$.map", async t => {
 test("$$.map: strings shouldn't be treated as string selectors", async t => {
   const result = await rootContext.evaluate(
     <CheerioToJson name="result" from={xmlResource}>
-      {$$.within($$(["title", "book"]), $$.map($$.value()))}
+      {$$.within($$(["title", "book"]), $$.map($$.getFirst()))}
     </CheerioToJson>
   );
 
@@ -455,7 +458,7 @@ test("$$.map: strings shouldn't be treated as string selectors", async t => {
 test("$$.map: empty selector", async t => {
   const result = await rootContext.evaluate(
     <CheerioToJson name="result" from={xmlResource}>
-      {$$.within($$([]), $$.map($$.value()))}
+      {$$.within($$([]), $$.map($$.getFirst()))}
     </CheerioToJson>
   );
 
@@ -537,7 +540,7 @@ test("$$.pipe: empty tasks: should return the sourceEl", async t => {
 test("$$.pipe: one task", async t => {
   const result = await rootContext.evaluate(
     <CheerioToJson name="result" from={xmlResource}>
-      {$$.within("title", $$.pipe($$.value()))}
+      {$$.within("title", $$.pipe($$.getFirst()))}
     </CheerioToJson>
   );
 

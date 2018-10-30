@@ -44,10 +44,10 @@ test("Must return a json resource", async t => {
         books: $$.within(
           ":root > *",
           $$.map({
-            name: $$.within(".name", $$.value()),
+            name: $$.within(".name", $$.getFirst()),
             genre: $$.within(
               ".genre_s",
-              $$.postprocess($$.value(), genreString =>
+              $$.postprocess($$.getFirst(), genreString =>
                 genreString.toUpperCase()
               )
             )
@@ -339,7 +339,7 @@ test("$$.find", async t => {
 test("$$.within: function selector (returns collection)", async t => {
   const result = await rootContext.evaluate(
     <JSONSelectToJson name="result" from={jsonResource}>
-      {$$.within($$.find(".name"), $$.value())}
+      {$$.within($$.find(".name"), $$.getFirst())}
     </JSONSelectToJson>
   );
 
@@ -349,17 +349,17 @@ test("$$.within: function selector (returns collection)", async t => {
 test("$$.within: function selector (returns single value)", async t => {
   const result = await rootContext.evaluate(
     <JSONSelectToJson name="result" from={jsonResource}>
-      {$$.within(() => "COOKING", $$.value())}
+      {$$.within(() => "COOKING", $$.getFirst())}
     </JSONSelectToJson>
   );
 
   t.deepEqual(result.content, "COOKING");
 });
 
-test("$$.value", async t => {
+test("$$.getFirst", async t => {
   const result = await rootContext.evaluate(
     <JSONSelectToJson name="result" from={jsonResource}>
-      {$$.within(".name", $$.value())}
+      {$$.within(".name", $$.getFirst())}
     </JSONSelectToJson>
   );
 
@@ -369,7 +369,7 @@ test("$$.value", async t => {
 test("$$.map", async t => {
   const result = await rootContext.evaluate(
     <JSONSelectToJson name="result" from={jsonResource}>
-      {$$.within(".name", $$.map($$.value()))}
+      {$$.within(".name", $$.map($$.getFirst()))}
     </JSONSelectToJson>
   );
 
@@ -379,7 +379,7 @@ test("$$.map", async t => {
 test("$$.map: strings shouldn't be treated as string selectors", async t => {
   const result = await rootContext.evaluate(
     <JSONSelectToJson name="result" from={jsonResource}>
-      {$$.within($$(["title", "book"]), $$.map($$.value()))}
+      {$$.within($$(["title", "book"]), $$.map($$.getFirst()))}
     </JSONSelectToJson>
   );
 
@@ -389,7 +389,7 @@ test("$$.map: strings shouldn't be treated as string selectors", async t => {
 test("$$.map: empty selector", async t => {
   const result = await rootContext.evaluate(
     <JSONSelectToJson name="result" from={jsonResource}>
-      {$$.within($$([]), $$.map($$.value()))}
+      {$$.within($$([]), $$.map($$.getFirst()))}
     </JSONSelectToJson>
   );
 
@@ -471,7 +471,7 @@ test("$$.pipe: empty tasks: should return the sourceEl", async t => {
 test("$$.pipe: one task", async t => {
   const result = await rootContext.evaluate(
     <JSONSelectToJson name="result" from={jsonResource}>
-      {$$.within(".name", $$.pipe($$.value()))}
+      {$$.within(".name", $$.pipe($$.getFirst()))}
     </JSONSelectToJson>
   );
 

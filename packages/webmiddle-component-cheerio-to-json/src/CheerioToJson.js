@@ -1,4 +1,4 @@
-import { PropTypes, isVirtual } from "webmiddle";
+import { PropTypes } from "webmiddle";
 import cheerio from "cheerio";
 import isDomNode from "./isDomNode";
 import isCheerioCollection from "./isCheerioCollection";
@@ -112,7 +112,7 @@ Object.assign($$, {
 
   attr: (...args) => sourceEl => sourceEl.attr(...args),
 
-  value: () => sourceEl => sourceEl[0],
+  getFirst: () => sourceEl => sourceEl[0],
 
   map: body => (sourceEl, $) =>
     sourceEl.map(
