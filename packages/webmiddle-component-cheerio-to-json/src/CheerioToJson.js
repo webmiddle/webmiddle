@@ -3,17 +3,6 @@ import cheerio from "cheerio";
 import isDomNode from "./isDomNode";
 import isCheerioCollection from "./isCheerioCollection";
 
-// NOTE: el.text() returns the concatenated text of all the
-// elements in the collection,
-// while this function only returns the first one.
-function getElementValue(el) {
-  if (!isDomNode(el[0])) {
-    return el[0]; // plain value
-  }
-
-  return el.first().val() || el.first().text();
-}
-
 async function processArray(array, sourceEl, $, options) {
   return Promise.all(array.map(item => process(item, sourceEl, $, options)));
 }
@@ -35,8 +24,11 @@ async function processDomNode(domNode, sourceEl, $, options) {
     return domNode.data;
   }
 
+  // NOTE: el.text() returns the concatenated text of all the
+  // elements in the collection,
+  // while this function only returns the first one.
   const el = $(domNode);
-  return getElementValue(el);
+  return el.first().val() || el.first().text();
 }
 
 async function processCheerioCollection(el, sourceEl, $, options) {
@@ -120,7 +112,7 @@ Object.assign($$, {
 
   attr: (...args) => sourceEl => sourceEl.attr(...args),
 
-  value: () => sourceEl => getElementValue(sourceEl),
+  value: () => sourceEl => sourceEl[0],
 
   map: body => (sourceEl, $) =>
     sourceEl.map(
