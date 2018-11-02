@@ -26,7 +26,7 @@ const FetchPageLinks = ({ url, query, waitFor }) => (
       waitFor={waitFor}
     />
 
-    {({ rawHtml }) =>
+    {rawHtml =>
       <HtmlToJson name="result" from={rawHtml}>
         <anchors
           el="a"

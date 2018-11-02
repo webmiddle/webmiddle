@@ -20,7 +20,7 @@ test("main", async t => {
     <Pipe>
       <FirstComponent />
 
-      {({ firstResource }) => (
+      {firstResource => (
         <SecondComponent
           name="secondResource"
           num={parseInt(firstResource.content, 10)}
@@ -34,7 +34,7 @@ test("main", async t => {
   t.is(output.content, "100", "must pipe resources through listed components");
 });
 
-test("expect resource", async t => {
+test("does not expect resource", async t => {
   const Component = () => 10; // a component that doesn't return a resource
 
   try {
@@ -43,8 +43,8 @@ test("expect resource", async t => {
         <Component />
       </Pipe>
     );
-    t.fail("expected rejection");
-  } catch (e) {
     t.pass();
+  } catch (e) {
+    t.fail();
   }
 });
