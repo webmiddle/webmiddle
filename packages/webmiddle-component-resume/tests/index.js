@@ -35,9 +35,10 @@ test("expect resource", async t => {
 
   try {
     await t.context.context.evaluate(
-      <Resume savePath="./expectResource/invalidResource">
-        <Component />
-      </Resume>
+      <Resume
+        savePath="./expectResource/invalidResource"
+        task={<Component />}
+      />
     );
     t.fail("expected rejection");
   } catch (e) {
@@ -64,9 +65,7 @@ test("main", async t => {
 
   componentExecuted = false;
   const output = await t.context.context.evaluate(
-    <Resume savePath="./main/resource">
-      <Component />
-    </Resume>
+    <Resume savePath="./main/resource" task={<Component />} />
   );
 
   t.is(componentExecuted, true, "component executed the first time");
@@ -77,9 +76,7 @@ test("main", async t => {
 
   componentExecuted = false;
   const secondOutput = await t.context.context.evaluate(
-    <Resume savePath="./main/resource">
-      <Component />
-    </Resume>
+    <Resume savePath="./main/resource" task={<Component />} />
   );
 
   t.is(componentExecuted, false, "component resumed the second time");
@@ -106,9 +103,7 @@ test("x-webmiddle-type", async t => {
 
   componentExecuted = false;
   const output = await t.context.context.evaluate(
-    <Resume savePath="./x-webmiddle-type/resource">
-      <Component />
-    </Resume>
+    <Resume savePath="./x-webmiddle-type/resource" task={<Component />} />
   );
 
   t.is(componentExecuted, true, "component executed the first time");
@@ -123,9 +118,7 @@ test("x-webmiddle-type", async t => {
 
   componentExecuted = false;
   const secondOutput = await t.context.context.evaluate(
-    <Resume savePath="./x-webmiddle-type/resource">
-      <Component />
-    </Resume>
+    <Resume savePath="./x-webmiddle-type/resource" task={<Component />} />
   );
 
   t.is(componentExecuted, false, "component resumed the second time");

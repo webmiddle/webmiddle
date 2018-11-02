@@ -2,11 +2,7 @@ import { PropTypes } from "webmiddle";
 import path from "path";
 import { fileExists, readFile, writeFile } from "./utils/filesystem";
 
-async function Resume({ savePath, children }, context) {
-  if (children.length !== 1) {
-    throw new Error("Resume MUST get exactly one child!");
-  }
-
+async function Resume({ savePath, task }, context) {
   const outputBasePath = context.options.outputBasePath;
   let filename = path.resolve(outputBasePath, savePath);
   if (!filename.endsWith(".json")) filename += ".json";
@@ -20,7 +16,7 @@ async function Resume({ savePath, children }, context) {
     .extend({
       expectResource: true
     })
-    .evaluate(children[0]);
+    .evaluate(task);
   await writeFile(filename, context.stringifyResource(resource));
 
   return resource;
@@ -28,7 +24,7 @@ async function Resume({ savePath, children }, context) {
 
 Resume.propTypes = {
   savePath: PropTypes.string.isRequired,
-  children: PropTypes.array.isRequired
+  task: PropTypes.any.isRequired
 };
 
 export default Resume;
