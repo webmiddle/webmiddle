@@ -94,12 +94,16 @@ async function match(selector, sourceEl, $, options) {
       ...options,
       keepNodes: true
     });
-    if (!isCheerioCollection(matchedEl)) {
-      matchedEl = Array.isArray(matchedEl) ? $(matchedEl) : $([matchedEl]);
-    }
-  } else {
+  } else if (typeof selector === "string") {
     matchedEl = $(selector, sourceEl);
+  } else {
+    matchedEl = selector;
   }
+
+  if (!isCheerioCollection(matchedEl)) {
+    matchedEl = Array.isArray(matchedEl) ? $(matchedEl) : $([matchedEl]);
+  }
+
   return matchedEl;
 }
 
@@ -151,25 +155,21 @@ Object.assign($$, {
   }
 });
 
-async function CheerioToJson({ name, from, children }, context) {
-  if (children.length !== 1) {
-    throw new Error("CheerioToJson MUST get exactly one child!");
-  }
-
+async function CheerioToJson({ from, name = "result", content }, context) {
   // parse html or xml
   const $ = cheerio.load(from.content, {
     xmlMode: from.contentType === "text/xml"
   });
 
-  const content = await process(children[0], $.root(), $, { context });
+  const processedContent = await process(content, $.root(), $, { context });
 
-  return context.createResource(name, "application/json", content);
+  return context.createResource(name, "application/json", processedContent);
 }
 
 CheerioToJson.propTypes = {
-  name: PropTypes.string.isRequired,
   from: PropTypes.object.isRequired, // resource
-  children: PropTypes.array
+  name: PropTypes.string,
+  content: PropTypes.any.isRequired
 };
 
 export default CheerioToJson;

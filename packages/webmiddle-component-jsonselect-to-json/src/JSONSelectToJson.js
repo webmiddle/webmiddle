@@ -1,32 +1,6 @@
 import { PropTypes } from "webmiddle";
 import JSONSelect from "JSONSelect";
 
-// Note: virtual.type must be a string
-async function processVirtual(virtual, sourceEl, JSONSelect, options) {
-  let el = virtual.attributes.el;
-  if (!el) {
-    el = sourceEl;
-  } else if (typeof el === "string") {
-    el = JSONSelect.match(el, undefined, sourceEl);
-  }
-
-  const condition = virtual.attributes.condition;
-  if (condition) {
-    if (typeof condition !== "function") {
-      throw new Error(
-        `condition must be a function: ${JSON.stringify(condition)}`
-      );
-    }
-    el = el.filter(condition);
-  }
-
-  return options.context.createVirtual(
-    virtual.type,
-    {},
-    await processArray(virtual.children, el, JSONSelect, options)
-  );
-}
-
 async function processArray(array, sourceEl, JSONSelect, options) {
   return Promise.all(
     array.map(item => process(item, sourceEl, JSONSelect, options))
@@ -90,17 +64,16 @@ async function match(selector, sourceEl, JSONSelect, options) {
   let matchedEl;
   if (typeof selector === "function") {
     matchedEl = await process(selector, sourceEl, JSONSelect, options);
-    matchedEl = Array.isArray(matchedEl) ? matchedEl : [matchedEl];
+  } else if (typeof selector === "string") {
+    matchedEl = [].concat(
+      ...sourceEl.map(rawItem => JSONSelect.match(selector, undefined, rawItem))
+    );
   } else {
-    matchedEl =
-      typeof selector !== "string"
-        ? selector
-        : [].concat(
-            ...sourceEl.map(rawItem =>
-              JSONSelect.match(selector, undefined, rawItem)
-            )
-          );
+    matchedEl = selector;
   }
+
+  matchedEl = Array.isArray(matchedEl) ? matchedEl : [matchedEl];
+
   return matchedEl;
 }
 
@@ -155,22 +128,18 @@ Object.assign($$, {
   }
 });
 
-async function JSONSelectToJson({ name, from, children }, context) {
-  if (children.length !== 1) {
-    throw new Error("JSONSelectToJson MUST get exactly one child!");
-  }
-
-  const content = await process(children[0], [from.content], JSONSelect, {
+async function JSONSelectToJson({ from, name = "result", content }, context) {
+  const processedContent = await process(content, [from.content], JSONSelect, {
     context
   });
 
-  return context.createResource(name, "application/json", content);
+  return context.createResource(name, "application/json", processedContent);
 }
 
 JSONSelectToJson.propTypes = {
-  name: PropTypes.string.isRequired,
   from: PropTypes.object.isRequired, // resource
-  children: PropTypes.array
+  name: PropTypes.string,
+  content: PropTypes.any.isRequired
 };
 
 export default JSONSelectToJson;
