@@ -13,7 +13,11 @@ async function Resume({ savePath, task }, context) {
     return resource.content;
   }
   // not exists
-  const result = await context.evaluate(task);
+  const result = await context
+    .extend({
+      expectResource: false
+    })
+    .evaluate(task);
   const resource = context.createResource("result", "x-webmiddle-type", result);
   await writeFile(filename, context.stringifyResource(resource));
   return result;
