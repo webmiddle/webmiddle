@@ -26,26 +26,6 @@ test.beforeEach(t => {
   });
 });
 
-test("expect resource", async t => {
-  deleteFolderRecursive(
-    path.resolve(t.context.context.options.outputBasePath, "./expectResource")
-  );
-
-  const Component = () => 10; // a component that doesn't return a resource
-
-  try {
-    await t.context.context.evaluate(
-      <Resume
-        savePath="./expectResource/invalidResource"
-        task={<Component />}
-      />
-    );
-    t.fail("expected rejection");
-  } catch (e) {
-    t.pass();
-  }
-});
-
 test("main", async t => {
   // clear folder
   deleteFolderRecursive(

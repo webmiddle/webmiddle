@@ -9,17 +9,14 @@ async function Resume({ savePath, task }, context) {
 
   if (await fileExists(filename)) {
     const fileContent = await readFile(filename);
-    return context.parseResource(fileContent);
+    const resource = context.parseResource(fileContent);
+    return resource.content;
   }
   // not exists
-  const resource = await context
-    .extend({
-      expectResource: true
-    })
-    .evaluate(task);
+  const result = await context.evaluate(task);
+  const resource = context.createResource("result", "x-webmiddle-type", result);
   await writeFile(filename, context.stringifyResource(resource));
-
-  return resource;
+  return result;
 }
 
 Resume.propTypes = {
