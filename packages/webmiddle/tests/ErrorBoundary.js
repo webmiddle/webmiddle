@@ -59,7 +59,7 @@ test("should evaluate child normally if there arent errors (virtual)", async t =
   t.is(output, "success");
 });
 
-test("should default to zero retries and no handleCatch", async t => {
+test("should default to zero retries and no catch", async t => {
   let tries = 0;
 
   await t.throwsAsync(
@@ -169,11 +169,11 @@ test("isRetryable as a function returning a promise", async t => {
   t.is(tries, retries + 1);
 });
 
-test("handleCatch as a string", async t => {
+test("catch as a string", async t => {
   let tries = 0;
 
   const output = await t.context.context.evaluate(
-    <ErrorBoundary handleCatch={"fallback"}>
+    <ErrorBoundary catch={"fallback"}>
       {() => {
         tries++;
         throw new Error("expected fail");
@@ -185,11 +185,11 @@ test("handleCatch as a string", async t => {
   t.is(output, "fallback");
 });
 
-test("handleCatch as a function returning a promise", async t => {
+test("catch as a function returning a promise", async t => {
   let tries = 0;
 
   const output = await t.context.context.evaluate(
-    <ErrorBoundary handleCatch={() => Promise.resolve("fallback")}>
+    <ErrorBoundary catch={() => Promise.resolve("fallback")}>
       {() => {
         tries++;
         throw new Error("expected fail");
@@ -201,13 +201,13 @@ test("handleCatch as a function returning a promise", async t => {
   t.is(output, "fallback");
 });
 
-test("handleCatch as a virtual", async t => {
+test("catch as a virtual", async t => {
   let tries = 0;
 
   const Component = ({ str }) => str;
 
   const output = await t.context.context.evaluate(
-    <ErrorBoundary handleCatch={<Component str="fallback" />}>
+    <ErrorBoundary catch={<Component str="fallback" />}>
       {() => {
         tries++;
         throw new Error("expected fail");
@@ -219,12 +219,12 @@ test("handleCatch as a virtual", async t => {
   t.is(output, "fallback");
 });
 
-test("retries + handleCatch", async t => {
+test("retries + catch", async t => {
   let tries = 0;
   const retries = 3;
 
   const output = await t.context.context.evaluate(
-    <ErrorBoundary retries={retries} handleCatch={"fallback"}>
+    <ErrorBoundary retries={retries} catch={"fallback"}>
       {() => {
         tries++;
         throw new Error("expected fail");

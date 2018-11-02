@@ -14,16 +14,16 @@ function Try({ children }) {
 const trueFn = () => true;
 
 // TODO: use evaluate for isRetryable and catch?
-export default function ErrorBoundary(
-  { children, retries, isRetryable, handleCatch },
-  context
-) {
+export default function ErrorBoundary(props, context) {
+  const { children } = props;
+
   if (children.length !== 1) {
     throw new Error("ErrorBoundary MUST get exactly one child!");
   }
 
-  retries = typeof retries === "undefined" ? 0 : retries;
-  isRetryable = typeof isRetryable === "undefined" ? trueFn : isRetryable;
+  const retries = typeof props.retries === "undefined" ? 0 : props.retries;
+  const isRetryable =
+    typeof props.isRetryable === "undefined" ? trueFn : props.isRetryable;
 
   const tryNext = async tries => {
     try {
@@ -38,8 +38,8 @@ export default function ErrorBoundary(
 
       if (tries === retries + 1) {
         // last resort
-        if (typeof handleCatch === "undefined") throw err;
-        return <Catch err={err} handler={handleCatch} />;
+        if (typeof props.catch === "undefined") throw err;
+        return <Catch err={err} handler={props.catch} />;
       }
 
       const retriesLeft = retries - (tries - 1);
@@ -59,5 +59,5 @@ ErrorBoundary.propTypes = {
   children: PropTypes.array.isRequired,
   retries: PropTypes.number,
   isRetryable: PropTypes.func,
-  handleCatch: PropTypes.any
+  catch: PropTypes.any
 };
