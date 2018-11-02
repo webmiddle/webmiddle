@@ -1,9 +1,12 @@
 import { PropTypes } from "webmiddle";
 import path from "path";
-import Pipe from "webmiddle-component-pipe";
 import { fileExists, readFile, writeFile } from "./utils/filesystem";
 
 async function Resume({ savePath, children }, context) {
+  if (children.length !== 1) {
+    throw new Error("Resume MUST get exactly one child!");
+  }
+
   const outputBasePath = context.options.outputBasePath;
   let filename = path.resolve(outputBasePath, savePath);
   if (!filename.endsWith(".json")) filename += ".json";
@@ -17,7 +20,7 @@ async function Resume({ savePath, children }, context) {
     .extend({
       expectResource: true
     })
-    .evaluate(<Pipe>{children}</Pipe>);
+    .evaluate(children[0]);
   await writeFile(filename, context.stringifyResource(resource));
 
   return resource;
