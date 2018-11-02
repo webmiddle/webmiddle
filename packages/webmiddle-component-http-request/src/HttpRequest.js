@@ -30,8 +30,10 @@ function HttpRequest(
   context
 ) {
   return (
-    <ErrorBoundary isRetryable={isRetryable} retries={retries(context)}>
-      {
+    <ErrorBoundary
+      isRetryable={isRetryable}
+      retries={retries(context)}
+      try={
         new Promise((resolve, reject) => {
           try {
             console.log("HttpRequest", url);
@@ -118,7 +120,7 @@ function HttpRequest(
           }
         })
       }
-    </ErrorBoundary>
+    />
   );
 }
 

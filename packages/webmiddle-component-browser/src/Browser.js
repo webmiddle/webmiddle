@@ -166,8 +166,10 @@ async function Browser(
   context
 ) {
   return (
-    <ErrorBoundary isRetryable={isRetryable} retries={retries(context)}>
-      {async () => {
+    <ErrorBoundary
+      isRetryable={isRetryable}
+      retries={retries(context)}
+      try={async () => {
         console.log("Browser", url);
 
         method = method.toUpperCase();
@@ -279,7 +281,7 @@ async function Browser(
           }
         }
       }}
-    </ErrorBoundary>
+    />
   );
 }
 

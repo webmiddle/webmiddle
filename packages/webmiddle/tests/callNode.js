@@ -41,9 +41,11 @@ test("virtual (component) with retries and final catch", async t => {
   };
 
   const virtual = (
-    <ErrorBoundary retries={retries} catch={() => "fallback"}>
-      <Component a={10} b={20} />
-    </ErrorBoundary>
+    <ErrorBoundary
+      retries={retries}
+      try={<Component a={10} b={20} />}
+      catch={() => "fallback"}
+    />
   );
 
   const context = t.context.context.extend({

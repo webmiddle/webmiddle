@@ -7,27 +7,21 @@ function Catch({ handler, err }) {
 
 // Separate Try component makes sure the call state
 // contains a visible "Try" component call
-function Try({ children }) {
-  return children[0];
+function Try({ handler }) {
+  return handler;
 }
 
 const trueFn = () => true;
 
 // TODO: use evaluate for isRetryable and catch?
 export default function ErrorBoundary(props, context) {
-  const { children } = props;
-
-  if (children.length !== 1) {
-    throw new Error("ErrorBoundary MUST get exactly one child!");
-  }
-
   const retries = typeof props.retries === "undefined" ? 0 : props.retries;
   const isRetryable =
     typeof props.isRetryable === "undefined" ? trueFn : props.isRetryable;
 
   const tryNext = async tries => {
     try {
-      return await context.evaluate(<Try>{children}</Try>);
+      return await context.evaluate(<Try handler={props.try} />);
     } catch (err) {
       console.error(err instanceof Error ? err.stack : err);
 
@@ -56,8 +50,8 @@ export default function ErrorBoundary(props, context) {
 }
 
 ErrorBoundary.propTypes = {
-  children: PropTypes.array.isRequired,
   retries: PropTypes.number,
   isRetryable: PropTypes.func,
+  try: PropTypes.any.isRequired,
   catch: PropTypes.any
 };
