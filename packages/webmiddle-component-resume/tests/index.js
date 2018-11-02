@@ -111,3 +111,21 @@ test("x-webmiddle-type", async t => {
   t.deepEqual(secondOutput.content.foo.attributes, { some: "more" });
   t.deepEqual(secondOutput.content.foo.children, []);
 });
+
+test("does not expect resource", async t => {
+  deleteFolderRecursive(
+    path.resolve(t.context.context.options.outputBasePath, "./expectResource")
+  );
+  const Component = () => 10; // a component that doesn't return a resource
+  try {
+    await t.context.context.evaluate(
+      <Resume
+        savePath="./expectResource/invalidResource"
+        task={<Component />}
+      />
+    );
+    t.pass();
+  } catch (e) {
+    t.fail();
+  }
+});
