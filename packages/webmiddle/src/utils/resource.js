@@ -37,6 +37,8 @@ class JsonResource extends Resource {
   }
 }
 
+class WebmiddleVirtualResource extends JsonResource {}
+
 class WebmiddleTypeResource extends JsonResource {
   stringifyContent() {
     const handle = data => {
@@ -117,12 +119,10 @@ class WebmiddleTypeResource extends JsonResource {
   }
 }
 
-class WebmiddleVirtualResource extends JsonResource {}
-
 const resourceHandlers = {
   "application/json": JsonResource,
-  "x-webmiddle-type": WebmiddleTypeResource,
-  "x-webmiddle-virtual": WebmiddleVirtualResource
+  "x-webmiddle-virtual": WebmiddleVirtualResource,
+  "x-webmiddle-type": WebmiddleTypeResource
 };
 
 export function createResource(context, name, contentType, content) {
