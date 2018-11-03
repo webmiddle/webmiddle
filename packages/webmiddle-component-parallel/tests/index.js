@@ -10,7 +10,7 @@ test.beforeEach(t => {
   t.context.context = rootContext;
 });
 
-test("main", async t => {
+test("main: tasks as object", async t => {
   let firstStart;
   let secondStart;
   let firstEnd;
@@ -38,10 +38,13 @@ test("main", async t => {
     });
 
   const output = await t.context.context.evaluate(
-    <Parallel name="resources">
-      <FirstComponent />
-      <SecondComponent />
-    </Parallel>
+    <Parallel
+      name="resources"
+      tasks={{
+        firstResource: <FirstComponent />,
+        secondResource: <SecondComponent />
+      }}
+    />
   );
 
   t.true(isResource(output));
@@ -64,19 +67,33 @@ test("main", async t => {
   );
 });
 
-test("expect resource", async t => {
-  const Component = () => 10; // a component that doesn't return a resource
+test("main: tasks as array", async t => {
+  const output = await rootContext.evaluate(
+    <Parallel
+      name="resources"
+      tasks={[1, 2].map((num, index) =>
+        rootContext.createResource(
+          `resource ${index}`,
+          "text/plain",
+          `${num} ${index}`
+        )
+      )}
+    />
+  );
 
-  try {
-    await t.context.context.evaluate(
-      <Parallel name="whatever">
-        <Component />
-      </Parallel>
-    );
-    t.fail("expected rejection");
-  } catch (e) {
-    t.pass();
-  }
+  t.true(isResource(output));
+  t.is(output.name, "resources", "name");
+  t.is(output.contentType, "x-webmiddle-type", "contentType");
+
+  t.true(isResource(output.content[0]));
+  t.is(output.content[0].name, "resource 0");
+  t.is(output.content[0].contentType, "text/plain");
+  t.is(output.content[0].content, "1 0");
+
+  t.true(isResource(output.content[1]));
+  t.is(output.content[1].name, "resource 1");
+  t.is(output.content[1].contentType, "text/plain");
+  t.is(output.content[1].content, "2 1");
 });
 
 test("limit", async t => {
@@ -104,11 +121,13 @@ test("limit", async t => {
   current = 0;
   overLimit = false;
   await t.context.context.evaluate(
-    <Parallel name="resources" limit={limit}>
-      {range(100).map(i => (
+    <Parallel
+      name="resources"
+      limit={limit}
+      tasks={range(100).map(i => (
         <Component name={i} />
       ))}
-    </Parallel>
+    />
   );
 
   t.is(overLimit, false, "with limit");
@@ -116,12 +135,27 @@ test("limit", async t => {
   current = 0;
   overLimit = false;
   await t.context.context.evaluate(
-    <Parallel name="resources" limit={0}>
-      {range(100).map(i => (
+    <Parallel
+      name="resources"
+      limit={0}
+      tasks={range(100).map(i => (
         <Component name={i} />
       ))}
-    </Parallel>
+    />
   );
 
   t.is(overLimit, true, "without limit");
+});
+
+test("expect resource", async t => {
+  const Component = () => 10; // a component that doesn't return a resource
+
+  try {
+    await t.context.context.evaluate(
+      <Parallel name="whatever" tasks={[<Component />]} />
+    );
+    t.fail("expected rejection");
+  } catch (e) {
+    t.pass();
+  }
 });

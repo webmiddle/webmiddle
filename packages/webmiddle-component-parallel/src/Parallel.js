@@ -1,6 +1,11 @@
 import { PropTypes } from "webmiddle";
 
-async function Parallel({ name, limit, children }, context) {
+function entries(target) {
+  if (!target) return [];
+  return Object.keys(target).map(key => [key, target[key]]);
+}
+
+async function Parallel({ name, limit, tasks }, context) {
   const resources = {};
 
   // Note: fullfilled promises are removed from this array
@@ -10,7 +15,7 @@ async function Parallel({ name, limit, children }, context) {
   // implementing the "limit" behaviour.
   const promises = [];
 
-  for (const child of children) {
+  for (const [taskKey, task] of entries(tasks)) {
     if (limit && promises.length >= limit) {
       //console.log('wait', promises.length);
       await Promise.race(promises);
@@ -20,11 +25,11 @@ async function Parallel({ name, limit, children }, context) {
       .extend({
         expectResource: true
       })
-      .evaluate(child)
+      .evaluate(task)
       .then(result => {
         promises.splice(promises.indexOf(promise), 1);
         //console.log('fullfilled', promises.length);
-        resources[result.name] = result;
+        resources[taskKey] = result;
       });
     promises.push(promise);
     //console.log('new one', promises.length);
@@ -37,7 +42,7 @@ async function Parallel({ name, limit, children }, context) {
 Parallel.propTypes = {
   name: PropTypes.string.isRequired,
   limit: PropTypes.number,
-  children: PropTypes.array.isRequired
+  tasks: PropTypes.oneOfType([PropTypes.object, PropTypes.array]).isRequired
 };
 
 export default Parallel;
