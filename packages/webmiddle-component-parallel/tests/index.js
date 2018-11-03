@@ -39,7 +39,6 @@ test("main: tasks as object", async t => {
 
   const output = await t.context.context.evaluate(
     <Parallel
-      name="resources"
       tasks={{
         firstResource: <FirstComponent />,
         secondResource: <SecondComponent />
@@ -69,7 +68,6 @@ test("main: tasks as object", async t => {
 test("main: tasks as array", async t => {
   const output = await rootContext.evaluate(
     <Parallel
-      name="resources"
       tasks={[1, 2].map((num, index) =>
         rootContext.createResource(
           `resource ${index}`,
@@ -120,10 +118,9 @@ test("limit", async t => {
   overLimit = false;
   await t.context.context.evaluate(
     <Parallel
-      name="resources"
       limit={limit}
       tasks={range(100).map(i => (
-        <Component name={i} />
+        <Component />
       ))}
     />
   );
@@ -134,10 +131,9 @@ test("limit", async t => {
   overLimit = false;
   await t.context.context.evaluate(
     <Parallel
-      name="resources"
       limit={0}
       tasks={range(100).map(i => (
-        <Component name={i} />
+        <Component />
       ))}
     />
   );
@@ -149,9 +145,7 @@ test("does not expect resource", async t => {
   const Component = () => 10; // a component that doesn't return a resource
 
   try {
-    await t.context.context.evaluate(
-      <Parallel name="whatever" tasks={[<Component />]} />
-    );
+    await t.context.context.evaluate(<Parallel tasks={[<Component />]} />);
     t.pass();
   } catch (e) {
     t.fail();

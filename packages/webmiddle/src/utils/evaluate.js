@@ -44,14 +44,6 @@ export default async function evaluate(context, value) {
 
         if (virtualResult !== result) {
           result = await evaluate(context, virtualResult);
-          if (isResource(result)) {
-            // resource overrides by top virtual
-            ["name", "contentType"].forEach(p => {
-              if (typeof topVirtual.attributes[p] !== "undefined") {
-                result[p] = topVirtual.attributes[p];
-              }
-            });
-          }
           resultEvaluated = true;
           return result;
         }

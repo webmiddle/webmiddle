@@ -21,10 +21,7 @@ test("main", async t => {
       <FirstComponent />
 
       {firstResource => (
-        <SecondComponent
-          name="secondResource"
-          num={parseInt(firstResource.content, 10)}
-        />
+        <SecondComponent num={parseInt(firstResource.content, 10)} />
       )}
     </Pipe>
   );

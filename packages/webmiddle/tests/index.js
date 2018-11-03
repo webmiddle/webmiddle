@@ -344,24 +344,6 @@ test("evaluateVirtual: component must be called correctly", async t => {
   t.is(output.result.children[0].type, "element", "children");
 });
 
-test("evaluateVirtual: resource overrides", async t => {
-  // bottom to parent
-  const Component = async () =>
-    t.context.context.createResource("some", "text/html", "<div></div>");
-  const TopComponent = () => (
-    <Component name="rawtext" contentType="text/plain" />
-  );
-
-  const output = await t.context.context.evaluate(
-    <TopComponent name="other" />
-  );
-
-  t.true(isResource(output));
-  t.is(output.name, "other", "name");
-  t.is(output.contentType, "text/plain", "contentType");
-  t.is(output.content, "<div></div>", "content");
-});
-
 test("evaluate: NaN", async t => {
   // regression test: NaN result should not cause infinite loop
   await t.context.context.evaluate(NaN);
