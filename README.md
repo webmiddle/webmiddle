@@ -268,10 +268,6 @@ The tool also allows to remotely execute components, making it an useful asset t
       <td><a href="https://badge.fury.io/js/webmiddle-component-parallel"><img src="https://badge.fury.io/js/webmiddle-component-parallel.svg" alt="npm version" height="18"></a></td>
     </tr>
     <tr>
-      <td>webmiddle-component-arraymap</td>
-      <td><a href="https://badge.fury.io/js/webmiddle-component-arraymap"><img src="https://badge.fury.io/js/webmiddle-component-arraymap.svg" alt="npm version" height="18"></a></td>
-    </tr>
-    <tr>
       <td>webmiddle-component-resume</td>
       <td><a href="https://badge.fury.io/js/webmiddle-component-resume"><img src="https://badge.fury.io/js/webmiddle-component-resume.svg" alt="npm version" height="18"></a></td>
     </tr>
