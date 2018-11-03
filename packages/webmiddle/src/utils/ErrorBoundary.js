@@ -1,4 +1,4 @@
-import PropTypes from "proptypes"; // explicit import because of circular dependency with index
+import PropTypes from "prop-types"; // explicit import because of circular dependency with index
 
 function Catch({ handler, err }) {
   if (typeof handler === "function") handler = handler(err);

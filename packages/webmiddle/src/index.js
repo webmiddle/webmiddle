@@ -1,5 +1,5 @@
 import virtualElement from "virtual-element";
-import PropTypes from "proptypes";
+import PropTypes from "prop-types";
 import createContext from "./utils/createContext";
 import { isResource } from "./utils/resource";
 import { isVirtual } from "./utils/virtual";

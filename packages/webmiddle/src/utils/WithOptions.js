@@ -1,4 +1,4 @@
-import PropTypes from "proptypes"; // explicit import because of circular dependency with index
+import PropTypes from "prop-types"; // explicit import because of circular dependency with index
 
 export default function WithOptions({ children, ...options }, context) {
   if (children.length !== 1) {

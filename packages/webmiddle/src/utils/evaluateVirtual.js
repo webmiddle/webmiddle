@@ -1,25 +1,14 @@
+import PropTypes from "prop-types"; // explicit import because of circular dependency with index
 import evaluate from "./evaluate";
 
-// extracted from https://github.com/developit/propTypes README
+// see https://www.npmjs.com/package/prop-types#proptypescheckproptypes
 function validateProps(props, propTypes, component) {
-  for (const prop in propTypes) {
-    if (propTypes.hasOwnProperty(prop)) {
-      if (typeof propTypes[prop] !== "function") {
-        console.error(
-          "Error: invalid prop type",
-          prop,
-          propTypes,
-          component && component.name ? component.name : component
-        );
-      }
-      const err = propTypes[prop](props, prop, component, "prop");
-      if (err) {
-        console.warn(err);
-        return false;
-      }
-    }
-  }
-  return true;
+  PropTypes.checkPropTypes(
+    propTypes,
+    props,
+    "prop",
+    component.name || "Component"
+  );
 }
 
 function evaluateComponent(context, component, props) {
