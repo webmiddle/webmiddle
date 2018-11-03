@@ -414,6 +414,19 @@ test("WithOptions", async t => {
   t.is(output, "bar fun forever");
 });
 
+test("WithOptions: should throw when passed more than one child", async t => {
+  const Component = () => "foo";
+
+  await t.throwsAsync(
+    t.context.context.evaluate(
+      <WithOptions myCustomOption="fun" anotherOption="forever">
+        <Component />
+        <Component />
+      </WithOptions>
+    )
+  );
+});
+
 test("must throw when the component throws", async t => {
   const Component = () => {
     throw new Error("expected throw");
