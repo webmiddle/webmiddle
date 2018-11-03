@@ -47,19 +47,18 @@ test("main: tasks as object", async t => {
     />
   );
 
-  t.true(isResource(output));
-  t.is(output.name, "resources", "name");
-  t.is(output.contentType, "x-webmiddle-type", "contentType");
+  t.true(typeof output === "object" && output !== null);
+  t.deepEqual(Object.keys(output), ["firstResource", "secondResource"]);
 
-  t.true(isResource(output.content.firstResource));
-  t.is(output.content.firstResource.name, "firstResource");
-  t.is(output.content.firstResource.contentType, "text/plain");
-  t.is(output.content.firstResource.content, "1");
+  t.true(isResource(output.firstResource));
+  t.is(output.firstResource.name, "firstResource");
+  t.is(output.firstResource.contentType, "text/plain");
+  t.is(output.firstResource.content, "1");
 
-  t.true(isResource(output.content.secondResource));
-  t.is(output.content.secondResource.name, "secondResource");
-  t.is(output.content.secondResource.contentType, "text/plain");
-  t.is(output.content.secondResource.content, "2");
+  t.true(isResource(output.secondResource));
+  t.is(output.secondResource.name, "secondResource");
+  t.is(output.secondResource.contentType, "text/plain");
+  t.is(output.secondResource.content, "2");
 
   t.true(
     firstStart < secondEnd && secondStart < firstEnd,
@@ -81,19 +80,18 @@ test("main: tasks as array", async t => {
     />
   );
 
-  t.true(isResource(output));
-  t.is(output.name, "resources", "name");
-  t.is(output.contentType, "x-webmiddle-type", "contentType");
+  t.true(Array.isArray(output));
+  t.is(output.length, 2);
 
-  t.true(isResource(output.content[0]));
-  t.is(output.content[0].name, "resource 0");
-  t.is(output.content[0].contentType, "text/plain");
-  t.is(output.content[0].content, "1 0");
+  t.true(isResource(output[0]));
+  t.is(output[0].name, "resource 0");
+  t.is(output[0].contentType, "text/plain");
+  t.is(output[0].content, "1 0");
 
-  t.true(isResource(output.content[1]));
-  t.is(output.content[1].name, "resource 1");
-  t.is(output.content[1].contentType, "text/plain");
-  t.is(output.content[1].content, "2 1");
+  t.true(isResource(output[1]));
+  t.is(output[1].name, "resource 1");
+  t.is(output[1].contentType, "text/plain");
+  t.is(output[1].content, "2 1");
 });
 
 test("limit", async t => {
@@ -147,15 +145,15 @@ test("limit", async t => {
   t.is(overLimit, true, "without limit");
 });
 
-test("expect resource", async t => {
+test("does not expect resource", async t => {
   const Component = () => 10; // a component that doesn't return a resource
 
   try {
     await t.context.context.evaluate(
       <Parallel name="whatever" tasks={[<Component />]} />
     );
-    t.fail("expected rejection");
-  } catch (e) {
     t.pass();
+  } catch (e) {
+    t.fail();
   }
 });

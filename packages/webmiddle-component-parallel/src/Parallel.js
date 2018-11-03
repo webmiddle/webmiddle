@@ -6,7 +6,7 @@ function entries(target) {
 }
 
 async function Parallel({ name, limit, tasks }, context) {
-  const resources = {};
+  const results = Array.isArray(tasks) ? [] : {};
 
   // Note: fullfilled promises are removed from this array
   // (no need to remove rejected promises as one reject makes the
@@ -23,20 +23,20 @@ async function Parallel({ name, limit, tasks }, context) {
 
     const promise = context
       .extend({
-        expectResource: true
+        expectResource: false
       })
       .evaluate(task)
       .then(result => {
         promises.splice(promises.indexOf(promise), 1);
         //console.log('fullfilled', promises.length);
-        resources[taskKey] = result;
+        results[taskKey] = result;
       });
     promises.push(promise);
     //console.log('new one', promises.length);
   }
 
   await Promise.all(promises);
-  return context.createResource(name, "x-webmiddle-type", resources);
+  return results;
 }
 
 Parallel.propTypes = {
