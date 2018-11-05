@@ -26,7 +26,14 @@ function normalizeHttpHeaders(headers) {
 
 // TODO: cookies
 function HttpRequest(
-  { name, contentType, url, method = "GET", body = {}, httpHeaders = {} },
+  {
+    name = "httpRequest",
+    contentType,
+    url,
+    method = "GET",
+    body = {},
+    httpHeaders = {}
+  },
   context
 ) {
   return (
@@ -125,7 +132,7 @@ function HttpRequest(
 }
 
 HttpRequest.propTypes = {
-  name: PropTypes.string.isRequired,
+  name: PropTypes.string,
   contentType: PropTypes.string,
   url: PropTypes.string.isRequired,
   method: PropTypes.string,

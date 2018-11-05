@@ -155,7 +155,7 @@ async function getBrowser() {
 // TODO: cookies
 async function Browser(
   {
-    name,
+    name = "browser",
     contentType,
     url,
     method = "GET",
@@ -286,7 +286,7 @@ async function Browser(
 }
 
 Browser.propTypes = {
-  name: PropTypes.string.isRequired,
+  name: PropTypes.string,
   contentType: PropTypes.string,
   url: PropTypes.string.isRequired,
   method: PropTypes.string,

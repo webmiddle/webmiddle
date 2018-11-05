@@ -29,6 +29,7 @@
     "react/jsx-tag-spacing": 0,
     "react/destructuring-assignment": 0,
     "react/forbid-prop-types": 0,
-    "spaced-comment": 1
+    "spaced-comment": 1,
+    "react/jsx-wrap-multilines": 0
   }
 }

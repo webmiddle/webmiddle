@@ -30,6 +30,23 @@ test("GET https page", async t => {
   });
 });
 
+test("GET https page (default name)", async t => {
+  const number = Math.round(Math.random() * 100);
+
+  const output = await t.context.context.evaluate(
+    <HttpRequest
+      contentType="application/json"
+      method="GET"
+      url={`https://eu.httpbin.org/get?number=${escape(number)}&static=${escape(
+        "test this number"
+      )}`}
+    />
+  );
+
+  t.true(isResource(output));
+  t.is(output.name, "httpRequest");
+});
+
 test("GET xml document (infer resource contentType)", async t => {
   const number = Math.round(Math.random() * 100);
 
