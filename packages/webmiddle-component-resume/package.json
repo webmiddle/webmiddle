@@ -57,7 +57,7 @@
   "repository": "webmiddle/webmiddle",
   "license": "MIT",
   "peerDependencies": {
-    "webmiddle": "^0.4.0"
+    "webmiddle": "^0.5.0"
   },
   "dependencies": {
     "mkdirp": "^0.5.1"
