@@ -1,6 +1,6 @@
 {
   "name": "webmiddle-client",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -65,7 +65,7 @@
     "ws": "^6.1.0"
   },
   "devDependencies": {
-    "webmiddle": "^0.4.0",
-    "webmiddle-server": "^0.4.0"
+    "webmiddle": "^0.5.0",
+    "webmiddle-server": "^0.5.0"
   }
 }

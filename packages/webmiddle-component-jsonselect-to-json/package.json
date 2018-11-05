@@ -1,6 +1,6 @@
 {
   "name": "webmiddle-component-jsonselect-to-json",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -63,6 +63,6 @@
     "JSONSelect": "^0.4.0"
   },
   "devDependencies": {
-    "webmiddle": "^0.4.0"
+    "webmiddle": "^0.5.0"
   }
 }

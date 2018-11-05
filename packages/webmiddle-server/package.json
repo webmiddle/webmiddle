@@ -1,6 +1,6 @@
 {
   "name": "webmiddle-server",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -69,6 +69,6 @@
   },
   "devDependencies": {
     "superagent": "^3.8.3",
-    "webmiddle": "^0.4.0"
+    "webmiddle": "^0.5.0"
   }
 }
