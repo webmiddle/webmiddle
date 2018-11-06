@@ -7,8 +7,8 @@
 
 > Node.js framework for modular web scraping and data extraction
 
-The building block of any webmiddle application is the JSX component.  
-Each component executes one task, or controls the execution of other tasks, by composing other components.
+The building block of any webmiddle application is the [JSX](http://facebook.github.io/jsx/) component.  
+Each component executes one task or controls the execution of other tasks by composing other components.
 
 ```jsx
 const FetchPageLinks({ url, query, name }) = () =>
@@ -31,12 +31,9 @@ const FetchPageLinks({ url, query, name }) = () =>
   </Pipe>
 ```
 
-The framework provides a set of core components for the most common operations like http requests, data transformations, flow control, Puppeteer requests, concurrency and error handling.
+The framework provides a set of core components for the most common operations, but there is no difference between a core component and a component that you may want to develop yourself.
 
-There is no actual difference between a core component and a component that you may want to develop yourself.
-Anyone can contribute by adding new components!
-
-Quickly turn webmiddle applications into REST APIs, allowing remote access via HTTP or WebSocket.
+Webmiddle applications can be quickly turned into REST APIs, allowing remote access via HTTP or WebSocket.
 Use webmiddle-devtools for running and debugging your components and test them remotely.
 
 ## Links
@@ -48,7 +45,7 @@ Use webmiddle-devtools for running and debugging your components and test them r
 
 ## Features
 
-Built-in features currently provided by the core components:
+Built-in features provided by the core components:
 
 - **[Concurrency](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-component-parallel)**, for executing multiple asynchronous components at the same time.
 - **[HTTP](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-component-http-request)** requests.
@@ -56,8 +53,9 @@ Built-in features currently provided by the core components:
 - **[Cookie JAR](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-manager-cookie)**, for sharing cookies among different components and webmiddle objects.
 - **[Caching](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-component-resume)**, for resuming work in case of crash.
 - **[Error handling](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle#errorboundary)**, via customizable retries and catch options.
-- **[Resource transformation](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-component-cheerio-to-virtual)**.
-  - Built-in HTML/XML/JSON to JSON transformations.
+- **Resource transformations**
+  - **[HTML/XML to JSON](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-component-cheerio-to-json)**
+  - **[JSON to JSON](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-component-jsonselect-to-json)**
 
 ## Core packages
 
@@ -120,14 +118,13 @@ Built-in features currently provided by the core components:
 
 Create your own components and publish them to npm!
 
-One of the main philosophies of the framework is **reuse**, by creating an ecosystem where general-purpose components and components for specific websites can be published as separate npm modules, to be usable in other projects.
+One of the main philosophies of the framework is **reuse**, by creating an ecosystem where components can be published as separate npm modules to be usable in other projects.
 
 **NOTE**: If you think that a component / feature is so common and general that it should be in the core, [open an issue](https://github.com/webmiddle/webmiddle/issues/new) or just do a pull request!
 
 ## Contributing
 
 This is a monorepo, i.e. all the core components and the main webmiddle package are all in this single repository.
-It is inspired by [Babel](https://github.com/babel/babel) and other projects, check out this [article](https://github.com/babel/babel/blob/master/doc/design/monorepo.md) to see why this isn't an horrible idea after all.
 
 It uses [Yarn](https://yarnpkg.com) and [Lerna](https://github.com/lerna/lerna) for managing the monorepo, as you might have guessed from the lerna.json file.
 
