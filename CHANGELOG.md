@@ -1,3 +1,9 @@
+## v0.5.1
+
+- webmiddle-server: send welcome when getting homepage
+- FIX webmiddle-server: express: default to empty api key
+- Remove outdated info from packages README
+
 ## v0.5.0
 
 - Bump dependencies
