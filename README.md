@@ -47,15 +47,15 @@ Use [webmiddle-devtools](https://github.com/webmiddle/webmiddle-devtools) for ru
 
 Built-in features provided by the core components:
 
-- **[Concurrency](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-component-parallel)**, for executing multiple asynchronous components at the same time.
-- **[HTTP](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-component-http-request)** requests.
-- **[Puppeteer](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-component-browser)** requests, for SPAs and pages using client-side generated content.
-- **[Cookie JAR](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-manager-cookie)**, for sharing cookies among different components and webmiddle objects.
-- **[Caching](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-component-resume)**, for resuming work in case of crash.
-- **[Error handling](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle#errorboundary)**, via customizable retries and catch options.
+- **[Concurrency](https://webmiddle.github.io/docs/control-flow/parallel)**, for executing multiple asynchronous components at the same time.
+- **[HTTP](https://webmiddle.github.io/docs/fetching/httprequest)** requests.
+- **[Puppeteer](https://webmiddle.github.io/docs/fetching/browser)** requests, for SPAs and pages using client-side generated content.
+- **[Cookie JAR](https://webmiddle.github.io/docs/fetching/managercookie)**, for sharing cookies among different components and webmiddle objects.
+- **[Caching](https://webmiddle.github.io/docs/storing/resume)**, for resuming work in case of crash.
+- **[Error handling](https://webmiddle.github.io/docs/webmiddle/errorboundary)**, via customizable retries and catch options.
 - **Resource transformations**
-  - **[HTML/XML to JSON](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-component-cheerio-to-json)**
-  - **[JSON to JSON](https://github.com/webmiddle/webmiddle/tree/master/packages/webmiddle-component-jsonselect-to-json)**
+  - **[HTML/XML to JSON](https://webmiddle.github.io/docs/transforming/cheeriotojson)**
+  - **[JSON to JSON](https://webmiddle.github.io/docs/transforming/jsonselecttojson)**
 
 ## Core packages
 
