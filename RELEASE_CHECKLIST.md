@@ -4,3 +4,4 @@
 - Execute `yarn test` and make sure it passes
 - Commit changes
 - Execute `yarn lerna publish` and release the new version specified in CHANGELOG / peerDependencies.
+- Deprecate with `npm deprecate` any removed package (if any).
