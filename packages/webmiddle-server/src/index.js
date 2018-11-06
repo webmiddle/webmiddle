@@ -72,7 +72,7 @@ export default class Server {
           `/${type}/*`,
           async (req, res) => {
             try {
-              const authorization = req.get("Authorization");
+              const authorization = req.get("Authorization") || "";
               if (authorization !== this.API_KEY) {
                 throw new Error("Invalid server API KEY");
               }
