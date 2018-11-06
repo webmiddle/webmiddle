@@ -1,6 +1,6 @@
 {
   "name": "webmiddle-component-resume",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -63,6 +63,6 @@
     "mkdirp": "^0.5.1"
   },
   "devDependencies": {
-    "webmiddle": "^0.5.0"
+    "webmiddle": "^0.5.1"
   }
 }

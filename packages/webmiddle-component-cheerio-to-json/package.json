@@ -1,6 +1,6 @@
 {
   "name": "webmiddle-component-cheerio-to-json",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "",
   "main": "dist/index.js",
   "files": [
@@ -64,6 +64,6 @@
     "lodash.every": "^4.6.0"
   },
   "devDependencies": {
-    "webmiddle": "^0.5.0"
+    "webmiddle": "^0.5.1"
   }
 }
