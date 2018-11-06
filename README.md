@@ -15,7 +15,7 @@ const FetchPageLinks({ url, query, name }) = () =>
   <Pipe>
     <HttpRequest contentType="text/html" url={url} />
 
-    {rawHtml => (
+    {rawHtml =>
       <HtmlToJson name={name} from={rawHtml} content={
         {
           anchors: $$.within("a", $$.pipe(
@@ -27,14 +27,14 @@ const FetchPageLinks({ url, query, name }) = () =>
           ))
         }
       }/>
-    )}
+    }
   </Pipe>
 ```
 
 The framework provides a set of core components for the most common operations, but there is no difference between a core component and a component that you may want to develop yourself.
 
 Webmiddle applications can be quickly turned into REST APIs, allowing remote access via HTTP or WebSocket.
-Use webmiddle-devtools for running and debugging your components and test them remotely.
+Use [webmiddle-devtools](https://github.com/webmiddle/webmiddle-devtools) for running and debugging your components and test them remotely.
 
 ## Links
 
