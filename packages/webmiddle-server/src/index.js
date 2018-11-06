@@ -60,6 +60,10 @@ export default class Server {
   }
 
   _bindExpress() {
+    this.expressServer.get("/", (req, res) => {
+      res.send("Welcome to webmiddle-server!");
+    });
+
     Object.keys(this.handlersByType).forEach(type => {
       ["GET", "POST"].forEach(httpMethod => {
         const expressMethod = this.expressServer[httpMethod.toLowerCase()];
