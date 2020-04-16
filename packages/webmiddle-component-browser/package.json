@@ -60,7 +60,7 @@
     "webmiddle": "^0.5.1"
   },
   "dependencies": {
-    "puppeteer": "1.8.0"
+    "puppeteer": "3.0.0"
   },
   "devDependencies": {
     "webmiddle": "^0.5.1"
